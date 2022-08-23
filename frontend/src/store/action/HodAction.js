@@ -39,7 +39,7 @@ export const uploadBulkEmployee = (excelFile, type, token) => {
     fetch(backendUrl + "/Employees/bulk?type=" + type, {
       method: "post",
       headers: {
-        Accept: "application/json",
+        // Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: data,
