@@ -55,7 +55,7 @@ export class Transactionrequest extends Component {
               <option value="POST_TRANSACTION">Complete</option>
             </select>
           </div>
-          <div
+          {/* <div
             className="col s6 m6 l6 input-field search-box"
             style={{ marginTop: "10px" }}
           >
@@ -74,7 +74,7 @@ export class Transactionrequest extends Component {
             >
               search
             </i>
-          </div>
+          </div> */}
           <div className="col s1 m1 l1 ">
             <div
               className="left"

@@ -76,7 +76,7 @@ export default function RequestList({
       </div>
       {list && list.length > 0 ? (
         <TableView
-          data={handleSearch(list, this.props.state.query, ['id', 'category', 'security_type', 'mode', 'request_folio', 'request_type', 'date_requested_to', 'request_quantity', 'proposed_price', 'updatedAt', 'request_status'], 'transaction request')}
+          data={list}
           headers={[
             {
               name: "Id",

@@ -184,6 +184,9 @@ export class TradingRequest extends Component {
       if (this.props.sharePdfSuccess) {
         swal("Success", "Success", "success");
         this.setState({ sharePdf: false });
+        this.props.history.push({
+          pathname: "/",
+        });
       } else if (this.props.sharePdfError) {
         swal("OOPS!", this.props.sharePdfMsg, "error");
         this.setState({ sharePdf: false });
@@ -240,6 +243,8 @@ export class TradingRequest extends Component {
           download={this.onDownload}
           file={this.props.requestTrans}
           share={this.onSharePdf}
+          props={this.props}
+          type='request'
         />
 
         <div

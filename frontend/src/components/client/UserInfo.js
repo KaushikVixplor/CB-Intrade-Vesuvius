@@ -270,7 +270,7 @@ export class UserInfo extends Component {
   HandleChange = (e) => {
     if (e.target.id == "last_benpos_date") {
       this.setState({
-        [e.target.id]: moment(e.target.value).format("MM-DD-YYYY"),
+        [e.target.id]: e.target.value
       });
     } else {
       this.setState({ [e.target.id]: e.target.value });
@@ -441,7 +441,7 @@ export class UserInfo extends Component {
                 this.props.updateSuccess
               }
             >
-              {this.props.userData && this.props.userData.userDetails && this.props.userData.userDetails.canEdit &&
+              {this.props.userData && this.props.userData.userDetails && (this.props.userData.userDetails.status == 'Temp' || this.props.userData.userDetails.canEdit) &&
                 <div className="row">
                   <div
                     className="col s10 m10 l10"
@@ -1045,7 +1045,7 @@ const mapStateToProps = (state) => {
     updateLoading: state.client.userUpdateLoading,
     updateSuccess: state.client.userUpdateSuccess,
     updateError: state.client.userUpdateError,
-    userUpdateMsg: state.clientuserUpdateMsg,
+    userUpdateMsg: state.client.userUpdateMsg,
 
     correctionUserList: state.Hod.correctionUserList,
     correctionUserSuccess: state.Hod.correctionUserSuccess,

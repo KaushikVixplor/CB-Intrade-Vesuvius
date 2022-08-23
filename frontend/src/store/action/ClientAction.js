@@ -154,12 +154,10 @@ export const updateUser = (body, id, stat, token) => {
             type: "AUTHENTICATION_ERROR",
           });
         } else {
-          response.json().then(data=> {
-            dispatch({
-              type: "USER_UPDATE_ERROR",
-              message: data.message
-            });
-          })
+          dispatch({
+            type: "USER_UPDATE_ERROR",
+            message: 'Error to update user'
+          });
         }
       })
     );

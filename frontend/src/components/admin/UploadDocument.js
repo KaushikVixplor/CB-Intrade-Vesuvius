@@ -22,6 +22,7 @@ export const UploadDocument = (props) => {
                   id="date"
                   type="date"
                   class="validate"
+                  min={props.state.day15}
                   value={props.state.date}
                   onChange={props.handleUploadDate}
                 />

@@ -1,7 +1,14 @@
 import React from "react";
 import "../stylesheet/modals.css";
 
-export const DisclosureFormModal = ({ file, share }) => {
+export const DisclosureFormModal = ({ file, share, props, type }) => {
+  const onClose = () => {
+    if (type == 'request') {
+      props.history.push({
+        pathname: "/",
+      });
+    }
+  }
   return (
     <div id="download-modal" class="modal modal-fixed-footer">
       <div class="modal-content">
@@ -13,10 +20,10 @@ export const DisclosureFormModal = ({ file, share }) => {
         </div>
       </div>
       <div className="modal-footer">
-        <button className="modal-close waves-effect waves btn-flat">
+        <button className="modal-close waves-effect waves btn-flat" onClick={onClose}>
           cancel
         </button>
-        <a className="waves-effect waves btn-flat" onClick={share}>
+        <a className="modal-close  waves-effect waves btn-flat" onClick={share}>
           Share
         </a>
       </div>
