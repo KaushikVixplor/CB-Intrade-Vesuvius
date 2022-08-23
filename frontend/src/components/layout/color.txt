@@ -1,0 +1,3 @@
+maincolor={b55e00} maincolor2={022d36}
+secondcolor={ffe6a1} secondcolor2={85bced}
+thirdcolor={fcf2c5} thirdcolor2={b9e4ed}
