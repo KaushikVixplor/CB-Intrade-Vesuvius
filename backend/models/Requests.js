@@ -22,10 +22,10 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "Purchase"
         },
         date_requested_from:{
-            type: 'TIMESTAMP'
+            type: DataTypes.DATE
         },
         date_requested_to:{
-            type: 'TIMESTAMP'
+            type: DataTypes.DATE
         },
         request_quantity:{
             type:DataTypes.FLOAT,
@@ -52,13 +52,13 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "Pending"
         },
         request_date:{
-            type: 'TIMESTAMP'
+            type: DataTypes.DATE
         },
         approval_date:{
-            type: 'TIMESTAMP'
+            type: DataTypes.DATE
         },
         transaction_date:{
-            type: 'TIMESTAMP'
+            type: DataTypes.DATE
         },
         transaction_quantity:{
             type:DataTypes.FLOAT,

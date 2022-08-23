@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         id:{
             type: DataTypes.INTEGER,
             autoIncrement: true,
+            allowNull: false
         },
         pan:{
             type: DataTypes.STRING,
@@ -57,11 +58,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "Shares"
         },
         last_benpos_date:{
-            type: 'TIMESTAMP',
+            type: DataTypes.DATE,
             defaultValue: null
         },
         date_of_appointment_as_insider:{
-            type: 'TIMESTAMP',
+            type: DataTypes.DATE,
             defaultValue: null
         },
         last_institute:{
@@ -88,11 +89,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "Active"
         },
         release_date:{
-            type: 'TIMESTAMP',
+            type: DataTypes.DATE,
             defaultValue:null 
         },
         temp_info:{
-            type:DataTypes.JSONB,
+            type:DataTypes.STRING,
             defaultValue: null
         },
         refreshAccessToken:{

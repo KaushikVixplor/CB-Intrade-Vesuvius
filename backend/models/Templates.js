@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue:""   
         },
         variables:{
-            type:DataTypes.JSONB,
+            type:DataTypes.STRING,
             defaultValue: null  
         }
     })

@@ -262,7 +262,7 @@ module.exports = (app, db) =>
                     console.error(text)
 
                     // generate pdf
-                    var data = empData.temp_info
+                    var data = JSON.parse(empData.temp_info)
                     data["emp"] = empData
                     data["folios"] = empData.Folios
                     data["admin"] = admin

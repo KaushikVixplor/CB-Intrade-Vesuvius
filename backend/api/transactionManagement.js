@@ -8,7 +8,6 @@ const localgetPublicUrl = require('../util/storageLocal').getPublicUrl;
 const trackActivity = require('../util/activityTrack').trackActivity;
 var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
 const pattern1 = /(\d{2})\-(\d{2})\-(\d{4})/;
-var pg = require('pg');
 
    
 module.exports = (app, db) =>{

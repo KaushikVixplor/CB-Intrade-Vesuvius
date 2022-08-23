@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         id:{
             type: DataTypes.INTEGER,
             autoIncrement: true,
+            allowNull: false
         },
         emp_sub_code:{
             type: DataTypes.STRING,
@@ -46,10 +47,10 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "Shares"
         },
         last_benpos_date:{
-            type: 'TIMESTAMP'
+            type: DataTypes.DATE
         },
         release_date:{
-            type: 'TIMESTAMP',
+            type: DataTypes.DATE,
             defaultValue:null 
         },
         last_institute:{
