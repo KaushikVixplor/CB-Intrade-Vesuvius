@@ -73,136 +73,305 @@ const getCredentialsText = async (text,credentials) => {
   }
 }
 
-const compareTransaction = async (param) => {
+// const compareTransaction = async (param) => {
+//   var transactionData = param;
+//   var current_benpos_data = transactionData.current_benpos_data.sort((a, b)=> (a.pan < b.pan) ? 1 : -1);
+//   var prev_benpos_data = transactionData.prev_benpos_data.sort((a, b)=> (a.pan < b.pan) ? 1 : -1 );
+//   try {
+//     var data = [];
+//     var i=0, j=0, k=0;
+//     var prev_pan = null;
+//     var prev_folio = null;
+//     var prev_benpos_date = new Date(new Date(transactionData.prev_benpos_date).setHours(0,0,0))
+//     var current_benpos_date = new Date(new Date(transactionData.current_benpos_date).setHours(0,0,0))
+//     // console.log('prev_benpos_date ', prev_benpos_date)
+//     // console.log('current_benpos_date ', current_benpos_date)
+//     if (prev_benpos_date.getTime() ==  current_benpos_date.getTime()){
+//       // console.log('Satisfied')
+//       while (j < current_benpos_data.length) {
+//         var obj = new Object();
+//         obj.folio = [];
+//         if (current_benpos_data[j].Folio.Employee.pan == prev_pan) {
+//           data[k-1].folio.push(current_benpos_data[j].transaction_folio);
+//           j++;
+//         } else {
+//           obj.code = current_benpos_data[j].Folio.Employee.emp_code;
+//           obj.pan = current_benpos_data[j].Folio.Employee.pan;
+//           obj.name = current_benpos_data[j].Folio.Employee.name;
+//           var curr = current_benpos_data[j].total_share;
+//           var prev = current_benpos_data[j].previous_total_share;
+//           obj.sell = curr - prev;
+//           obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
+//           obj.curr = curr;
+//           obj.prev = prev;
+//           obj.reqStatus =  current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+//           obj.apprDate = current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+//           obj.folio.push(current_benpos_data[j].transaction_folio);
+//           data[k] = obj;
+//           prev_pan = current_benpos_data[j].Folio.Employee.pan;
+//           j++;
+//           k++;
+//         }
+//       }
+//     }
+//     else{
+//       while (i < prev_benpos_data.length && j < current_benpos_data.length) {
+//         var obj = new Object();
+//         obj.folio = [];
+//         if (prev_benpos_data[i].pan == current_benpos_data[j].pan) {
+//             if (prev_pan != prev_benpos_data[i].pan) {
+//               obj.code = current_benpos_data[j].Folio.Employee.emp_code;
+//               obj.pan = current_benpos_data[j].Folio.Employee.pan;
+//               obj.name = current_benpos_data[j].Folio.Employee.name;
+//               var curr = current_benpos_data[j].total_share;
+//               var prev = prev_benpos_data[i].total_share;
+//               obj.sell = curr - prev;
+//               obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
+//               obj.curr = curr;
+//               obj.prev = prev;
+//               obj.reqStatus =  current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+//               obj.apprDate = current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+//               obj.folio.push(current_benpos_data[j].transaction_folio);
+//               data[k] = obj;
+//               prev_pan = current_benpos_data[j].Folio.Employee.pan;
+//               i++;
+//               j++;
+//               k++;
+//             } else {
+//               data[k-1].folio.push(prev_benpos_data[i].transaction_folio);
+//               i++;
+//               j++;
+//             }
+//         } else {
+//           if (prev_benpos_data[i].pan == prev_pan) {
+//             data[k-1].folio.push(prev_benpos_data[i].transaction_folio);
+//             i++;
+//           } else if (current_benpos_data[j].pan == prev_pan) {
+//             data[k-1].folio.push(current_benpos_data[j].transaction_folio);
+//             j++;
+//           } else {
+//             if (prev_benpos_data.length - i > current_benpos_data.length - j) {
+//               obj.code = prev_benpos_data[i].Folio.Employee.emp_code;
+//               obj.pan = prev_benpos_data[i].Folio.Employee.pan;
+//               obj.name = prev_benpos_data[i].Folio.Employee.name;
+//               var curr = 0;
+//               var prev = prev_benpos_data[i].total_share;
+//               obj.sell = curr - prev;
+//               obj.valid = prev_benpos_data[i].is_valid ? "Valid" : "Invalid";
+//               obj.curr = curr;
+//               obj.prev = prev;
+//               obj.reqStatus =  prev_benpos_data[i].Requests.length == 0 ? "No Data" : prev_benpos_data[i].Requests[prev_benpos_data[i].Requests.length-1].status;
+//               obj.apprDate = prev_benpos_data[i].Requests.length == 0 ? "No Data" : prev_benpos_data[i].Requests[prev_benpos_data[i].Requests.length-1].status;
+//               obj.folio.push(prev_benpos_data[i].transaction_folio);
+//               data[k] = obj;
+//               prev_pan = prev_benpos_data[i].Folio.Employee.pan;
+//               i++;
+//               k++;
+//             } else {
+//               obj.code = current_benpos_data[j].Folio.Employee.emp_code;
+//               obj.pan = current_benpos_data[j].Folio.Employee.pan;
+//               obj.name = current_benpos_data[j].Folio.Employee.name;
+//               var curr = current_benpos_data[j].total_share;
+//               var prev = 0;
+//               obj.sell = curr - prev;
+//               obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
+//               obj.curr = curr;
+//               obj.prev = prev;
+//               obj.reqStatus =  current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+//               obj.apprDate = current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+//               obj.folio.push(current_benpos_data[j].transaction_folio);
+//               data[k] = obj;
+//               prev_pan = current_benpos_data[j].Folio.Employee.pan;
+//               j++;
+//               k++;
+//             }
+//           }
+//         }
+//       }
+//       while (i < prev_benpos_data.length) {
+//         var obj = new Object();
+//         obj.folio = [];
+//         if (prev_benpos_data[i].Folio.Employee.pan == prev_pan) {
+//           data[k-1].folio.push(prev_benpos_data[i].transaction_folio);
+//           i++;
+//         }else {
+//           obj.code = prev_benpos_data[i].Folio.Employee.emp_code;
+//           obj.pan = prev_benpos_data[i].Folio.Employee.pan;
+//           obj.name = prev_benpos_data[i].Folio.Employee.name;
+//           var curr = 0;
+//           var prev = prev_benpos_data[i].total_share;
+//           obj.sell = curr - prev;
+//           obj.valid = prev_benpos_data[i].is_valid ? "Valid" : "Invalid";
+//           obj.curr = curr;
+//           obj.prev = prev;
+//           obj.reqStatus =  prev_benpos_data[i].Requests.length == 0 ? "No Data" : prev_benpos_data[i].Requests[prev_benpos_data[i].Requests.length-1].status;
+//           obj.apprDate = prev_benpos_data[i].Requests.length == 0 ? "No Data" : prev_benpos_data[i].Requests[prev_benpos_data[i].Requests.length-1].status;
+//           obj.folio.push(prev_benpos_data[i].transaction_folio);
+//           data[k] = obj;
+//           prev_pan = prev_benpos_data[i].Folio.Employee.pan;
+//           i++;
+//           k++;
+//         }
+//       }
+//       while (j < current_benpos_data.length) {
+//         var obj = new Object();
+//         obj.folio = [];
+//         if (current_benpos_data[j].Folio.Employee.pan == prev_pan) {
+//           data[k-1].folio.push(current_benpos_data[j].transaction_folio);
+//           j++;
+//         } else {
+//           obj.code = current_benpos_data[j].Folio.Employee.emp_code;
+//           obj.pan = current_benpos_data[j].Folio.Employee.pan;
+//           obj.name = current_benpos_data[j].Folio.Employee.name;
+//           var curr = current_benpos_data[j].total_share;
+//           var prev = 0;
+//           obj.sell = curr - prev;
+//           obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
+//           obj.curr = curr;
+//           obj.prev = prev;
+//           obj.reqStatus =  current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+//           obj.apprDate = current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+//           obj.folio.push(current_benpos_data[j].transaction_folio);
+//           data[k] = obj;
+//           prev_pan = current_benpos_data[j].Folio.Employee.pan;
+//           j++;
+//           k++;
+//         }
+//       }
+//     }
+//     return data;
+//   }catch(err){
+//     throw err;
+//   }
+// };
+
+
+
+const compareTransactionNew = async (param) => {
   var transactionData = param;
   var current_benpos_data = transactionData.current_benpos_data.sort((a, b)=> (a.pan < b.pan) ? 1 : -1);
   var prev_benpos_data = transactionData.prev_benpos_data.sort((a, b)=> (a.pan < b.pan) ? 1 : -1 );
   try {
     var data = [];
-    var i=0, j=0, k=0;
+    var i=0, k=0;
+    processedPans = []
     var prev_pan = null;
     var prev_folio = null;
-    while (i < prev_benpos_data.length && j < current_benpos_data.length) {
-      var obj = new Object();
-      obj.folio = [];
-      if (prev_benpos_data[i].pan == current_benpos_data[j].pan) {
-          if (prev_pan != prev_benpos_data[i].pan) {
-            obj.code = current_benpos_data[j].Folio.Employee.emp_code;
-            obj.pan = current_benpos_data[j].Folio.Employee.pan;
-            obj.name = current_benpos_data[j].Folio.Employee.name;
-            var curr = current_benpos_data[j].total_share;
-            var prev = prev_benpos_data[i].total_share;
-            obj.sell = curr - prev;
-            obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
-            obj.curr = curr;
-            obj.prev = prev;
-            obj.reqStatus =  current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
-            obj.apprDate = current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
-            obj.folio.push(current_benpos_data[j].transaction_folio);
-            data[k] = obj;
-            prev_pan = current_benpos_data[j].Folio.Employee.pan;
-            i++;
-            j++;
-            k++;
-          } else {
-            data[k-1].folio.push(prev_benpos_data[i].transaction_folio);
-            i++;
-            j++;
-          }
-      } else {
-        if (prev_benpos_data[i].pan == prev_pan) {
-          data[k-1].folio.push(prev_benpos_data[i].transaction_folio);
-          i++;
-        } else if (current_benpos_data[j].pan == prev_pan) {
+    var prev_benpos_date = new Date(new Date(transactionData.prev_benpos_date).setHours(0,0,0))
+    var current_benpos_date = new Date(new Date(transactionData.current_benpos_date).setHours(0,0,0))
+    console.log('prev_benpos_date ', prev_benpos_date)
+    console.log('current_benpos_date ', current_benpos_date)
+    if (prev_benpos_date.getTime() ==  current_benpos_date.getTime()){
+      console.log('current benpose date is equals to previous benpose date')
+      var j=0;
+      while (j < current_benpos_data.length) {
+        var obj = new Object();
+        obj.folio = [];
+        if (current_benpos_data[j].Folio.Employee.pan == prev_pan) {
           data[k-1].folio.push(current_benpos_data[j].transaction_folio);
           j++;
         } else {
-          if (prev_benpos_data.length - i > current_benpos_data.length - j) {
-            obj.code = prev_benpos_data[i].Folio.Employee.emp_code;
-            obj.pan = prev_benpos_data[i].Folio.Employee.pan;
-            obj.name = prev_benpos_data[i].Folio.Employee.name;
-            var curr = 0;
-            var prev = prev_benpos_data[i].total_share;
-            obj.sell = curr - prev;
-            obj.valid = prev_benpos_data[i].is_valid ? "Valid" : "Invalid";
-            obj.curr = curr;
-            obj.prev = prev;
-            obj.reqStatus =  prev_benpos_data[i].Requests.length == 0 ? "No Data" : prev_benpos_data[i].Requests[prev_benpos_data[i].Requests.length-1].status;
-            obj.apprDate = prev_benpos_data[i].Requests.length == 0 ? "No Data" : prev_benpos_data[i].Requests[prev_benpos_data[i].Requests.length-1].status;
-            obj.folio.push(prev_benpos_data[i].transaction_folio);
-            data[k] = obj;
-            prev_pan = prev_benpos_data[i].Folio.Employee.pan;
-            i++;
-            k++;
-          } else {
-            obj.code = current_benpos_data[j].Folio.Employee.emp_code;
-            obj.pan = current_benpos_data[j].Folio.Employee.pan;
-            obj.name = current_benpos_data[j].Folio.Employee.name;
-            var curr = current_benpos_data[j].total_share;
-            var prev = 0;
-            obj.sell = curr - prev;
-            obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
-            obj.curr = curr;
-            obj.prev = prev;
-            obj.reqStatus =  current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
-            obj.apprDate = current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
-            obj.folio.push(current_benpos_data[j].transaction_folio);
-            data[k] = obj;
-            prev_pan = current_benpos_data[j].Folio.Employee.pan;
-            j++;
-            k++;
-          }
+          obj.code = current_benpos_data[j].Folio.Employee.emp_code;
+          obj.pan = current_benpos_data[j].Folio.Employee.pan;
+          obj.name = current_benpos_data[j].Folio.Employee.name;
+          var curr = current_benpos_data[j].total_share;
+          var prev = current_benpos_data[j].previous_total_share;
+          obj.sell = curr - prev;
+          obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
+          obj.curr = curr;
+          obj.prev = prev;
+          obj.reqStatus =  current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+          obj.apprDate = current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
+          obj.folio.push(current_benpos_data[j].transaction_folio);
+          data[k] = obj;
+          prev_pan = current_benpos_data[j].Folio.Employee.pan;
+          j++;
+          k++;
         }
       }
     }
-    while (i < prev_benpos_data.length) {
-      var obj = new Object();
-      obj.folio = [];
-      if (prev_benpos_data[i].Folio.Employee.pan == prev_pan) {
-        data[k-1].folio.push(prev_benpos_data[i].transaction_folio);
-        i++;
-      }else {
-        obj.code = prev_benpos_data[i].Folio.Employee.emp_code;
-        obj.pan = prev_benpos_data[i].Folio.Employee.pan;
-        obj.name = prev_benpos_data[i].Folio.Employee.name;
-        var curr = 0;
-        var prev = prev_benpos_data[i].total_share;
-        obj.sell = curr - prev;
-        obj.valid = prev_benpos_data[i].is_valid ? "Valid" : "Invalid";
-        obj.curr = curr;
-        obj.prev = prev;
-        obj.reqStatus =  prev_benpos_data[i].Requests.length == 0 ? "No Data" : prev_benpos_data[i].Requests[prev_benpos_data[i].Requests.length-1].status;
-        obj.apprDate = prev_benpos_data[i].Requests.length == 0 ? "No Data" : prev_benpos_data[i].Requests[prev_benpos_data[i].Requests.length-1].status;
-        obj.folio.push(prev_benpos_data[i].transaction_folio);
-        data[k] = obj;
-        prev_pan = prev_benpos_data[i].Folio.Employee.pan;
-        i++;
-        k++;
-      }
-    }
-    while (j < current_benpos_data.length) {
-      var obj = new Object();
-      obj.folio = [];
-      if (current_benpos_data[j].Folio.Employee.pan == prev_pan) {
-        data[k-1].folio.push(current_benpos_data[j].transaction_folio);
-        j++;
-      } else {
-        obj.code = current_benpos_data[j].Folio.Employee.emp_code;
-        obj.pan = current_benpos_data[j].Folio.Employee.pan;
-        obj.name = current_benpos_data[j].Folio.Employee.name;
-        var curr = current_benpos_data[j].total_share;
-        var prev = 0;
-        obj.sell = curr - prev;
-        obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
-        obj.curr = curr;
-        obj.prev = prev;
-        obj.reqStatus =  current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
-        obj.apprDate = current_benpos_data[j].Requests.length == 0 ? "No Data" : current_benpos_data[j].Requests[current_benpos_data[j].Requests.length-1].status;
-        obj.folio.push(current_benpos_data[j].transaction_folio);
-        data[k] = obj;
-        prev_pan = current_benpos_data[j].Folio.Employee.pan;
-        j++;
-        k++;
+    else{
+      for(var i=0; i<current_benpos_data.length; i++){
+        currPan = current_benpos_data[i].Folio.Employee.pan
+        console.log('currPan', currPan)
+        console.log('processedPans', processedPans)
+        if(!processedPans.includes(currPan)){
+          processedPans.push(currPan);
+          filteredPrevBenposData = prev_benpos_data.filter((e) => { return e.Folio.Employee.pan == currPan})
+          filteredCurrBenposData = current_benpos_data.filter((e) => { return e.Folio.Employee.pan == currPan})
+          if(filteredPrevBenposData.length == 0){
+            // employee not present in prev Benpos data i.e this employee is new
+            var obj = new Object();
+            obj.folio = [];
+            obj.code = filteredCurrBenposData[0].Folio.Employee.emp_code;
+            obj.pan = filteredCurrBenposData[0].Folio.Employee.pan;
+            obj.name = filteredCurrBenposData[0].Folio.Employee.name;
+            var curr = filteredCurrBenposData[0].total_share;
+            var prev = filteredCurrBenposData[0].previous_total_share;
+            obj.sell = curr - prev;
+            obj.valid = filteredCurrBenposData[0].is_valid ? "Valid" : "Invalid";
+            obj.curr = curr;
+            obj.prev = prev;
+            obj.reqStatus =  filteredCurrBenposData[0].Requests.length == 0 ? "No Data" : filteredCurrBenposData[0].Requests[filteredCurrBenposData[0].Requests.length-1].status;
+            obj.apprDate = filteredCurrBenposData[0].Requests.length == 0 ? "No Data" : filteredCurrBenposData[0].Requests[filteredCurrBenposData[0].Requests.length-1].status;
+            for(var l=0; l < filteredCurrBenposData.length; l++){
+              if(!obj.folio.includes(filteredCurrBenposData[l].transaction_folio)){
+                obj.folio.push(filteredCurrBenposData[l].transaction_folio);
+              }
+            }
+            data.push(obj);
+          }
+          else if(filteredCurrBenposData.length == 0){
+            // employee not present in current Benpos data i.e this employee is removed
+            var obj = new Object();
+            obj.folio = [];
+            obj.code = filteredPrevBenposData[0].Folio.Employee.emp_code;
+            obj.pan = filteredPrevBenposData[0].Folio.Employee.pan;
+            obj.name = filteredPrevBenposData[0].Folio.Employee.name;
+            var curr = 0;
+            var prev = filteredPrevBenposData[0].total_share;
+            // var curr = filteredPrevBenposData[0].total_share;
+            // var prev = filteredPrevBenposData[0].previous_total_share;
+            obj.sell = curr - prev;
+            obj.valid = filteredPrevBenposData[0].is_valid ? "Valid" : "Invalid";
+            obj.curr = curr;
+            obj.prev = prev;
+            obj.reqStatus =  filteredPrevBenposData[0].Requests.length == 0 ? "No Data" : filteredPrevBenposData[0].Requests[filteredPrevBenposData[0].Requests.length-1].status;
+            obj.apprDate = filteredPrevBenposData[0].Requests.length == 0 ? "No Data" : filteredPrevBenposData[0].Requests[filteredPrevBenposData[0].Requests.length-1].status;
+            for(var l=0; l < filteredPrevBenposData.length; l++){
+              if(!obj.folio.includes(filteredPrevBenposData[l].transaction_folio)){
+                obj.folio.push(filteredPrevBenposData[l].transaction_folio);
+              }
+            }
+            data.push(obj);
+          }
+          else{
+            var obj = new Object();
+            obj.folio = [];
+            obj.code = filteredCurrBenposData[0].Folio.Employee.emp_code;
+            obj.pan = filteredCurrBenposData[0].Folio.Employee.pan;
+            obj.name = filteredCurrBenposData[0].Folio.Employee.name;
+            var curr = filteredCurrBenposData[0].total_share;
+            var prev = filteredPrevBenposData[0].total_share;
+            obj.sell = curr - prev;
+            obj.valid = filteredCurrBenposData[0].is_valid ? "Valid" : "Invalid";
+            obj.curr = curr;
+            obj.prev = prev;
+            obj.reqStatus =  filteredCurrBenposData[0].Requests.length == 0 ? "No Data" : filteredCurrBenposData[0].Requests[filteredCurrBenposData[0].Requests.length-1].status;
+            obj.apprDate = filteredCurrBenposData[0].Requests.length == 0 ? "No Data" : filteredCurrBenposData[0].Requests[filteredCurrBenposData[0].Requests.length-1].status;
+            // for(var l=0; l < filteredPrevBenposData.length; l++){
+            //   if(!obj.folio.includes(filteredPrevBenposData[l].transaction_folio)){
+            //     obj.folio.push(filteredPrevBenposData[l].transaction_folio);
+            //   }
+            // }
+            for(var l=0; l < filteredCurrBenposData.length; l++){
+              if(!obj.folio.includes(filteredCurrBenposData[l].transaction_folio)){
+                obj.folio.push(filteredCurrBenposData[l].transaction_folio);
+              }
+            }
+            data.push(obj);
+          }
+        }
       }
     }
     return data;
@@ -210,6 +379,8 @@ const compareTransaction = async (param) => {
     throw err;
   }
 };
+
+
 
 const getViolationData = async (params) => {
   var body = params.sort((a, b)=> (a.pan < b.pan) ? -1 : 1 );
@@ -291,7 +462,8 @@ const getViolationData = async (params) => {
 
 module.exports ={
   getUpdatedText,
-  compareTransaction,
+  // compareTransaction,
+  compareTransactionNew,
   getViolationData,
   getCredentialsText,
   getPdf

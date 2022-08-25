@@ -112,7 +112,6 @@ export class ClientRequest extends Component {
     });
     this.props.RequestAction(
       "Approved",
-      {},
       e.target.id,
       this.props.user.accessToken
     );
@@ -127,9 +126,9 @@ export class ClientRequest extends Component {
     });
     this.props.RequestAction(
       "Rejected",
-      {reason: this.state.reason},
       this.state.id,
-      this.props.user.accessToken
+      this.props.user.accessToken,
+      {reason: this.state.reason},
     );
     // this.props.PendingRequest("Pending", null, this.props.user.accessToken);
   };
@@ -234,8 +233,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    RequestAction: (status, body, id, token) => {
-      dispatch(requestAction(status, body, id, token));
+    RequestAction: (status, id, token, body) => {
+      dispatch(requestAction(status, id, token, body));
     },
     PendingRequest: (status, pan, token) => {
       dispatch(getRequestList(status, pan, token));

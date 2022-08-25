@@ -4,6 +4,7 @@ const getConnectedPersonsExcel = require('../util/excelGeneration').getConnected
 const fs = require('fs');
 var sequelize = require('sequelize');
 const compareTransaction = require('../util/common').compareTransaction;
+const compareTransactionNew = require('../util/common').compareTransactionNew;
 const getCompareTransactionPdf = require('../util/pdfGeneration').compareTransactionPdf;
 const Op = sequelize.Op;
 const getViolationData = require('../util/common').getViolationData;
@@ -140,10 +141,11 @@ module.exports = (app, db) => {
 				current_benpos_date: current_benpos_date,
 				current_benpos_data: current_benpos_data.data
 			};
-			compareTransaction(transactionData)
+			// compareTransaction(transactionData)
+			compareTransactionNew(transactionData)
 				.then((data) => {
 					console.log('Transaction Compared successfully');
-					getCompareTransactionPdf(data)
+					getCompareTransactionPdf(data, transactionData.prev_benpos_date, transactionData.current_benpos_date)
 						.then((doc) => {
 							console.log('Transaction Comparison converted to pdf successfully');
 							res.setHeader('Content-disposition', 'attachment; filename=Compare Transaction.pdf');

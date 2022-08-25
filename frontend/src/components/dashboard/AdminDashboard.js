@@ -23,7 +23,7 @@ import {
   emailPanRequest,
   getTempaltes,
 } from "../../store/action/HodAction";
-import { gotoCompare, pdfDownload } from "../../store/action/CommonAction";
+import { gotoCompare, pdfDownload, resetReducer } from "../../store/action/CommonAction";
 import { ActivityLog } from "../admin/ActivityLog";
 import CorrectionRequest from "../admin/CorrectionRequest";
 import moment from "moment";
@@ -118,7 +118,7 @@ export class AdminDashboard extends Component {
       this.state.comparetransFlag &&
       this.state.chooseFlag == "compare"
     ) {
-      this.compareTransaction(this.props.compareTransaction);
+      // this.compareTransaction(this.props.compareTransaction);
       this.setState({
         comparetransFlag: false,
       });
@@ -356,212 +356,213 @@ export class AdminDashboard extends Component {
     }
     if (this.state.pdfDownloadFlag && this.props.pdfDownloadError) {
       swal("OOPS!", "Failed to download pdf", "error");
+      this.props.ResetReducer({ pdfDownloadError: false })
       this.setState({ pdfDownloadFlag: false });
     }
   }
 
-  compareTransaction = (param) => {
-    var transactionData = param;
-    var current_benpos_data = transactionData.current_benpos_data.sort((a, b) =>
-      a.pan < b.pan ? 1 : -1
-    );
-    var prev_benpos_data = transactionData.prev_benpos_data.sort((a, b) =>
-      a.pan < b.pan ? 1 : -1
-    );
-    try {
-      var data = [];
-      var i = 0,
-        j = 0,
-        k = 0;
-      var prev_pan = null;
-      var prev_folio = null;
-      while (i < prev_benpos_data.length && j < current_benpos_data.length) {
-        var obj = new Object();
-        obj.folio = [];
-        if (prev_benpos_data[i].pan == current_benpos_data[j].pan) {
-          if (prev_pan != prev_benpos_data[i].pan) {
-            obj.code = current_benpos_data[j].Folio.Employee.emp_code;
-            obj.pan = current_benpos_data[j].Folio.Employee.pan;
-            obj.name = current_benpos_data[j].Folio.Employee.name;
-            var curr = current_benpos_data[j].total_share;
-            var prev = prev_benpos_data[i].total_share;
-            obj.sell = curr - prev;
-            obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
-            obj.curr = curr;
-            obj.prev = prev;
-            obj.reqStatus =
-              current_benpos_data[j].Requests.length == 0
-                ? "No Data"
-                : current_benpos_data[j].Requests[
-                    current_benpos_data[j].Requests.length - 1
-                  ].status;
-            obj.apprDate =
-              current_benpos_data[j].Requests.length == 0
-                ? "No Data"
-                : current_benpos_data[j].Requests[
-                    current_benpos_data[j].Requests.length - 1
-                  ].status;
-            obj.folio.push(current_benpos_data[j].transaction_folio);
-            data[k] = obj;
-            prev_pan = current_benpos_data[j].Folio.Employee.pan;
-            i++;
-            j++;
-            k++;
-          } else {
-            data[k - 1].folio.push(prev_benpos_data[i].transaction_folio);
-            i++;
-            j++;
-          }
-        } else {
-          if (prev_benpos_data[i].pan == prev_pan) {
-            data[k - 1].folio.push(prev_benpos_data[i].transaction_folio);
-            i++;
-          } else if (current_benpos_data[j].pan == prev_pan) {
-            data[k - 1].folio.push(current_benpos_data[j].transaction_folio);
-            j++;
-          } else {
-            if (prev_benpos_data.length - i > current_benpos_data.length - j) {
-              obj.code = prev_benpos_data[i].Folio.Employee.emp_code;
-              obj.pan = prev_benpos_data[i].Folio.Employee.pan;
-              obj.name = prev_benpos_data[i].Folio.Employee.name;
-              var curr = 0;
-              var prev = prev_benpos_data[i].total_share;
-              obj.sell = curr - prev;
-              obj.valid = prev_benpos_data[i].is_valid ? "Valid" : "Invalid";
-              obj.curr = curr;
-              obj.prev = prev;
-              obj.reqStatus =
-                prev_benpos_data[i].Requests.length == 0
-                  ? "No Data"
-                  : prev_benpos_data[i].Requests[
-                      prev_benpos_data[i].Requests.length - 1
-                    ].status;
-              obj.apprDate =
-                prev_benpos_data[i].Requests.length == 0
-                  ? "No Data"
-                  : prev_benpos_data[i].Requests[
-                      prev_benpos_data[i].Requests.length - 1
-                    ].status;
-              obj.folio.push(prev_benpos_data[i].transaction_folio);
-              data[k] = obj;
-              prev_pan = prev_benpos_data[i].Folio.Employee.pan;
-              i++;
-              k++;
-            } else {
-              obj.code = current_benpos_data[j].Folio.Employee.emp_code;
-              obj.pan = current_benpos_data[j].Folio.Employee.pan;
-              obj.name = current_benpos_data[j].Folio.Employee.name;
-              var curr = current_benpos_data[j].total_share;
-              var prev = 0;
-              obj.sell = curr - prev;
-              obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
-              obj.curr = curr;
-              obj.prev = prev;
-              obj.reqStatus =
-                current_benpos_data[j].Requests.length == 0
-                  ? "No Data"
-                  : current_benpos_data[j].Requests[
-                      current_benpos_data[j].Requests.length - 1
-                    ].status;
-              obj.apprDate =
-                current_benpos_data[j].Requests.length == 0
-                  ? "No Data"
-                  : current_benpos_data[j].Requests[
-                      current_benpos_data[j].Requests.length - 1
-                    ].status;
-              obj.folio.push(current_benpos_data[j].transaction_folio);
-              data[k] = obj;
-              prev_pan = current_benpos_data[j].Folio.Employee.pan;
-              j++;
-              k++;
-            }
-          }
-        }
-      }
-      while (i < prev_benpos_data.length) {
-        var obj = new Object();
-        obj.folio = [];
-        if (prev_benpos_data[i].Folio.Employee.pan == prev_pan) {
-          data[k - 1].folio.push(prev_benpos_data[i].transaction_folio);
-          i++;
-        } else {
-          obj.code = prev_benpos_data[i].Folio.Employee.emp_code;
-          obj.pan = prev_benpos_data[i].Folio.Employee.pan;
-          obj.name = prev_benpos_data[i].Folio.Employee.name;
-          var curr = 0;
-          var prev = prev_benpos_data[i].total_share;
-          obj.sell = curr - prev;
-          obj.valid = prev_benpos_data[i].is_valid ? "Valid" : "Invalid";
-          obj.curr = curr;
-          obj.prev = prev;
-          obj.reqStatus =
-            prev_benpos_data[i].Requests.length == 0
-              ? "No Data"
-              : prev_benpos_data[i].Requests[
-                  prev_benpos_data[i].Requests.length - 1
-                ].status;
-          obj.apprDate =
-            prev_benpos_data[i].Requests.length == 0
-              ? "No Data"
-              : prev_benpos_data[i].Requests[
-                  prev_benpos_data[i].Requests.length - 1
-                ].status;
-          obj.folio.push(prev_benpos_data[i].transaction_folio);
-          data[k] = obj;
-          prev_pan = prev_benpos_data[i].Folio.Employee.pan;
-          i++;
-          k++;
-        }
-      }
-      while (j < current_benpos_data.length) {
-        var obj = new Object();
-        obj.folio = [];
-        if (current_benpos_data[j].Folio.Employee.pan == prev_pan) {
-          data[k - 1].folio.push(current_benpos_data[j].transaction_folio);
-          j++;
-        } else {
-          obj.code = current_benpos_data[j].Folio.Employee.emp_code;
-          obj.pan = current_benpos_data[j].Folio.Employee.pan;
-          obj.name = current_benpos_data[j].Folio.Employee.name;
-          var curr = current_benpos_data[j].total_share;
-          var prev = 0;
-          obj.sell = curr - prev;
-          obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
-          obj.curr = curr;
-          obj.prev = prev;
-          obj.reqStatus =
-            current_benpos_data[j].Requests.length == 0
-              ? "No Data"
-              : current_benpos_data[j].Requests[
-                  current_benpos_data[j].Requests.length - 1
-                ].status;
-          obj.apprDate =
-            current_benpos_data[j].Requests.length == 0
-              ? "No Data"
-              : current_benpos_data[j].Requests[
-                  current_benpos_data[j].Requests.length - 1
-                ].status;
-          obj.folio.push(current_benpos_data[j].transaction_folio);
-          data[k] = obj;
-          prev_pan = current_benpos_data[j].Folio.Employee.pan;
-          j++;
-          k++;
-        }
-      }
-      //return data;
-      this.setState({
-        compareTransData: data,
-        compStartDate: transactionData.prev_benpos_date
-          ? moment(transactionData.prev_benpos_date).format("DD-MM-YYYY")
-          : "",
-        compEndDate: transactionData.current_benpos_date
-          ? moment(transactionData.current_benpos_date).format("DD-MM-YYYY")
-          : "",
-      });
-    } catch (err) {
-      throw err;
-    }
-  };
+  // compareTransaction = (param) => {
+  //   var transactionData = param;
+  //   var current_benpos_data = transactionData.current_benpos_data.sort((a, b) =>
+  //     a.pan < b.pan ? 1 : -1
+  //   );
+  //   var prev_benpos_data = transactionData.prev_benpos_data.sort((a, b) =>
+  //     a.pan < b.pan ? 1 : -1
+  //   );
+  //   try {
+  //     var data = [];
+  //     var i = 0,
+  //       j = 0,
+  //       k = 0;
+  //     var prev_pan = null;
+  //     var prev_folio = null;
+  //     while (i < prev_benpos_data.length && j < current_benpos_data.length) {
+  //       var obj = new Object();
+  //       obj.folio = [];
+  //       if (prev_benpos_data[i].pan == current_benpos_data[j].pan) {
+  //         if (prev_pan != prev_benpos_data[i].pan) {
+  //           obj.code = current_benpos_data[j].Folio.Employee.emp_code;
+  //           obj.pan = current_benpos_data[j].Folio.Employee.pan;
+  //           obj.name = current_benpos_data[j].Folio.Employee.name;
+  //           var curr = current_benpos_data[j].total_share;
+  //           var prev = prev_benpos_data[i].total_share;
+  //           obj.sell = curr - prev;
+  //           obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
+  //           obj.curr = curr;
+  //           obj.prev = prev;
+  //           obj.reqStatus =
+  //             current_benpos_data[j].Requests.length == 0
+  //               ? "No Data"
+  //               : current_benpos_data[j].Requests[
+  //                   current_benpos_data[j].Requests.length - 1
+  //                 ].status;
+  //           obj.apprDate =
+  //             current_benpos_data[j].Requests.length == 0
+  //               ? "No Data"
+  //               : current_benpos_data[j].Requests[
+  //                   current_benpos_data[j].Requests.length - 1
+  //                 ].status;
+  //           obj.folio.push(current_benpos_data[j].transaction_folio);
+  //           data[k] = obj;
+  //           prev_pan = current_benpos_data[j].Folio.Employee.pan;
+  //           i++;
+  //           j++;
+  //           k++;
+  //         } else {
+  //           data[k - 1].folio.push(prev_benpos_data[i].transaction_folio);
+  //           i++;
+  //           j++;
+  //         }
+  //       } else {
+  //         if (prev_benpos_data[i].pan == prev_pan) {
+  //           data[k - 1].folio.push(prev_benpos_data[i].transaction_folio);
+  //           i++;
+  //         } else if (current_benpos_data[j].pan == prev_pan) {
+  //           data[k - 1].folio.push(current_benpos_data[j].transaction_folio);
+  //           j++;
+  //         } else {
+  //           if (prev_benpos_data.length - i > current_benpos_data.length - j) {
+  //             obj.code = prev_benpos_data[i].Folio.Employee.emp_code;
+  //             obj.pan = prev_benpos_data[i].Folio.Employee.pan;
+  //             obj.name = prev_benpos_data[i].Folio.Employee.name;
+  //             var curr = 0;
+  //             var prev = prev_benpos_data[i].total_share;
+  //             obj.sell = curr - prev;
+  //             obj.valid = prev_benpos_data[i].is_valid ? "Valid" : "Invalid";
+  //             obj.curr = curr;
+  //             obj.prev = prev;
+  //             obj.reqStatus =
+  //               prev_benpos_data[i].Requests.length == 0
+  //                 ? "No Data"
+  //                 : prev_benpos_data[i].Requests[
+  //                     prev_benpos_data[i].Requests.length - 1
+  //                   ].status;
+  //             obj.apprDate =
+  //               prev_benpos_data[i].Requests.length == 0
+  //                 ? "No Data"
+  //                 : prev_benpos_data[i].Requests[
+  //                     prev_benpos_data[i].Requests.length - 1
+  //                   ].status;
+  //             obj.folio.push(prev_benpos_data[i].transaction_folio);
+  //             data[k] = obj;
+  //             prev_pan = prev_benpos_data[i].Folio.Employee.pan;
+  //             i++;
+  //             k++;
+  //           } else {
+  //             obj.code = current_benpos_data[j].Folio.Employee.emp_code;
+  //             obj.pan = current_benpos_data[j].Folio.Employee.pan;
+  //             obj.name = current_benpos_data[j].Folio.Employee.name;
+  //             var curr = current_benpos_data[j].total_share;
+  //             var prev = 0;
+  //             obj.sell = curr - prev;
+  //             obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
+  //             obj.curr = curr;
+  //             obj.prev = prev;
+  //             obj.reqStatus =
+  //               current_benpos_data[j].Requests.length == 0
+  //                 ? "No Data"
+  //                 : current_benpos_data[j].Requests[
+  //                     current_benpos_data[j].Requests.length - 1
+  //                   ].status;
+  //             obj.apprDate =
+  //               current_benpos_data[j].Requests.length == 0
+  //                 ? "No Data"
+  //                 : current_benpos_data[j].Requests[
+  //                     current_benpos_data[j].Requests.length - 1
+  //                   ].status;
+  //             obj.folio.push(current_benpos_data[j].transaction_folio);
+  //             data[k] = obj;
+  //             prev_pan = current_benpos_data[j].Folio.Employee.pan;
+  //             j++;
+  //             k++;
+  //           }
+  //         }
+  //       }
+  //     }
+  //     while (i < prev_benpos_data.length) {
+  //       var obj = new Object();
+  //       obj.folio = [];
+  //       if (prev_benpos_data[i].Folio.Employee.pan == prev_pan) {
+  //         data[k - 1].folio.push(prev_benpos_data[i].transaction_folio);
+  //         i++;
+  //       } else {
+  //         obj.code = prev_benpos_data[i].Folio.Employee.emp_code;
+  //         obj.pan = prev_benpos_data[i].Folio.Employee.pan;
+  //         obj.name = prev_benpos_data[i].Folio.Employee.name;
+  //         var curr = 0;
+  //         var prev = prev_benpos_data[i].total_share;
+  //         obj.sell = curr - prev;
+  //         obj.valid = prev_benpos_data[i].is_valid ? "Valid" : "Invalid";
+  //         obj.curr = curr;
+  //         obj.prev = prev;
+  //         obj.reqStatus =
+  //           prev_benpos_data[i].Requests.length == 0
+  //             ? "No Data"
+  //             : prev_benpos_data[i].Requests[
+  //                 prev_benpos_data[i].Requests.length - 1
+  //               ].status;
+  //         obj.apprDate =
+  //           prev_benpos_data[i].Requests.length == 0
+  //             ? "No Data"
+  //             : prev_benpos_data[i].Requests[
+  //                 prev_benpos_data[i].Requests.length - 1
+  //               ].status;
+  //         obj.folio.push(prev_benpos_data[i].transaction_folio);
+  //         data[k] = obj;
+  //         prev_pan = prev_benpos_data[i].Folio.Employee.pan;
+  //         i++;
+  //         k++;
+  //       }
+  //     }
+  //     while (j < current_benpos_data.length) {
+  //       var obj = new Object();
+  //       obj.folio = [];
+  //       if (current_benpos_data[j].Folio.Employee.pan == prev_pan) {
+  //         data[k - 1].folio.push(current_benpos_data[j].transaction_folio);
+  //         j++;
+  //       } else {
+  //         obj.code = current_benpos_data[j].Folio.Employee.emp_code;
+  //         obj.pan = current_benpos_data[j].Folio.Employee.pan;
+  //         obj.name = current_benpos_data[j].Folio.Employee.name;
+  //         var curr = current_benpos_data[j].total_share;
+  //         var prev = 0;
+  //         obj.sell = curr - prev;
+  //         obj.valid = current_benpos_data[j].is_valid ? "Valid" : "Invalid";
+  //         obj.curr = curr;
+  //         obj.prev = prev;
+  //         obj.reqStatus =
+  //           current_benpos_data[j].Requests.length == 0
+  //             ? "No Data"
+  //             : current_benpos_data[j].Requests[
+  //                 current_benpos_data[j].Requests.length - 1
+  //               ].status;
+  //         obj.apprDate =
+  //           current_benpos_data[j].Requests.length == 0
+  //             ? "No Data"
+  //             : current_benpos_data[j].Requests[
+  //                 current_benpos_data[j].Requests.length - 1
+  //               ].status;
+  //         obj.folio.push(current_benpos_data[j].transaction_folio);
+  //         data[k] = obj;
+  //         prev_pan = current_benpos_data[j].Folio.Employee.pan;
+  //         j++;
+  //         k++;
+  //       }
+  //     }
+  //     //return data;
+  //     this.setState({
+  //       compareTransData: data,
+  //       compStartDate: transactionData.prev_benpos_date
+  //         ? moment(transactionData.prev_benpos_date).format("DD-MM-YYYY")
+  //         : "",
+  //       compEndDate: transactionData.current_benpos_date
+  //         ? moment(transactionData.current_benpos_date).format("DD-MM-YYYY")
+  //         : "",
+  //     });
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // };
 
   current = (pan, arr1, arr2, flag, index) => {
     console.log(pan);
@@ -965,17 +966,10 @@ export class AdminDashboard extends Component {
                     <div className="row container initial-writeups">
                       <ul>
                         <li>
-                          Pre Transaction Request -{" "}
+                          Transaction Request -{" "}
                           <span>
-                            Click the button to look on and Approve/Reject the
-                            transaction requests comming from CP
-                          </span>
-                        </li>
-                        <li>
-                          Post Transaction Request -{" "}
-                          <span>
-                            Click the button to look on and download the
-                            completed transation
+                            Click the button to look on and Approve/Reject/download the
+                            transaction requests comming from insiders
                           </span>
                         </li>
                         <li>
@@ -1030,15 +1024,15 @@ export class AdminDashboard extends Component {
                     <div className="row container initial-writeups">
                       <ul>
                         <li>
-                          Connected Persons -{" "}
+                          View Insiders -{" "}
                           <span>
-                            Click the button to look on the CP list and Reset
+                           Click the button to look on the insider list and Reset
                             Password/View Relatives/Relese User as your need
                           </span>
                         </li>
                         <li>
-                          Add Bulk CP -{" "}
-                          <span>Click the button to upload CP list</span>
+                          Add Bulk Insiders -{" "}
+                          <span>Click the button to upload insider list</span>
                         </li>
                         <li>
                           Add New CP -{" "}
@@ -1078,6 +1072,7 @@ export class AdminDashboard extends Component {
                 <ViolationReport
                   state={this.state}
                   violationList={this.state.violationTransData}
+                  violationTransaction={this.props.violationTransaction}
                   handleUploadDate={this.handleStartEndDate}
                   handleSearchWithDate={this.handleSearchWithDate}
                   onDownload={this.onDownload}
@@ -1098,6 +1093,9 @@ export class AdminDashboard extends Component {
                   }
                   previousData={this.props.compareTransaction.prev_benpos_data}
                   onDownload={this.onDownload}
+                  compareTransaction={this.props.compareTransaction.compareData}
+                  current_benpos_date={this.props.compareTransaction.current_benpos_date}
+                  prev_benpos_date={this.props.compareTransaction.prev_benpos_date}
                 />
               ) : this.state.chooseFlag == "activity" ? (
                 <ActivityLog
@@ -1220,6 +1218,9 @@ const mapDispatchToProps = (dispatch) => {
     PdfDownload: (startDate, endDate, request_status, type, token) => {
       dispatch(pdfDownload(startDate, endDate, request_status, type, token));
     },
+    ResetReducer: (data) => {
+      dispatch(resetReducer(data))
+    }
   };
 };
 

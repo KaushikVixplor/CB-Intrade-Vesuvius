@@ -24,6 +24,7 @@ var options = {
   type: "application/octet-stream",
 };
 
+
 const app = express();
 app.use(express.static("uploads"));
 app.use(express.static("build"));
@@ -41,8 +42,5 @@ userManagement(app, db);
 mailManagement(app, db);
 templateManagement(app, db);
 downloadManagement(app, db);
-
-
-// dbInit.createTables(db);
 
 app.listen(8081, () => console.log("App listening on port 8081!"));

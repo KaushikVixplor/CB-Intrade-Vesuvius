@@ -10,10 +10,22 @@ export const CompareTransaction = ({
   compareData,
   previousData,
   onDownload,
+  compareTransaction,
+  prev_benpos_date,
+  current_benpos_date
 }) => {
   console.log("list", compareList, state);
   var field1 = state.startDate.split("-").reverse().join("-");
   var field = state.endDate.split("-").reverse().join("-");
+  const getDate = (date) => {
+    var d = new Date(date);
+    var day = d.getDate();
+    if (day.toString().length == 1) day = '0' + day
+    var month = d.getMonth() + 1;
+    if (month.toString().length == 1) month = '0' + month
+    var Year = d.getFullYear();
+    return day + "-" + month + "-" + Year;
+  }
   return (
     <div>
       <div className="row  container">
@@ -33,12 +45,7 @@ export const CompareTransaction = ({
           />
           <a className="left">
             <b>Previous Benpos Date:</b>{" "}
-            {compareData &&
-            compareData.length == 0 &&
-            previousData &&
-            previousData.length == 0
-              ? null
-              : state.compStartDate}
+            {prev_benpos_date ? getDate(prev_benpos_date) : null}
           </a>
         </div>
         <div className="col s4 m4 l4">
@@ -51,12 +58,7 @@ export const CompareTransaction = ({
           />
           <a className="left">
             <b>Current Benpos Date:</b>{" "}
-            {compareData &&
-            compareData.length == 0 &&
-            previousData &&
-            previousData.length == 0
-              ? null
-              : state.compEndDate}
+            {current_benpos_date ? getDate(current_benpos_date) : null}
           </a>
         </div>
         <div className="col s1 m1 l1" style={{ marginLeft: "4%" }}>
@@ -100,11 +102,11 @@ export const CompareTransaction = ({
               fontWeight: 600,
             }}
           >
-            Total Data: {compareList && compareList.length}
+            Total Data: {compareTransaction && compareTransaction.length}
           </span>
         </div>
       </div>
-      {compareList && compareList.length > 0 ? (
+      {/* {compareList && compareList.length > 0 ? (
         <TableView
           data={compareList}
           headers={[
@@ -200,7 +202,55 @@ export const CompareTransaction = ({
         ></TableView>
       ) : (
         <span style={{ fontWeight: 600, fontSize: 20 }}>No Data Found</span>
-      )}
+      )} */}
+      {compareTransaction && compareTransaction.length > 0 ?
+        <div className="tableView">
+          <table className="responsive-table highlight custom-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>PAN</th>
+                <th>Name</th>
+                <th>Buy/Sell</th>
+                <th>Valid</th>
+                <th>Curr. Total Share</th>
+                <th>Prev. Total Share</th>
+                <th>Req. Status</th>
+                <th>Appr. Date</th>
+                <th>Folio-1</th>
+                <th>Folio-2</th>
+                <th>Folio-3</th>
+                <th>Folio-4</th>
+                <th>Folio-5</th>
+              </tr>
+            </thead>
+            <tbody>
+              {compareTransaction.map((d, ind) =>
+                <tr key={ind}>
+                  <td>
+                    {d.code}
+                  </td>
+                  <td>{d.pan}</td>
+                  <td>{d.name}</td>
+                  <td>{d.sell}</td>
+                  <td>{d.valid}</td>
+                  <td>{d.curr}</td>
+                  <td>{d.prev}</td>
+                  <td>{d.reqStatus}</td>
+                  <td>{d.apprDate}</td>
+                  <td>{d.folio && d.folio[0] ? d.folio[0] : 'NA'}</td>
+                  <td>{d.folio && d.folio[1] ? d.folio[1] : 'NA'}</td>
+                  <td>{d.folio && d.folio[2] ? d.folio[2] : 'NA'}</td>
+                  <td>{d.folio && d.folio[3] ? d.folio[3] : 'NA'}</td>
+                  <td>{d.folio && d.folio[4] ? d.folio[4] : 'NA'}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div> 
+      :
+      <span style={{ fontWeight: 600, fontSize: 20 }}>No Data Found</span>
+      }
     </div>
   );
 };

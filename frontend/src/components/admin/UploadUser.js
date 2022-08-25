@@ -88,7 +88,7 @@ const UploadUser = (props) => {
               <div className="col s12 m12 l12" style={{ transform: 'translate(-110px, -38px)' }}>
                 <a
                   className="hint"
-                  href="./BULK_CP_UPLOAD_FORMAT.xlsx"
+                  href="./BULK_INSIDER_UPLOAD_FORMAT.xlsx"
                 >
                   Insiders Details Format Download
                 </a>

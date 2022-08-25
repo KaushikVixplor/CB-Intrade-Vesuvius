@@ -8,6 +8,7 @@ export const ViolationReport = ({
   handleSearchWithDate,
   handleUploadDate,
   onDownload,
+  violationTransaction
 }) => {
   var field1 = state.startDate.split("-").reverse().join("-");
   var field = state.endDate.split("-").reverse().join("-");
@@ -229,11 +230,11 @@ export const ViolationReport = ({
               fontWeight: 600,
             }}
           >
-            Total Data: {violationList && violationList.length}
+            Total Data: {violationTransaction && violationTransaction.length}
           </span>
         </div>
       </div>
-      {violationList && violationList.length > 0 ? (
+      {/* {violationList && violationList.length > 0 ? (
         <TableView
           data={violationList}
           headers={[
@@ -352,7 +353,53 @@ export const ViolationReport = ({
         ></TableView>
       ) : (
         <span style={{ fontWeight: 600, fontSize: 20 }}>No Data Found</span>
-      )}
+      )} */}
+      {violationTransaction && violationTransaction.length > 0 ?
+        <div className="tableView">
+          <table className="responsive-table highlight custom-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>PAN</th>
+                <th>Name</th>
+                <th>Buy/ Sell</th>
+                <th>Benpos Date</th>
+                <th>Curr. Total Share</th>
+                <th>Prev. Total Share</th>
+                <th>Req Status</th>
+                <th>Appr. Date</th>
+                <th>Folio-1</th>
+                <th>Folio-2</th>
+                <th>Folio-3</th>
+                <th>Folio-4</th>
+                <th>Folio-5</th>
+              </tr>
+            </thead>
+            <tbody>
+              {violationTransaction.map((d, ind) =>
+                <tr key={ind}>
+                  <td>{d.code}</td>
+                  <td>{d.pan}</td>
+                  <td>{d.name}</td>
+                  <td>{d.sell}</td>
+                  <td>{d.benpose_date}</td>
+                  <td>{d.curr}</td>
+                  <td>{d.prev}</td>
+                  <td>{d.reqStatus}</td>
+                  <td>{d.apprDate}</td>
+                  <td>{d.folio && d.folio[0] ? d.folio[0] : 'NA'}</td>
+                  <td>{d.folio && d.folio[1] ? d.folio[1] : 'NA'}</td>
+                  <td>{d.folio && d.folio[2] ? d.folio[2] : 'NA'}</td>
+                  <td>{d.folio && d.folio[3] ? d.folio[3] : 'NA'}</td>
+                  <td>{d.folio && d.folio[4] ? d.folio[4] : 'NA'}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        :
+        <span style={{ fontWeight: 600, fontSize: 20 }}>No Data Found</span>
+      }
     </div>
   );
 };

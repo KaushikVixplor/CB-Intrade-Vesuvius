@@ -39,7 +39,7 @@ export const uploadBulkEmployee = (excelFile, type, token) => {
     fetch(backendUrl + "/Employees/bulk?type=" + type, {
       method: "post",
       headers: {
-        // Accept: "application/json",
+        Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: data,
@@ -164,7 +164,7 @@ export const violationTransaction = (start_date, end_date, token) => {
   };
 };
 
-export const requestAction = (status, body, id, token) => {
+export const requestAction = (status, id, token, body = {}) => {
   return (dispatch) => {
     dispatch({
       type: "REQUEST_ACTION_LOADING",

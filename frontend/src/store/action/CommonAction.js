@@ -486,3 +486,13 @@ export const updateEmployee = (query,body, token) => {
       })
   }
 }
+
+
+export const resetReducer = (data) => {
+  return (dispatch) => {
+    dispatch({
+      type: 'RESET_REDUCER',
+      data: data
+    })
+  }
+}

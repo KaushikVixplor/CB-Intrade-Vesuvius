@@ -6,8 +6,12 @@ process.env.SECRET_KEY = 'secret';
 const localUpload = require('../util/storageLocal').upload;
 const localgetPublicUrl = require('../util/storageLocal').getPublicUrl;
 const trackActivity = require('../util/activityTrack').trackActivity;
+const compareTransaction = require('../util/common').compareTransaction;
+const compareTransactionNew = require('../util/common').compareTransactionNew;
+const getViolationData = require('../util/common').getViolationData;
 var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
 const pattern1 = /(\d{2})\-(\d{2})\-(\d{4})/;
+var pg = require('pg');
 
    
 module.exports = (app, db) =>{
@@ -158,6 +162,8 @@ module.exports = (app, db) =>{
             else{
                 throw "Date Format Error"
             }
+            console.log('fromDate : ', fromDate)
+            console.log('toDate : ', toDate)
             // var prev_benpos_date = fromDate
             // var current_benpos_date = toDate
             var prev_benpos_data = await getBenposData(fromDate,toDate,false)
@@ -175,7 +181,10 @@ module.exports = (app, db) =>{
                 transactionData = {prev_benpos_date: prev_benpos_date,prev_benpos_data: prev_benpos_data.data,
                                     current_benpos_date: current_benpos_date,current_benpos_data: current_benpos_data.data}
             }
-            res.status(200).json({'message':'transaction fetch successfully',"data":transactionData})
+            // compareData = await compareTransaction(transactionData)
+            compareData = await compareTransactionNew(transactionData)
+
+            res.status(200).json({'message':'transaction fetch successfully',"data":{transactionData: transactionData,compareData: compareData,prev_benpos_date: transactionData.prev_benpos_date,current_benpos_date: transactionData.current_benpos_date}})
         }
         catch(error){
             console.error("transaction fetch error:",error);
@@ -234,7 +243,8 @@ module.exports = (app, db) =>{
                                     }]
                         }]
             })
-            res.status(200).json({'message':'transaction fetch successfully',"data":transactionData})
+			violationData = await getViolationData(transactionData)
+            res.status(200).json({'message':'transaction fetch successfully',"data":violationData})
         }
         catch(error){
             console.error("transaction fetch error:",error);

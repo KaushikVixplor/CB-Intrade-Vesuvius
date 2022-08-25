@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
         id:{
             type: DataTypes.INTEGER,
             autoIncrement: true,
-            allowNull: false
         },
         folio:{
             type: DataTypes.STRING,

@@ -327,27 +327,42 @@ export class UserInfo extends Component {
         if (
           this.state.relatives[i].type == "" ||
           this.state.relatives[i].name == "" ||
-          this.state.relatives[i].relation == ""
+          this.state.relatives[i].relation == "" ||
+          this.state.relatives[i].pan == ""
         ) {
           alert("Fill all the required fields in relative section");
         } else {
           if (this.state.last_benpos_date == "Invalid date") {
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, "0");
-            var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-            var yyyy = today.getFullYear();
-            today = mm + "-" + dd + "-" + yyyy;
-            console.log("today", today, new Date());
-            this.setState({ last_benpos_date: today }, () => {
-              this.setState({ onRequestFlag: true });
-              console.log(this.state);
-              this.props.UpdateUser(
-                this.state,
-                this.props.user.id,
-                this.props.userData.userDetails.status,
-                this.props.user.accessToken
-              );
-            });
+            // var today = new Date();
+            // var dd = String(today.getDate()).padStart(2, "0");
+            // var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+            // var yyyy = today.getFullYear();
+            // today = mm + "-" + dd + "-" + yyyy;
+            // console.log("today", today, new Date());
+            // this.setState({ last_benpos_date: today }, () => {
+            //   this.setState({ onRequestFlag: true });
+            //   console.log(this.state);
+            //   this.props.UpdateUser(
+            //     this.state,
+            //     this.props.user.id,
+            //     this.props.userData.userDetails.status,
+            //     this.props.user.accessToken
+            //   );
+            // });
+            var d = new Date()
+            var day = d.getDate();
+            if (day.toString().length == 1) day = '0' + day
+            var month = d.getMonth() + 1;
+            if (month.toString().length == 1) month = '0' + month
+            var Year = d.getFullYear();
+            var today = Year + "-" + month + "-" + day
+            this.setState({ onRequestFlag: true });
+            this.props.UpdateUser(
+              {...this.state, last_benpos_date: today},
+              this.props.user.id,
+              this.props.userData.userDetails.status,
+              this.props.user.accessToken
+            );
           } else {
             this.setState({ onRequestFlag: true });
             console.log(this.state);
@@ -362,22 +377,36 @@ export class UserInfo extends Component {
       }
     } else {
       if (this.state.last_benpos_date == "Invalid date") {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, "0");
-        var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-        var yyyy = today.getFullYear();
-        today = mm + "-" + dd + "-" + yyyy;
-        console.log("today", today, new Date());
-        this.setState({ last_benpos_date: today }, () => {
-          this.setState({ onRequestFlag: true });
-          console.log(this.state);
-          this.props.UpdateUser(
-            this.state,
-            this.props.user.id,
-            this.props.userData.userDetails.status,
-            this.props.user.accessToken
-          );
-        });
+        // var today = new Date();
+        // var dd = String(today.getDate()).padStart(2, "0");
+        // var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+        // var yyyy = today.getFullYear();
+        // today = mm + "-" + dd + "-" + yyyy;
+        // console.log("today", today, new Date());
+        // this.setState({ last_benpos_date: today }, () => {
+        //   this.setState({ onRequestFlag: true });
+        //   console.log(this.state);
+        //   this.props.UpdateUser(
+        //     this.state,
+        //     this.props.user.id,
+        //     this.props.userData.userDetails.status,
+        //     this.props.user.accessToken
+        //   );
+        // });
+        var d = new Date()
+        var day = d.getDate();
+        if (day.toString().length == 1) day = '0' + day
+        var month = d.getMonth() + 1;
+        if (month.toString().length == 1) month = '0' + month
+        var Year = d.getFullYear();
+        var today_rel = Year + "-" + month + "-" + day
+        this.setState({ onRequestFlag: true });
+        this.props.UpdateUser(
+          {...this.state, last_benpos_date: today_rel},
+          this.props.user.id,
+          this.props.userData.userDetails.status,
+          this.props.user.accessToken
+        );
       } else {
         this.setState({ onRequestFlag: true });
         console.log(this.state);

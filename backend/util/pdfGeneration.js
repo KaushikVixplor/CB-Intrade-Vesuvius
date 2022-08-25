@@ -3,16 +3,34 @@ const moment = require("moment");
 const PDFDocument = require('../api/pdfkit-tables');
 
 
-async function getDateString(dateObj){
+async function getDateString(dateObj,timeFlag = false){
     try{
-        var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()
-        return dateStr
+        if(!timeFlag){
+            var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()
+            console.log('dateObj : ', dateObj)
+            return dateStr
+        }
+        else{
+            var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()+", "+dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds()
+            console.log('dateObj : ', dateObj)
+            return dateStr
+        }
     }
     catch(error){
         console.error("getDateString:: ",error)
         throw error
     }
 }
+
+const getDateValue = (date) => {
+    var d = new Date(date);
+    var day = d.getDate();
+    if (day.toString().length == 1) day = '0' + day
+    var month = d.getMonth() + 1;
+    if (month.toString().length == 1) month = '0' + month
+    var Year = d.getFullYear();
+    return day + "-" + month + "-" + Year;
+  }
 
 
 var getAnnexure3 = async (data) =>{
@@ -1631,7 +1649,7 @@ const getConnectedPersons = async (body) => {
             row[5] = body[i].designation;
             row[6] = body[i].status;
             const date = new Date(body[i].createdAt);  
-            var d = await getDateString(date)
+            var d = await getDateString(date,true)
             // var d = moment(date).format('d/mm/YYYY');
             row[7] = d;
             for(var j=0; j<5; j++){
@@ -1655,13 +1673,15 @@ const getConnectedPersons = async (body) => {
     }
 };
 
-const compareTransactionPdf = async (body) => {
+const compareTransactionPdf = async (body, formDate, toDate) => {
     console.log(body);
     try {
         const doc = new PDFDocument({
             size: "B4",
             layout: "landscape"
         });
+        doc.text('Previous Benpos Date: ' + getDateValue(formDate) + '                                Current Benpos Date: ' + getDateValue(toDate))
+        doc.moveDown(2)
         var headers = ["Epm. Code", "PAN", "Name", "Buy/Sell", "Valid", "Curr. Total Share", "Prev. Total Share", "Req. Status", "Appr. Date", "Folio-1", "Folio-2", "Folio-3", "Folio-4", "Folio-5"];
         var tbody = [];
         for(var i=0; i<body.length; i++) {
@@ -1674,8 +1694,8 @@ const compareTransactionPdf = async (body) => {
             row[5] = body[i].curr;
             row[6] = body[i].prev;
             row[7] = body[i].reqStatus;
-            var apprDate = body[i].apprDate 
-            var d = await getDateString(apprDate)
+            var apprDate = body[i].apprDate == 'No Data' ? 'No Data' : new Date(body[i].apprDate)
+            var d = apprDate == 'No Data' ? 'No Data' : await getDateString(apprDate)
             row[8] = d;
             for(j=0; j < body[i].folio.length; j++) {
                 row[9+j] = body[i].folio[j];
@@ -1712,15 +1732,15 @@ const getViloationsPdf = async (body) => {
             row[1] = body[i].pan;
             row[2] = body[i].name;
             row[3] = body[i].sell;
-            // const date = new Date(body[i].benpose_date); 
-            var benpose_date = body[i].benpose_date
-            var bd = await getDateString(benpose_date) 
-            row[4] = bd;
+            // // const date = new Date(body[i].benpose_date); 
+            // var benpose_date = new Date(body[i].benpose_date)
+            // var bd = await getDateString(benpose_date) 
+            row[4] = body[i].benpose_date;
             row[5] = body[i].curr;
             row[6] = body[i].prev;
             row[7] = body[i].reqStatus;
-            var apprDate = body[i].apprDate
-            var d = await getDateString(apprDate)
+            var apprDate = body[i].apprDate == 'No Data' ? 'No Data' : new Date(body[i].apprDate)
+            var d = apprDate == 'No Data' ? 'No Data' : await getDateString(apprDate)
             row[8] = d;
             for(var j=0; j<body[i].folio.length; j++) {
                 row[9+j] = body[i].folio[j];
@@ -1754,7 +1774,7 @@ const getActivityPdf = async (body) => {
             var row = [];
             row[0] = i+1;
             var date = new Date(body[i].createdAt);
-            var d = await getDateString(date) 
+            var d = await getDateString(date,true) 
             // var d = moment(date).format("d/mm/yyyy") ;
             row[1] = d;
             row[2] = body[i].activity;
@@ -1802,7 +1822,7 @@ const getRequestPdf = async (body) => {
             row[8] = body[i].request_quantity;
             row[9] = body[i].proposed_price;
             var date1 = new Date(body[i].createdAt);
-            var d1 = await getDateString(date1) 
+            var d1 = await getDateString(date1,true) 
             // var d1 = moment(date1).format("d/mm/yyyy");
             row[10] = d1;
             tbody.push(row);

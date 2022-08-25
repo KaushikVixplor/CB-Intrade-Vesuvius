@@ -209,6 +209,10 @@ const CommonReducer = (state = initState, action) => {
         ...state,
         pdfDownloadError: true,
       };
+    case 'RESET_REDUCER': 
+    return {
+      ...state, ...action.data
+    }
     default:
       return state;
   }

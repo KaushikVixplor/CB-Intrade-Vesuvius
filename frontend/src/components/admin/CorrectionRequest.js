@@ -135,7 +135,7 @@ export class CorrectionRequest extends Component {
       <div className="">
         <ViewCorrectionRequestModal
           id={this.state.userId}
-          UserInfo={JSON.parse(this.props.correctionUserList.temp_info)}
+          UserInfo={this.props.correctionUserList.temp_info}
           onApprove={this.onApprove}
           onReject={this.onReject}
           onApproveClick={this.OnAppproveClick}
