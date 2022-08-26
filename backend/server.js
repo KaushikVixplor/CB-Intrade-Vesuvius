@@ -43,4 +43,7 @@ mailManagement(app, db);
 templateManagement(app, db);
 downloadManagement(app, db);
 
+
+// dbInit.createTables(db)
+
 app.listen(8081, () => console.log("App listening on port 8081!"));

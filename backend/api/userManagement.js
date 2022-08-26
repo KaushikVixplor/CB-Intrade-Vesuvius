@@ -560,7 +560,8 @@ module.exports = (app, db) =>
         try
         {
             // Activity add 
-            var activityData = {"activity": "bulk Connected Person Add","description": "",
+            var actvtCat = req.query["type"] == "DP" ? "Designated Person" : "Connected Person"
+            var activityData = {"activity": "bulk "+actvtCat+" Add","description": "",
                                 "done_by": [req.user.userId],
                                 "done_for": []}
             var activity_id = await trackActivity(activityData, db)

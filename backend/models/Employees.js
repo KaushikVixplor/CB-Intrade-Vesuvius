@@ -93,7 +93,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue:null 
         },
         temp_info:{
-            type:DataTypes.STRING,
+            type:DataTypes.TEXT,
             defaultValue: null
         },
         refreshAccessToken:{
