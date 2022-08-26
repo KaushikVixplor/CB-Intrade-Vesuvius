@@ -144,6 +144,12 @@ export const ActivityLog = ({
               },
             },
             {
+              name: "Period",
+              key: (d) => {
+                return d.period;
+              },
+            },
+            {
               name: "Status",
               key: (d) => {
                 return d.status;

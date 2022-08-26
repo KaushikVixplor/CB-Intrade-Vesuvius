@@ -11,7 +11,6 @@ const compareTransactionNew = require('../util/common').compareTransactionNew;
 const getViolationData = require('../util/common').getViolationData;
 var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
 const pattern1 = /(\d{2})\-(\d{2})\-(\d{4})/;
-var pg = require('pg');
 
    
 module.exports = (app, db) =>{

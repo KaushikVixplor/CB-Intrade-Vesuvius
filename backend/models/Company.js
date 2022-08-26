@@ -62,11 +62,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue:""
         },
         window_close_from:{
-            type: 'TIMESTAMP',
+            type: DataTypes.DATE,
             defaultValue:null
         },
         window_close_to:{
-            type: 'TIMESTAMP',
+            type: DataTypes.DATE,
             defaultValue:null
         },
         purpose:{

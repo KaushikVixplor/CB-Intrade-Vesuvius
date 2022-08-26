@@ -65,9 +65,10 @@ export class Dashboard extends Component {
   };
   componentDidMount() {
     M.AutoInit();
+    var today = this.getDateValue()
     if (this.props.user) {
       if (this.props.user.is_compliance) {
-        this.setState({ company: this.props.userData.userDetails.Company });
+        this.setState({ company: this.props.userData.userDetails.Company , today: today});
       }
       this.get15Date()
     }
@@ -134,6 +135,18 @@ export class Dashboard extends Component {
       }
     }
   }
+
+
+  getDateValue = () => {
+    var d = new Date();
+    var day = d.getDate();
+    if (day.toString().length == 1) day = '0' + day
+    var month = d.getMonth() + 1;
+    if (month.toString().length == 1) month = '0' + month
+    var Year = d.getFullYear();
+    return Year + "-" + month + "-" + day;
+  }
+
   dateFormatter = (inputDate) => {
     var splitDate = inputDate.split("-");
     if (splitDate.count == 0) {
@@ -363,6 +376,7 @@ export class Dashboard extends Component {
   render() {
     if (!this.props.user) return <Redirect to="/login" />;
     console.log(this.state);
+    console.log(this.props);
     return (
       <div style={{height:"100vh",width:"100vw","overflow-x":"auto","overflow-y":"auto"}}>
         <TopNav />
@@ -382,6 +396,8 @@ export class Dashboard extends Component {
           windowCloserSubmit={this.windowCloserSubmit}
           handleWindowCloser={this.handleWindowCloser}
           windowCloserSubmitShare={this.windowCloserSubmitShare}
+          company={this.props.company}
+          getDate={this.getDate}
         />
         <ConfirmationModal
           state={this.state}

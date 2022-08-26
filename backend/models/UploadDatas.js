@@ -26,10 +26,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue:0
         },
         current_benpos_date:{
-            type: 'TIMESTAMP'
+            type: DataTypes.DATE,
+            defaultValue: null  
         },
         last_share_change_date:{
-            type: 'TIMESTAMP',
+            type: DataTypes.DATE,
             defaultValue: null  
         },
         is_share_changed:{

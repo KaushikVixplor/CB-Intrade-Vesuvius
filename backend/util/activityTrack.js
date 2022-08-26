@@ -129,6 +129,9 @@ var trackActivity = async (data,db) =>{
             console.error("done_for_info:: ",done_for_info)
             var newActivityData = {"activity": data.activity,"description": data.description,
             "done_by": done_by_info,"done_for": done_for_info,"status": "Fail"}
+            if(data.hasOwnProperty("period")){
+                newActivityData["period"] = data.period
+            }
             var newActivity = await db.ActivityLogs.create(newActivityData)
             activity_id = newActivity.id
         }

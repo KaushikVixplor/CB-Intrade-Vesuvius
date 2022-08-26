@@ -46,11 +46,12 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "Shares"
         },
         last_benpos_date:{
-            type: 'TIMESTAMP'
+            type: DataTypes.DATE,
+            defaultValue: null
         },
         release_date:{
-            type: 'TIMESTAMP',
-            defaultValue:null 
+            type: DataTypes.DATE,
+            defaultValue: null 
         },
         last_institute:{
             type:DataTypes.TEXT,

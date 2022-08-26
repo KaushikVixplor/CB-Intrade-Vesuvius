@@ -1768,7 +1768,7 @@ const getActivityPdf = async (body) => {
             size: "A4",
             // layout: "landscape"
         });
-        var headers = ["Sl.", "Timestamp", "Activity", "By", "For", "Status"];
+        var headers = ["Sl.", "Timestamp", "Activity", "By", "For","Period", "Status"];
         var tbody = [];
         for(var i=0; i<body.length; i++) {
             var row = [];
@@ -1780,7 +1780,8 @@ const getActivityPdf = async (body) => {
             row[2] = body[i].activity;
             row[3] = body[i].done_by;
             row[4] = body[i].done_for;
-            row[5] = body[i].status;
+            row[5] = body[i].period;
+            row[6] = body[i].status;
             tbody.push(row);
         }
         var table = {

@@ -460,11 +460,33 @@ const getViolationData = async (params) => {
   }
 };
 
+
+const getDateString = async (dateObj,timeFlag = false) => {
+  try{
+      if(!timeFlag){
+          var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()
+          console.log('dateObj : ', dateObj)
+          return dateStr
+      }
+      else{
+          var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()+", "+dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds()
+          console.log('dateObj : ', dateObj)
+          return dateStr
+      }
+  }
+  catch(error){
+      console.error("getDateString:: ",error)
+      throw error
+  }
+}
+
+
 module.exports ={
   getUpdatedText,
   // compareTransaction,
   compareTransactionNew,
   getViolationData,
   getCredentialsText,
-  getPdf
+  getPdf,
+  getDateString
 }

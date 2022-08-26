@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.STRING,
             defaultValue:""
         },
+        period:{
+            type:DataTypes.STRING,
+            defaultValue:""
+        },
         done_by:{
             type:DataTypes.TEXT,
             defaultValue:""

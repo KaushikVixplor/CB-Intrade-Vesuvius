@@ -7,6 +7,7 @@ const pdfGeneration = require('../util/pdfGeneration');
 const {getAnnexure1And2} = require('../util/pdfGeneration');
 const trackActivity = require('../util/activityTrack').trackActivity;
 const {getAnnexure3} = require('../util/pdfGeneration');
+const {getDateString} = require('../util/common');
 
 
 module.exports = (app, db) =>
@@ -202,9 +203,15 @@ module.exports = (app, db) =>
 
     app.put('/config', async (req,res) => {
         try{
+            var window_close_from_str = req.query.window_close_from
+            var window_close_from_date = await getDate(window_close_from_str)
+            
+            var window_close_to_str = req.query.window_close_to
+            var window_close_to_date = await getDate(window_close_to_str)
+
             var activityData = {"activity": "Window Closure Period Updated","description": "",
                                 "done_by": [req.user.userId],
-                                "done_for": []}
+                                "done_for": [],"period": await getDateString(window_close_from_date) +" to "+ await getDateString(window_close_to_date)}
             var activity_id = await trackActivity(activityData, db)
             const companyData = await db.Company.findAll()
             companyId = companyData[0].id
@@ -280,6 +287,8 @@ module.exports = (app, db) =>
         })
     })
 
+
+
     app.get('/requests', (req,res) => {
         console.log("q", req.query);
         db.Requests.findAll({
@@ -348,6 +357,8 @@ module.exports = (app, db) =>
     })
 
 
+
+
     app.post('/request/:id/complete', async (req,res) => {
         console.log("request post complete")
         db.Requests.findByPk(req.params.id,{
@@ -391,12 +402,24 @@ module.exports = (app, db) =>
     })
     
 
+
+
     app.post("/request", async (req,res) => {
         try{
             // data preparation
+            var proposed_dealing_from_date_str = req.body.date_requested_from
+            // console.error("proposed_dealing_from_date_str = ",proposed_dealing_from_date_str)
+            var proposed_dealing_from_date = await getDate(proposed_dealing_from_date_str)
+            // console.error("proposed_dealing_from_date = ",proposed_dealing_from_date)
+            
+            var proposed_dealing_to_date_str = req.body.date_requested_to
+            // console.error("proposed_dealing_to_date_str = ",proposed_dealing_to_date_str)
+            var proposed_dealing_to_date = await getDate(proposed_dealing_to_date_str)
+            // console.error("proposed_dealing_to_date = ",proposed_dealing_to_date)
+
             var activityData = {"activity": "Pre-transaction Approval Request","description": "",
                                 "done_by": [req.user.userId],
-                                "done_for": []}
+                                "done_for": [],"period": await getDateString(proposed_dealing_from_date) +" to "+ await getDateString(proposed_dealing_to_date)}
             var activity_id = await trackActivity(activityData, db)
             console.log(">>>>>>>>>>>>>>>> requests >>>>>>>>")
             var EmployeeData = await db.Employees.findOne({ 
@@ -433,15 +456,6 @@ module.exports = (app, db) =>
             })
             var request_type = req.body.request_type
 
-            var proposed_dealing_from_date_str = req.body.date_requested_from
-            console.error("proposed_dealing_from_date_str = ",proposed_dealing_from_date_str)
-            var proposed_dealing_from_date = await getDate(proposed_dealing_from_date_str)
-            console.error("proposed_dealing_from_date = ",proposed_dealing_from_date)
-            
-            var proposed_dealing_to_date_str = req.body.date_requested_to
-            console.error("proposed_dealing_to_date_str = ",proposed_dealing_to_date_str)
-            var proposed_dealing_to_date = await getDate(proposed_dealing_to_date_str)
-            console.error("proposed_dealing_to_date = ",proposed_dealing_to_date)
 
             var proposed_quantity = Number(req.body.request_quantity)
             var proposed_price = Number(req.body.proposed_price)

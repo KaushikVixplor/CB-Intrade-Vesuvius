@@ -6,15 +6,17 @@ const ConfigureModal = ({
   handleWindowCloser,
   windowCloserSubmit,
   windowCloserSubmitShare,
+  getDate,
+  company
 }) => {
-  var field1 = state.company.window_close_from
-    ? moment(state.company.window_close_from).format("DD-MM-YYYY")
-    : "";
-  field1 = field1.split("-").reverse().join("-");
-  var field = state.company.window_close_to
-    ? moment(state.company.window_close_to).format("DD-MM-YYYY")
-    : "";
-  field = field.split("-").reverse().join("-");
+  // var field1 = state.company.window_close_from
+  //   ? moment(state.company.window_close_from).format("DD-MM-YYYY")
+  //   : "";
+  // field1 = field1.split("-").reverse().join("-");
+  // var field = state.company.window_close_to
+  //   ? moment(state.company.window_close_to).format("DD-MM-YYYY")
+  //   : "";
+  // field = field.split("-").reverse().join("-");
   return (
     <div id="configure-modal" class="modal">
       <div class="row modal-content">
@@ -29,7 +31,8 @@ const ConfigureModal = ({
                 type="date"
                 id="from"
                 name="from"
-                defaultValue={field1}
+                min={state.today}
+                // defaultValue={field1}
                 onChange={handleWindowCloser}
               />
             </div>
@@ -39,7 +42,8 @@ const ConfigureModal = ({
                 type="date"
                 id="to"
                 name="to"
-                defaultValue={field}
+                min={state.today}
+                // defaultValue={field}
                 onChange={handleWindowCloser}
               />
             </div>
@@ -61,10 +65,15 @@ const ConfigureModal = ({
                 rows="2"
                 cols="80"
                 name="purpose"
-                defaultValue={state.company.purpose}
+                // defaultValue={state.company.purpose}
                 form="usrform"
                 style={{ resize: "none", padding: 10 }}
               ></textarea>
+            </div>
+            <div className="col s12 m12 l12">
+              {company && company.window_close_from && company.window_close_to &&
+                <span style={{ transform: 'translate(-5px, 8px)'}}> {'Configured window closure period: ' + getDate(company.window_close_from) + ' to ' + getDate(company.window_close_to) }</span>
+              }
             </div>
           </div>
         </div>

@@ -329,7 +329,7 @@ export class AdminDashboard extends Component {
             // );
             user.push(info);
           }
-          swal("Bulk CP Add Successful except the above CP(s)  ", {
+          swal("Bulk Insider Add Successful except the above Insider(s)  ", {
             title: [user],
           });
           console.log(user);

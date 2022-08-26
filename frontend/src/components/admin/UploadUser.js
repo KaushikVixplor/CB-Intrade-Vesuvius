@@ -85,13 +85,23 @@ const UploadUser = (props) => {
               </div>
             </div>
             <div className="row">
-              <div className="col s12 m12 l12" style={{ transform: 'translate(-110px, -38px)' }}>
-                <a
-                  className="hint"
-                  href="./BULK_INSIDER_UPLOAD_FORMAT.xlsx"
-                >
-                  Insiders Details Format Download
-                </a>
+              <div className="col s12 m12 l12" style={{ transform: 'translate(-50px, -38px)' }}>
+                <span>
+                  <a
+                    className="hint"
+                    href="./BULK_CP_UPLOAD_FORMAT.xlsx"
+                  >
+                    CP Details Upload Format
+                  </a>
+                </span>
+                <span style={{ transform: 'translate(86px, 0px)' }}>
+                  <a
+                    className="hint"
+                    href="./BULK_DP_UPLOAD_FORMAT.xlsx"
+                  >
+                    DP Details Upload Format
+                  </a>
+                  </span>
               </div>
             </div>
             <div>

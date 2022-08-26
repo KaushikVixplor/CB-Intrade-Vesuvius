@@ -1018,7 +1018,8 @@ module.exports = (app, db) =>
                     activity_id = await trackActivity(activityData, db)
                     if(!req.user.is_compliance){
                         updateData = {
-                            temp_info:req.body,
+                            // temp_info:req.body,
+                            temp_info: JSON.stringify(req.body),
                             status:'Update'
                         }
                         mailOb.flag = true
@@ -1033,7 +1034,8 @@ module.exports = (app, db) =>
                                             "done_for": [req.params.id]}
                         activity_id = await trackActivity(activityData, db)
                         updateData = {
-                            ...data.temp_info,
+                            // ...data.temp_info,
+                            ...JSON.parse(data.temp_info),
                             status:'Active'
                         }
                         mailOb.flag = true
@@ -1045,7 +1047,8 @@ module.exports = (app, db) =>
                                             "done_for": [req.params.id]}
                         activity_id = await trackActivity(activityData, db)
                         updateData = {
-                            temp_info:{},
+                            // temp_info:{},
+                            temp_info: JSON.stringify({}),
                             reason: req.body.reason,
                             status:'Active'
                         }
