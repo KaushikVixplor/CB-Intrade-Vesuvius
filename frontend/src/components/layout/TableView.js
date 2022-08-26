@@ -193,7 +193,19 @@ export class TableView extends Component {
                               onClick={(event) => e.f(event, row)}
                             >
                               <i class="material-icons" id={row.id}>
-                                {row.canEdit ? 'close' : 'done'}
+                                {row.canEdit ? 'clear' : 'edit'}
+                              </i>
+                            </a>
+                          ) : e.name == 'upsiEnableswitch' ? (
+                            <a
+                              className="btn-floating right btn-small tooltipped"
+                              data-position="right"
+                              data-tooltip={row.upsi ? 'Disable UPSI' : 'Enable UPSI'}
+                              id={row.id}
+                              onClick={(event) => e.f(event, row)}
+                            >
+                              <i class="material-icons" id={row.id}>
+                                {row.upsi ? 'clear' : 'wysiwyg'}
                               </i>
                             </a>
                           ) : null}

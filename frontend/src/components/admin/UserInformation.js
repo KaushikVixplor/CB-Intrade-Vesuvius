@@ -18,7 +18,7 @@ import {
 import ViewRelatives from "./ViewRelatives";
 import swal from "sweetalert";
 import { ViewCpModal } from "./ViewCpModal";
-import { pdfDownload, updateEmployee } from "../../store/action/CommonAction";
+import { pdfDownload, updateEmployee, updateUPSIAccess } from "../../store/action/CommonAction";
 import TableView from "../layout/TableView";
 
 export class UserInformation extends Component {
@@ -119,6 +119,15 @@ export class UserInformation extends Component {
       this.setState({ onSwitchFlag: false })
       swal('OOPS!', this.props.updateEmployeeMsg, 'error')
     }
+    
+    if (this.state.onUPSIAccessSwitchFlag && this.props.updateUPSIAccessSuccess) {
+      this.setState({ onUPSIAccessSwitchFlag: false })
+      this.props.GetKmp(this.props.user.accessToken, { type: this.state.filter })
+    }
+    if (this.state.onUPSIAccessSwitchFlag && this.props.updateUPSIAccessError) {
+      this.setState({ onUPSIAccessSwitchFlag: false })
+      swal('OOPS!', this.props.updateUPSIAccessMsg, 'error')
+    }
   }
   clickRelative = (element) => {
     let components = this.state.change;
@@ -209,6 +218,12 @@ export class UserInformation extends Component {
     this.props.UpdateEmployee(null, [{ id: d.id, canEdit: d.canEdit ? false : true }], this.props.user.accessToken)
     this.setState({ onSwitchFlag: true })
   }
+
+  onUPSIAccessSwitch = (e, d) => {
+    this.props.UpdateUPSIAccess(null, [{ id: d.id, upsi: d.upsi ? false : true }], this.props.user.accessToken)
+    this.setState({ onUPSIAccessSwitchFlag: true })
+  }
+
 
   enableAll = (e) => {
     var body = []
@@ -428,6 +443,7 @@ export class UserInformation extends Component {
                       { name: "delete", f: this.CatchIdForRelese, modal: "delete-user-modal", },
                       { name: "reset_pass", f: this.resetPass, page: false, },
                       { name: "switch", f: this.onSwitch, page: false, },
+                      { name: "upsiEnableswitch", f: this.onUPSIAccessSwitch, page: false, },
                     ],
                   }
                 ]}
@@ -477,7 +493,14 @@ const mapStateToProps = (state) => {
     updateEmployeeSuccess: state.common.updateEmployeeSuccess,
     updateEmployeeError: state.common.updateEmployeeErroe,
     updateEmployeeData: state.common.updateEmployeeData,
-    updateEmployeeMsg: state.common.updateEmployeeMsg
+    updateEmployeeMsg: state.common.updateEmployeeMsg,
+
+    
+    updateUPSIAccessLoading: state.common.updateUPSIAccessLoading,
+    updateUPSIAccessSuccess: state.common.updateUPSIAccessSuccess,
+    updateUPSIAccessError: state.common.updateUPSIAccessError,
+    updateUPSIAccessData: state.common.updateUPSIAccessData,
+    updateUPSIAccessMsg: state.common.updateUPSIAccessMsg
   };
 };
 
@@ -503,6 +526,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     UpdateEmployee: (query, body, token) => {
       dispatch(updateEmployee(query, body, token))
+    },
+    UpdateUPSIAccess: (query, body, token) => {
+      dispatch(updateUPSIAccess(query, body, token))
     }
   };
 };

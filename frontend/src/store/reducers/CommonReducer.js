@@ -40,7 +40,14 @@ const initState = {
   updateEmployeeSuccess: false,
   updateEmployeeErroe: false,
   updateEmployeeData: null,
-  updateEmployeeMsg: null
+  updateEmployeeMsg: null,
+
+  
+  updateUPSIAccessLoading: false,
+  updateUPSIAccessSuccess: false,
+  updateUPSIAccessError: false,
+  updateUPSIAccessData: null,
+  updateUPSIAccessMsg: null
 };
 
 const CommonReducer = (state = initState, action) => {
@@ -173,6 +180,33 @@ const CommonReducer = (state = initState, action) => {
         updateEmployeeErroe: true,
         updateEmployeeData: action.data,
         updateEmployeeMsg: action.message
+      }
+    case 'UPDATE_UPSI_ACCESS_LOADING':
+      return {
+        ...state,
+        updateUPSIAccessLoading: true,
+        updateUPSIAccessSuccess: false,
+        updateUPSIAccessError: false,
+        updateUPSIAccessData: null,
+        updateUPSIAccessMsg: null
+      }
+    case 'UPDATE_UPSI_ACCESS_SUCCESS':
+      return {
+        ...state,
+        updateUPSIAccessLoading: false,
+        updateUPSIAccessSuccess: true,
+        updateUPSIAccessError: false,
+        updateUPSIAccessData: action.data,
+        updateUPSIAccessMsg: action.message
+      }
+    case 'UPDATE_UPSI_ACCESS_ERROR':
+      return {
+        ...state,
+        updateUPSIAccessLoading: false,
+        updateUPSIAccessSuccess: false,
+        updateUPSIAccessError: true,
+        updateUPSIAccessData: action.data,
+        updateUPSIAccessMsg: action.message
       }
     // case "LOGOUT_SUCCESS":
     //   return {

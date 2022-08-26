@@ -1144,6 +1144,7 @@ module.exports = (app, db) =>
                         console.error(">>>>>>>> updateData.last_benpos_date(3) = ",updateData.last_benpos_date)
                     }
                 }
+                console.error("updateData:: ",updateData)
                 db.Employees.update(updateData, {
                     where:{
                         id:req.params.id
@@ -1596,6 +1597,30 @@ module.exports = (app, db) =>
     })
 
 
+
+    
+    app.put('/users/haveUPSI', async (req,res) => {
+        try{
+            data = req.body
+            for(var i=0 ; i < data.length ; i++){
+                try{
+                    var newEmpData = await db.Employees.update({upsi: data[i].upsi},{
+                        where:{
+                            id: data[i].id
+                        }
+                    })
+                }
+                catch(error){
+                    console.error("upsi:: ",data[i].id," :: ",error)
+                }
+            }
+            res.status(200).json({message:"Employee have upsi update successfullly"})
+        }
+        catch(error){
+            console.error("Employee have upsi update error", error);
+            res.status(500).json({message:"Employee have upsi update error:: "+error})
+        }
+    })
 
     
     async function subDays(baseDate,days){

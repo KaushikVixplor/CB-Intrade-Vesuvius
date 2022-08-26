@@ -488,6 +488,46 @@ export const updateEmployee = (query,body, token) => {
 }
 
 
+export const updateUPSIAccess = (query,body, token) => {
+  return (dispatch) => {
+    dispatch({ type: 'UPDATE_UPSI_ACCESS_LOADING' });
+    var newUrl = queryBuilder('/users/haveUPSI', query)
+    fetch(backendUrl + newUrl, {
+      method: "put",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body)
+    })
+      .then(res => res.json().then(data => {
+        if (res.status == 200) {
+          dispatch({
+            type: 'UPDATE_UPSI_ACCESS_SUCCESS',
+            message: data.message,
+          });
+        } else if (res.status === 403 || res.status === 401) {
+          dispatch({
+            type: "AUTHENTICATION_ERROR",
+          });
+        } else {
+          dispatch({
+            type: 'UPDATE_UPSI_ACCESS_ERROR',
+            message: data.message
+          });
+        }
+      }))
+      .catch(err => {
+        dispatch({
+          type: 'UPDATE_EMPLOYEE_ERROR',
+          message: 'Internal Error'
+        });
+      })
+  }
+}
+
+
 export const resetReducer = (data) => {
   return (dispatch) => {
     dispatch({

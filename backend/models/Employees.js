@@ -112,6 +112,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },
+        upsi:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         reason:{
             type:DataTypes.TEXT,
             defaultValue:""   
