@@ -24,6 +24,8 @@ const getAnnexure6  = require('../util/pdfGeneration').getAnnexure6;
 const getAnnexure5  = require('../util/pdfGeneration').getAnnexure5;
 const getUpdatedText = require('../util/common').getUpdatedText;
 const getCredentialsText = require('../util/common').getCredentialsText;
+const decryptData = require('../util/common').decryptData;
+const encryptData = require('../util/common').encryptData;
 var PDFDocument = require("pdfkit")
 process.env.SECRET_KEY = 'secret';
 
@@ -178,7 +180,10 @@ module.exports = (app, db) =>
     
 
     // login 
-    app.post('/login',(req, res) => {
+    app.post('/login',async (req, res) => {
+        decryptedData = await decryptData(req.body.data)
+        req.body = JSON.parse(decryptedData)
+        console.error("req.body:: ",req.body)
         db.Employees.findOne({ 
             include:[{
                         model:db.Company,    
@@ -222,7 +227,7 @@ module.exports = (app, db) =>
                         id: user_id
                     }
                 })
-                .then(([nrows, rows]) => {
+                .then(async ([nrows, rows]) => {
                     if (nrows>0)
                     {
                         console.log("User detail fetched rows = ", nrows);
@@ -230,10 +235,12 @@ module.exports = (app, db) =>
                         userDetails.temp_info = null
                         // console.log("User detail fetched", userDeail);
                         res.status(200).json({
-                            'message':'Successfully login',
-                            userDetails: userDetails, 
-                            accessToken: accessToken, 
-                            refreshAccessToken: refreshAccessToken
+                            data: await encryptData(JSON.stringify({
+                                'message':'Successfully login',
+                                userDetails: userDetails, 
+                                accessToken: accessToken, 
+                                refreshAccessToken: refreshAccessToken
+                            }))
                         })
                     }
                     else{

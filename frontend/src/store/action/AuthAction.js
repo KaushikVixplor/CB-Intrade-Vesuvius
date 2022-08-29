@@ -1,6 +1,42 @@
 import { backendUrl } from "../../config/config";
+var crypto = require("crypto");
+
+
+const encryptData = (data) => {
+  try{
+    var encryptionMethod = 'AES-256-CBC';
+    var secret = "roAdvl!i$nk#freightroAdvl!i$nk#f";
+    var iv = "1234567891011121";
+    var encryptor = crypto.createCipheriv(encryptionMethod, secret, iv);
+    return encryptor.update(data, 'utf8', 'base64') + encryptor.final('base64');
+  }
+  catch(error){
+    console.error("encryptData:: error in data encryption - ",error)
+  }
+};
+
+
+
+const decryptData = (encryptedData) => {
+  try{
+    var encryptionMethod = 'AES-256-CBC';
+    var secret = "roAdvl!i$nk#freightroAdvl!i$nk#f";
+    var iv = "1234567891011121";
+    var decryptor = crypto.createDecipheriv(encryptionMethod, secret, iv);
+    return decryptor.update(encryptedData, 'base64', 'utf8') + decryptor.final('utf8');
+  }
+  catch(error){
+    console.error("decryptData:: error in encryptedData decryption - ",error)
+  }
+};
+
 
 export const signIn = (credential) => {
+  var data = encryptData(JSON.stringify({
+    email: credential.email,
+    password: credential.password,
+  }))
+  console.error("data:: ",data);
   return (dispatch) => {
     dispatch({ type: "AUTH_LOADING" });
     fetch(backendUrl + "/login", {
@@ -10,12 +46,13 @@ export const signIn = (credential) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: credential.email,
-        password: credential.password,
+        data: data
       }),
     }).then((response) =>
       response.json().then((data) => {
         if (response.status == 200) {
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "LOGIN_SUCCESS",
             user: {

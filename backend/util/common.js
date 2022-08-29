@@ -1,5 +1,6 @@
 const moment = require("moment");
 const fs= require("fs");
+var crypto = require("crypto");
 
 async function getDate(date) {
   return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
@@ -481,6 +482,34 @@ const getDateString = async (dateObj,timeFlag = false) => {
 }
 
 
+
+const encryptData = async (data) => {
+  try{
+    var encryptionMethod = 'AES-256-CBC';
+    var secret = "roAdvl!i$nk#freightroAdvl!i$nk#f";
+    var iv = "1234567891011121";
+    var encryptor = crypto.createCipheriv(encryptionMethod, secret, iv);
+    return encryptor.update(data, 'utf8', 'base64') + encryptor.final('base64');
+  }
+  catch(error){
+    console.error("encryptData:: error in data encryption - ",error)
+  }
+};
+
+
+const decryptData = async (encryptedData) => {
+  try{
+    var encryptionMethod = 'AES-256-CBC';
+    var secret = "roAdvl!i$nk#freightroAdvl!i$nk#f";
+    var iv = "1234567891011121";
+    var decryptor = crypto.createDecipheriv(encryptionMethod, secret, iv);
+    return decryptor.update(encryptedData, 'base64', 'utf8') + decryptor.final('utf8');
+  }
+  catch(error){
+    console.error("decryptData:: error in encryptedData decryption - ",error)
+  }
+};
+
 module.exports ={
   getUpdatedText,
   // compareTransaction,
@@ -488,5 +517,7 @@ module.exports ={
   getViolationData,
   getCredentialsText,
   getPdf,
-  getDateString
+  getDateString,
+  decryptData,
+  encryptData
 }
