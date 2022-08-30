@@ -1,34 +1,5 @@
 import { backendUrl } from "../../config/config";
-var crypto = require("crypto");
-
-
-const encryptData = (data) => {
-  try{
-    var encryptionMethod = 'AES-256-CBC';
-    var secret = "roAdvl!i$nk#freightroAdvl!i$nk#f";
-    var iv = "1234567891011121";
-    var encryptor = crypto.createCipheriv(encryptionMethod, secret, iv);
-    return encryptor.update(data, 'utf8', 'base64') + encryptor.final('base64');
-  }
-  catch(error){
-    console.error("encryptData:: error in data encryption - ",error)
-  }
-};
-
-
-
-const decryptData = (encryptedData) => {
-  try{
-    var encryptionMethod = 'AES-256-CBC';
-    var secret = "roAdvl!i$nk#freightroAdvl!i$nk#f";
-    var iv = "1234567891011121";
-    var decryptor = crypto.createDecipheriv(encryptionMethod, secret, iv);
-    return decryptor.update(encryptedData, 'base64', 'utf8') + decryptor.final('utf8');
-  }
-  catch(error){
-    console.error("decryptData:: error in encryptedData decryption - ",error)
-  }
-};
+import { decryptData, encryptData } from "../../utils/helper";
 
 
 export const signIn = (credential) => {
@@ -36,7 +7,7 @@ export const signIn = (credential) => {
     email: credential.email,
     password: credential.password,
   }))
-  console.error("data:: ",data);
+  // console.error("data:: ",data);
   return (dispatch) => {
     dispatch({ type: "AUTH_LOADING" });
     fetch(backendUrl + "/login", {
@@ -139,13 +110,16 @@ export const signOut = (token) => {
 };
 
 export const changePassword = (credential, id, token) => {
+  var data = encryptData(JSON.stringify({
+    password: credential.password,
+    newPassword: credential.newPassword,
+  }))
   return (dispatch) => {
     dispatch({ type: "PASSWORD_CHANGE_LOADING" });
     fetch(backendUrl + "/user/" + id + "/changepassword", {
       method: "post",
       body: JSON.stringify({
-        password: credential.password,
-        newPassword: credential.newPassword,
+        data: data
       }),
       headers: {
         Accept: "application/json",

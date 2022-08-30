@@ -8,6 +8,8 @@ const {getAnnexure1And2} = require('../util/pdfGeneration');
 const trackActivity = require('../util/activityTrack').trackActivity;
 const {getAnnexure3} = require('../util/pdfGeneration');
 const {getDateString} = require('../util/common');
+const decryptData = require('../util/common').decryptData;
+const encryptData = require('../util/common').encryptData;
 
 
 module.exports = (app, db) =>
@@ -312,7 +314,7 @@ module.exports = (app, db) =>
             },
             required:false
         })
-        .then( data=> {
+        .then( async data=> {
             if(req.query.hasOwnProperty("pan")){
                 db.Requests.findAll({
                     include:[
@@ -334,10 +336,16 @@ module.exports = (app, db) =>
                     ],
                     required:false
                 })
-                .then( data1=> {
+                .then( async data1=> {
                     data1 = data1.filter((e)=> {return e.Folio && e.Folio.Relative})                    
                     data = [...data,...data1]
-                    res.status(200).json({message:"Requests fetched", data})
+                    res.status(200).json({
+                        data: await encryptData(JSON.stringify({
+                            'message':'Requests fetched',
+                            "data": data
+                        }))
+                    })
+                    // res.status(200).json({message:"Requests fetched", data})
 
                 })
                 .catch(err => {
@@ -347,7 +355,13 @@ module.exports = (app, db) =>
             }
             else{
                 console.log("Requests fetched",data);
-                res.status(200).json({message:"Requests fetched", data})
+                res.status(200).json({
+                    data: await encryptData(JSON.stringify({
+                        'message':'Requests fetched',
+                        "data": data
+                    }))
+                })
+                // res.status(200).json({message:"Requests fetched", data})
             }
         })
         .catch(err => {

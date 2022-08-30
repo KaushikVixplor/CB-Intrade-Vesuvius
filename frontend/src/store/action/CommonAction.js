@@ -1,5 +1,5 @@
 import { backendUrl } from "../../config/config";
-import { queryBuilder } from "../../utils/helper";
+import { queryBuilder,decryptData, encryptData } from "../../utils/helper";
 
 export const companyData = () => {
   return (dispatch) => {
@@ -101,8 +101,12 @@ export const getRequestList = (status, pan, token) => {
     })
       .then((response) => {
         response.json().then((data) => {
+          // var respData = JSON.parse(decryptData(data.data))
+          // data = respData
           if (response.status === 200) {
             // console.log("action", data)
+            var respData = JSON.parse(decryptData(data.data))
+            data = respData
             dispatch({
               type: "FETCH_REQUEST_LIST_SUCCESS",
               payload: data.data,

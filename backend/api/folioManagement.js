@@ -1,3 +1,6 @@
+const decryptData = require('../util/common').decryptData;
+const encryptData = require('../util/common').encryptData;
+
 module.exports = (app, db) =>
 {
 
@@ -92,7 +95,14 @@ module.exports = (app, db) =>
             console.log("respData = ",respData)
             respData["allFolios"] = allFolios
             console.log("respData = ",respData)
-            res.status(200).json({data: respData})
+            
+            res.status(200).json({
+                data: await encryptData(JSON.stringify({
+                    'message':'Request Folio list fetched',
+                    "data": respData
+                }))
+            })
+            // res.status(200).json({data: respData})
         }
         catch(error){
             console.error("request fetch error", error);
@@ -133,9 +143,15 @@ module.exports = (app, db) =>
                 }
             ]
         }) 
-        .then(data => {
+        .then(async data => {
             console.log("folio list fetched");
-            res.status(200).json({message:'Folio list fetched', data})
+            res.status(200).json({
+                data: await encryptData(JSON.stringify({
+                    'message':'Folio list fetched',
+                    "data": data
+                }))
+            })
+            // res.status(200).json({message:'Folio list fetched', data})
         }) 
         .catch(err => {
             console.error("Folio list fetch error", err);

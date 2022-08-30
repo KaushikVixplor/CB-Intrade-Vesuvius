@@ -1,6 +1,6 @@
 import { backendUrl } from "../../config/config";
 import moment from "moment";
-import { queryBuilder } from "../../utils/helper";
+import { queryBuilder,decryptData, encryptData } from "../../utils/helper";
 
 export const uploadExcel = (date, excelFile, token) => {
   return (dispatch, getState) => {
@@ -71,7 +71,11 @@ export const getKmp = (token, query = null) => {
       },
     }).then((response) =>
       response.json().then((data) => {
+        // var respData = JSON.parse(decryptData(data.data))
+        // data = respData
         if (response.status == 200) {
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "KMP_FETCH_SUCCESS",
             payload: data.data,
@@ -310,6 +314,7 @@ export const windowConfigure = (type, from, to, purpose, token) => {
 };
 
 export const correctionRequest = (data, id, token) => {
+  data = encryptData(JSON.stringify(data))
   return (dispatch) => {
     dispatch({
       type: "CORRECTION_REQUEST_LOADING",
@@ -321,7 +326,7 @@ export const correctionRequest = (data, id, token) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({data: data}),
     }).then((response) =>
       response
         .json()
@@ -404,7 +409,11 @@ export const kmpRelative = (id, token) => {
       },
     }).then((response) =>
       response.json().then((data) => {
+        // var respData = JSON.parse(decryptData(data.data))
+        // data = respData
         if (response.status == 200) {
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "KMP_RELATIVE_FETCH_SUCCESS",
             payload: data.data,
@@ -571,7 +580,11 @@ export const viewCorrectionRequest = (id, token) => {
       },
     }).then((response) =>
       response.json().then((data) => {
+        // var respData = JSON.parse(decryptData(data.data))
+        // data = respData
         if (response.status == 200) {
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "CORRECTION_FETCH_SUCCESS",
             payload: data.data,

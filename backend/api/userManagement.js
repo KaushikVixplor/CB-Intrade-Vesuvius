@@ -122,18 +122,30 @@ module.exports = (app, db) =>
                         required:false 
                     }]    
         })
-        .then(usersInfo =>
+        .then(async usersInfo =>
         {
             // console.log(">>>>>>>>>>>>>>>>>>>",usersInfo)
             if (usersInfo.length > 0)
             {
-            
-                res.status(200).json({'data': usersInfo});
+                
+                res.status(200).json({
+                    data: await encryptData(JSON.stringify({
+                        'message':'usersInfo fetched',
+                        "data": usersInfo
+                    }))
+                })
+                // res.status(200).json({'data': usersInfo});
             }
             else
             {
                 console.error("No user exists:", usersInfo);
-                res.status(200).json({'data': usersInfo});
+                res.status(200).json({
+                    data: await encryptData(JSON.stringify({
+                        'message':'usersInfo fetched',
+                        "data": usersInfo
+                    }))
+                })
+                // res.status(200).json({'data': usersInfo});
             }
         })
         .catch(err =>
@@ -166,9 +178,15 @@ module.exports = (app, db) =>
                         model:db.Folios
                     }]
         })
-        .then(data => {
-            console.log("Request fetched", data);
-            res.status(200).json({message:"Request fetched", "data":data})
+        .then(async data => {
+            console.log("Request fetched");
+            res.status(200).json({
+                data: await encryptData(JSON.stringify({
+                    'message':'Request fetched',
+                    "data": data
+                }))
+            })
+            // res.status(200).json({message:"Request fetched", "data":data})
         })
         .catch(err => {
             console.error("fetched request error", err);
@@ -183,7 +201,7 @@ module.exports = (app, db) =>
     app.post('/login',async (req, res) => {
         decryptedData = await decryptData(req.body.data)
         req.body = JSON.parse(decryptedData)
-        console.error("req.body:: ",req.body)
+        // console.error("req.body:: ",req.body)
         db.Employees.findOne({ 
             include:[{
                         model:db.Company,    
@@ -363,6 +381,8 @@ module.exports = (app, db) =>
     // change password
     app.post("/user/:userId/changepassword" , async (req,res) => {
         // Activity add 
+        decryptedData = await decryptData(req.body.data)
+        req.body = JSON.parse(decryptedData)
         console.log("changepassword by = ",req.user)
         var activityData = {"activity": "change password","description": "",
                             "done_by": [req.user.userId],
@@ -961,7 +981,9 @@ module.exports = (app, db) =>
 
 
 
-    app.put('/user/:id', (req,res) => {
+    app.put('/user/:id', async (req,res) => {
+        decryptedData = await decryptData(req.body.data)
+        req.body = JSON.parse(decryptedData)
         var updateData = {}
         let activity_id 
         db.Employees.findOne({
@@ -1445,9 +1467,15 @@ module.exports = (app, db) =>
                         }],
                 where:{id: req.params.id}
             })
-        .then( data=> {
+        .then( async data=> {
             console.log("relatives fetched");
-            res.status(200).json({message:"relatives fetched", "data": data})
+            res.status(200).json({
+                data: await encryptData(JSON.stringify({
+                    'message':'relatives fetched',
+                    "data": data
+                }))
+            })
+            // res.status(200).json({message:"relatives fetched", "data": data})
         })
         .catch(err => {
             console.error("Fetch relatives error", err);
@@ -1483,9 +1511,15 @@ module.exports = (app, db) =>
                 id: req.params.id
             }
         })
-        .then( data=> {
+        .then( async data=> {
             console.log("Employee fetched");
-            res.status(200).json({message:"Employee fetched", data})
+            res.status(200).json({
+                data: await encryptData(JSON.stringify({
+                    'message':'Employee fetched',
+                    "data": data
+                }))
+            })
+            // res.status(200).json({message:"Employee fetched", data})
         })
         .catch(err => {
             console.error("Fetch employee error", err);

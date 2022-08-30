@@ -1,4 +1,5 @@
 import { backendUrl } from "../../config/config";
+import { decryptData, encryptData } from "../../utils/helper";
 
 export const clientRequest = (body) => {
   return (dispatch) => {
@@ -107,8 +108,12 @@ export const fetchFolioList = (token) => {
       },
     }).then((response) =>
       response.json().then((data) => {
+        // var respData = JSON.parse(decryptData(data.data))
+        // data = respData
         if (response.status === 200) {
           // console.log("action", data)
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "FETCH_FOLIOS_SUCCESS",
             payload: data.data,
@@ -128,6 +133,7 @@ export const fetchFolioList = (token) => {
 };
 
 export const updateUser = (body, id, stat, token) => {
+  var data = encryptData(JSON.stringify(body))
   return (dispatch) => {
     dispatch({ type: "USER_UPDATE_LOADING" });
     var url = backendUrl + "/user/" + id;
@@ -138,7 +144,7 @@ export const updateUser = (body, id, stat, token) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({data: data}),
     }).then((response) =>
       response.blob().then((blob) => {
         if (response.status === 200) {
@@ -240,6 +246,8 @@ export const requestFolioList = (id, token) => {
       response.json().then((data) => {
         if (response.status === 200) {
           // console.log("action", data)
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "FETCH_REQUEST_FOLIOS_SUCCESS",
             payload: data.data,
@@ -301,7 +309,11 @@ export const userRelative = (id, token) => {
       },
     }).then((response) =>
       response.json().then((data) => {
+        // var respData = JSON.parse(decryptData(data.data))
+        // data = respData
         if (response.status == 200) {
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "USER_RELATIVE_FETCH_SUCCESS",
             payload: data.data,
