@@ -119,7 +119,11 @@ module.exports = (sequelize, DataTypes) => {
         reason:{
             type:DataTypes.TEXT,
             defaultValue:""   
-        }
+        },
+        firstLogin:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
     })
     Employees.associate = models => {
         Employees.belongsTo(models.Company,{foreignKey: 'company_id', sourceKey: 'id'})

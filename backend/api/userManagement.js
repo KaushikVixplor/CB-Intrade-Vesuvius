@@ -726,7 +726,8 @@ module.exports = (app, db) =>
                                                                 "total_share": total_share,"last_benpos_date": last_benpos_date,
                                                                 "date_of_appointment_as_insider": appointment_date,"last_institute": last_institute,
                                                                 "last_employer": last_employer ,"other_identifier_type": other_identifier_type,
-                                                                "other_identifier_no": other_identifier_no,"category": emp_category,"type": req.query["type"] 
+                                                                "other_identifier_no": other_identifier_no,"category": emp_category,"type": req.query["type"], 
+                                                                'firstLoging': true
                                                             }
                                             
                                             console.error("EmployeeData:: ",EmployeeData)           

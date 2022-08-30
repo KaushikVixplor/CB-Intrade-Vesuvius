@@ -24,6 +24,8 @@ var options = {
   type: "application/octet-stream",
 };
 
+// dbInit.createTables(db)
+
 
 const app = express();
 app.use(express.static("uploads"));
