@@ -84,7 +84,7 @@ export const CompareTransaction = ({
             onClick={(e, type) => {
               onDownload(e, "COMPARE");
             }}
-            title="Download CP List"
+            title="Download Benpose Comparison Report"
           >
             <i class="material-icons" style={{ color: "black" }}>
               download

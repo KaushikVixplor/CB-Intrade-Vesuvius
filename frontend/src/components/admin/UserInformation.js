@@ -337,7 +337,7 @@ export class UserInformation extends Component {
                   <button
                     className="btn-floating btn-button"
                     onClick={this.onDownload}
-                    title="Download CP List"
+                    title="Download Insider List"
                   >
                     <i class="material-icons" style={{ color: "black" }}>
                       download

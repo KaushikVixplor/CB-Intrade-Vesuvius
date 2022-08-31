@@ -62,7 +62,7 @@ export const ViolationReport = ({
             onClick={(e, type) => {
               onDownload(e, "VIOLATION_REPORT");
             }}
-            title="Download CP List"
+            title="Download Violation Report"
           >
             <i class="material-icons" style={{ color: "black" }}>
               download
