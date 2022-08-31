@@ -379,7 +379,7 @@ module.exports = (app, db) =>
         try{
             db.Company.findAll()
             .then(async companyData =>{
-                cNameParts = companyData.name.split(" ")
+                cNameParts = companyData[0].name.split(" ")
                 cName = cNameParts[0].toLowerCase()
                 if(cName.length < 3 && cNameParts.length > 1){
                     cName = cNameParts[0].toLowerCase()+" "+cNameParts[1].toLowerCase()
