@@ -45,7 +45,7 @@ const AuthReducer = (state = initState, action) => {
         ...state,
         changePasswordSuccess: false,
         changePasswordLoading: true,
-        changePasswordError: false,
+        changePasswordError: false
       };
     case "CHANGE_PASSWORD_SUCCESS":
       return {
@@ -60,6 +60,15 @@ const AuthReducer = (state = initState, action) => {
         changePasswordSuccess: false,
         changePasswordLoading: false,
         changePasswordError: true,
+        changePasswordMsg: action.msg
+      };
+    case "CHANGE_PASSWORD_FAIL":
+      return {
+        ...state,
+        changePasswordSuccess: false,
+        changePasswordLoading: false,
+        changePasswordError: true,
+        changePasswordMsg: action.msg
       };
     case "AUTHENTICATION_ERROR":
       alert("Your session has expired");

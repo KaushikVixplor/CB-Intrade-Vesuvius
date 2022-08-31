@@ -42,7 +42,7 @@ class TopNav extends Component {
         this.setState({ onRequestFlag: false });
       }
       if (this.props.changePasswordError) {
-        swal("OOPS!", "Try again", "error");
+        swal("OOPS!",this.props.changePasswordMsg, "error");
         this.setState({ onRequestFlag: false });
       }
     }
@@ -114,8 +114,8 @@ class TopNav extends Component {
       swal('Info', 'Password should contains atleast one Upper case, one lower case, one numeric and one special charecter', 'info')
       return
     }
-    if (this.state.newPassword.length < 6) {
-      swal('Info', 'Password should contains minimum six charecters', 'info')
+    if (this.state.newPassword.length < 10) {
+      swal('Info', 'Password should contains minimum ten charecters', 'info')
       return
     }
     this.setState({
@@ -376,6 +376,8 @@ const mapStateToProps = (state) => {
     changePasswordSuccess: state.auth.changePasswordSuccess,
     changePasswordLoading: state.auth.changePasswordLoading,
     changePasswordError: state.auth.changePasswordError,
+    changePasswordMsg: state.auth.changePasswordMsg,
+
     systemResetSuccess: state.common.systemResetSuccess,
     systemResetLoading: state.common.systemResetLoading,
     systemResetError: state.common.systemResetError,
