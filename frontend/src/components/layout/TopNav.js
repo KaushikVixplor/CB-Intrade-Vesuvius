@@ -108,6 +108,8 @@ class TopNav extends Component {
       password: this.state.password,
       newPassword: this.state.newPassword,
     };
+    var re = '/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])$/'
+    
     this.setState({
       password: "",
       newPassword: "",
@@ -180,11 +182,21 @@ class TopNav extends Component {
         />
         <ul id="userName" className="dropdown-content white darken-3">
           {this.props.userData.userDetails.status == "Temp" ? (
-            <li>
-              <a href="#" className=" black-text" onClick={this.OnSignOut}>
-                <b>Logout</b>
-              </a>
-            </li>
+            <>
+              <li>
+                <a href="#" className=" black-text" onClick={this.OnSignOut}>
+                  <b>Logout</b>
+                </a>
+              </li>
+              <li>
+                <Link
+                  className="ChangePassword black-text modal-trigger"
+                  data-target="change-password-modal"
+                >
+                  <b>Change Password</b>
+                </Link>
+              </li>
+            </>
           ) : (
             <>
               {/* <li>
@@ -197,14 +209,14 @@ class TopNav extends Component {
               </li> */}
               {this.props.user.is_compliance ? (
                 <>
-                  <li>
+                  {/* <li>
                     <Link
                       className="ChangePassword black-text modal-trigger"
                       data-target="change-password-modal"
                     >
                       <b>Change Password</b>
                     </Link>
-                  </li>
+                  </li> */}
                   {/* <li>
                     <Link
                       className="ChangePassword black-text modal-trigger"
@@ -239,7 +251,15 @@ class TopNav extends Component {
                   <b>Logout</b>
                 </a>
               </li>
-            </>
+              <li>
+                <Link
+                  className="ChangePassword black-text modal-trigger"
+                  data-target="change-password-modal"
+                >
+                  <b>Change Password</b>
+                </Link>
+              </li>
+              </>
           )}
         </ul>
 
