@@ -189,10 +189,23 @@ export const sharePdf = (type, id, token) => {
   };
 };
 
-export const pdfDownload = (startDate, endDate, pan, type, token) => {
+export const pdfDownload = (startDate, endDate, pan, type, token, query = null) => {
   return (dispatch) => {
     if (type === "CONNECTED_PERSONS") {
-      fetch(backendUrl + "/usersPdf", {
+      var newUrl = '/usersPdf'
+      if (query && Object.keys(query).length > 0) {
+        newUrl += "?";
+        Object.keys(query).map((q, index) => {
+          if (query[q]) {
+            if (index > 0 || newUrl.charAt(newUrl.length - 1) != "?") {
+              newUrl += "&" + q + "=" + query[q];
+            } else {
+              newUrl += q + "=" + query[q];
+            }
+          }
+        });
+      }
+      fetch(backendUrl + newUrl, {
         headers: {
           // "Content-Type": "application/json",
           // "Content-disposition": "attachment; filename=Connected Persons.pdf",
@@ -540,3 +553,70 @@ export const resetReducer = (data) => {
     })
   }
 }
+
+export const getInsidersexcel = (query, token) => {
+  return (dispatch) => {
+      dispatch({
+          type: "INSIDERS_EXCEL_LOADING",
+      });
+      var newUrl = '/insidersPdf'
+      if (query && Object.keys(query).length > 0) {
+          newUrl += "?";
+          Object.keys(query).map((q, index) => {
+              if (query[q]) {
+                  if (index > 0 || newUrl.charAt(newUrl.length - 1) != "?") {
+                      newUrl += "&" + q + "=" + query[q];
+                  } else {
+                      newUrl += q + "=" + query[q];
+                  }
+              }
+          });
+      }
+      fetch(backendUrl + newUrl, {
+          headers: {
+              "Content-Type": "application/json",
+              "Content-disposition": "attachment; filename=insiders.xlsx",
+              Authorization: `Bearer ${token}`,
+          },
+      })
+          .then((response) =>
+              response.blob().then((blob) => {
+                  if (response.status === 500) {
+                      dispatch({
+                          type: "INSIDERS_EXCEL_ERROR",
+                          message: "No insiders found",
+                      });
+                  } else if (response.status === 200) {
+                      const data = window.URL.createObjectURL(blob);
+                      var link = document.createElement("a");
+                      link.href = data;
+                      link.download = "insiders.xlsx";
+                      link.click();
+                      setTimeout(function () {
+                          // For Firefox it is necessary to delay revoking the ObjectURL
+                          window.URL.revokeObjectURL(data);
+                      }, 100);
+                      dispatch({
+                          type: "INSIDERS_EXCEL_SUCCESS",
+                          payload: data,
+                      });
+                  } else if (response.status === 403) {
+                      dispatch({
+                          type: "AUTHENTICATION_ERROR",
+                      });
+                  } else {
+                      dispatch({
+                          type: "INSIDERS_EXCEL_ERROR",
+                          message: "No employee found",
+                      });
+                  }
+              })
+          )
+          .catch((err) => {
+              dispatch({
+                  type: "INSIDERS_EXCEL_ERROR",
+                  message: "internal Error",
+              });
+          });
+  };
+};
