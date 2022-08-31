@@ -375,7 +375,34 @@ module.exports = (app, db) =>
 
 
 
-
+    async function validatePassword(password,name){
+        try{
+            db.Company.findAll()
+            .then(async companyData =>{
+                cNameParts = companyData.name.split(" ")
+                cName = cNameParts[0].toLowerCase()
+                if(cName.length < 3 && cNameParts.length > 1){
+                    cName = cNameParts[0].toLowerCase()+" "+cNameParts[1].toLowerCase()
+                }
+                uName = name.split(" ")[0].toLowerCase()
+                if(password.toLowerCase().includes(cName) || password.toLowerCase().includes(uName)){
+                    return false
+                }
+                else{
+                    return true
+                }
+            })
+            .catch(err => {
+                console.error("Can not fetch company data", err);
+                throw err
+            })
+        }
+        catch(error){
+            console.error("validatePassword:: error: ", error);    
+            throw error
+        }
+    }
+    
 
 
     // change password
@@ -393,39 +420,49 @@ module.exports = (app, db) =>
                 id: req.params.userId,
             }
         })  
-        .then(user =>{
+        .then(async user =>{
             if(!user) {
                 console.log("User does not exist")
                 res.status(404).json({'message':'User does not exist'});
             }
             else if(bcrypt.compareSync(req.body.password,user.password)){
-                const hash = bcrypt.hashSync(req.body.newPassword,10); //Hashing the password
-                req.body.newPassword=hash
-                // console.log("ID", user.email, refreshAccessToken);
-                db.Employees.update({ password:req.body.newPassword},{
-                    where:{
-                        id:req.params.userId
-                    }
-                })
-                .then(async ([nrows]) => {
-                    if(nrows>0){
-                        console.log("Password changed successfully");
-                        // Activity update 
-                        var activityData = {"activityId": activity_id}
-                        activity_id = await trackActivity(activityData, db)
-                        res.status(200).json({mesage:"Password changed successfully"})
-                    }
-                    else{
-                        console.error("Password change faild");
-                        res.status(500).json({message:"Password change faild"})
-                    }
 
-                })
-                .catch(err => {
-                    console.error("Can not save update password", err);
-                    res.status(500).json({message:"Database error:: "+err});
-                })
-        
+                if(bcrypt.compareSync(req.body.newPassword,user.password)){
+                    console.error("New password can't be same with previous password")
+                    res.status(401).json({'message': "New password can't be same with previous password"})
+                }
+                else if(await validatePassword(req.body.password,user.name)){
+                    console.error("New password can't contain your company name or your name")
+                    res.status(401).json({'message': "New password can't contain your company name or your name"})
+                }
+                else{
+                    const hash = bcrypt.hashSync(req.body.newPassword,10); //Hashing the password
+                    req.body.newPassword=hash
+                    // console.log("ID", user.email, refreshAccessToken);
+                    db.Employees.update({ password:req.body.newPassword,firstLoging: false},{
+                        where:{
+                            id:req.params.userId
+                        }
+                    })
+                    .then(async ([nrows]) => {
+                        if(nrows>0){
+                            console.log("Password changed successfully");
+                            // Activity update 
+                            var activityData = {"activityId": activity_id}
+                            activity_id = await trackActivity(activityData, db)
+                            res.status(200).json({mesage:"Password changed successfully"})
+                        }
+                        else{
+                            console.error("Password change faild");
+                            res.status(500).json({message:"Password change faild"})
+                        }
+
+                    })
+                    .catch(err => {
+                        console.error("Can not save update password", err);
+                        res.status(500).json({message:"Database error:: "+err});
+                    })
+                }
             }
             else{
                 console.error("Invalid password")
