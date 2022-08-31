@@ -130,11 +130,12 @@ export const changePassword = (credential, id, token) => {
       response.json().then((data) => {
         if (response.status == 200) {
           dispatch({
-            type: "CHANGE_PASSWORD_SUCCESS",
+            type: "CHANGE_PASSWORD_SUCCESS"
           });
         } else if (response.status == 401) {
           dispatch({
             type: "CHANGE_PASSWORD_WRONG_PASSWORD",
+            msg: data.message
           });
         } else if (response.status === 403) {
           dispatch({
@@ -143,6 +144,7 @@ export const changePassword = (credential, id, token) => {
         } else {
           dispatch({
             type: "CHANGE_PASSWORD_FAIL",
+            msg: data.message
           });
         }
       })

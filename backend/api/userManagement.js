@@ -385,7 +385,14 @@ module.exports = (app, db) =>
                     cName = cNameParts[0].toLowerCase()+" "+cNameParts[1].toLowerCase()
                 }
                 uName = name.split(" ")[0].toLowerCase()
-                if(password.toLowerCase().includes(cName) || password.toLowerCase().includes(uName)){
+                console.error("password.toLowerCase():: ",password.toLowerCase())
+                console.error("cName.toLowerCase():: ",cName.toLowerCase())
+                console.error(password.toLowerCase().includes(cName.toLowerCase()))
+                console.error("cName.replace(' ','').toLowerCase():: ",cName.replace(" ","").toLowerCase())
+                console.error(password.toLowerCase().includes(cName.replace(" ","").toLowerCase()))
+                console.error("uName.toLowerCase():: ",uName.toLowerCase())
+                console.error(password.toLowerCase().includes(uName.toLowerCase()))
+                if(password.toLowerCase().includes(cName.toLowerCase()) || password.toLowerCase().includes(cName.replace(" ","").toLowerCase()) || password.toLowerCase().includes(uName.toLowerCase())){
                     return false
                 }
                 else{
@@ -431,15 +438,15 @@ module.exports = (app, db) =>
                     console.error("New password can't be same with previous password")
                     res.status(401).json({'message': "New password can't be same with previous password"})
                 }
-                else if(await validatePassword(req.body.password,user.name)){
+                else if(!await validatePassword(req.body.newPassword,user.name)){
                     console.error("New password can't contain your company name or your name")
                     res.status(401).json({'message': "New password can't contain your company name or your name"})
                 }
                 else{
                     const hash = bcrypt.hashSync(req.body.newPassword,10); //Hashing the password
                     req.body.newPassword=hash
-                    // console.log("ID", user.email, refreshAccessToken);
-                    db.Employees.update({ password:req.body.newPassword,firstLoging: false},{
+                    console.log("ID", user.email, );
+                    db.Employees.update({ password:req.body.newPassword, firstLogin: false},{
                         where:{
                             id:req.params.userId
                         }
