@@ -211,7 +211,9 @@ export class UserInformation extends Component {
   onDownload = (e) => {
     e.preventDefault();
     this.setState({pdfDownloadFlag: true});
-    this.props.PdfDownload(null, null, null, "CONNECTED_PERSONS", this.props.user.accessToken);
+    var query = {}
+    if (this.state.filter) query.type = this.state.filter
+    this.props.PdfDownload(null, null, null, "CONNECTED_PERSONS", this.props.user.accessToken, query);
   };
 
   onSwitch = (e, d) => {
@@ -521,8 +523,8 @@ const mapDispatchToProps = (dispatch) => {
     ResetPass: (id, token) => {
       dispatch(resetPassword(id, token));
     },
-    PdfDownload: (startDate, endDate, request_status, type, token) => {
-      dispatch(pdfDownload(startDate, endDate, request_status, type, token));
+    PdfDownload: (startDate, endDate, request_status, type, token, query) => {
+      dispatch(pdfDownload(startDate, endDate, request_status, type, token, query));
     },
     UpdateEmployee: (query, body, token) => {
       dispatch(updateEmployee(query, body, token))
