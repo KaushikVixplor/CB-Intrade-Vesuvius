@@ -878,7 +878,7 @@ export class Dashboard extends Component {
                 }
               </div>
               :
-              <span style={{marginTop: '20px', fontWeight: '500'}}>Please change your password to continue</span>
+              <span style={{marginTop: '20px', fontWeight: '500'}}>Please change your password and re-login to continue</span>
             }
           </>
         )}
