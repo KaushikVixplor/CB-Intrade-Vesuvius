@@ -18,37 +18,72 @@ async function getDateString(dateObj){
 
 const getConnectedPersonsExcel = async (body) => {
     try{
-        var headers = ["SL.", "Emp. Code", "Name", "Email", "PAN", "Designation", "Status", "Appointed On", "Folio 1", "Share 1", "Folio 2", "Share 2","Folio 3", "Share 3","Folio 4", "Share 4","Folio 5", "Share 5",]
+        
+        var headers = ["SL.", "Emp. Code","Emp. Sub Code", "Name", "Email", "PAN", "Designation", "Status", "Appointed On", "Folio 1", "Share 1", "Folio 2", "Share 2","Folio 3", "Share 3","Folio 4", "Share 4","Folio 5", "Share 5",]
         var tbody = [];
         for(var i=0; i<body.length; i++){
             var row = {};
-            row[headers[0]] = i+1;
+            row[headers[0]] = tbody.length+1;
             row[headers[1]] = body[i].emp_code;
-            row[headers[2]] = body[i].name;
-            row[headers[3]] = body[i].email;
-            row[headers[4]] = body[i].pan;
-            row[headers[5]] = body[i].designation;
-            row[headers[6]] = body[i].status;
+            row[headers[2]] = "";
+            row[headers[3]] = body[i].name;
+            row[headers[4]] = body[i].email;
+            row[headers[5]] = body[i].pan;
+            row[headers[6]] = body[i].designation;
+            row[headers[7]] = body[i].status;
             const date = new Date(body[i].createdAt);  
-            var d = moment(date).format('d/mm/YYYY');
-            row[headers[7]] = d;
+            var d = await getDateString(date);
+            row[headers[8]] = d;
 
             // Folio 1 details
-            row[headers[8]] = body[i].Folios[0] ? body[i].Folios[0].folio : "NA";
-            row[headers[9]] = body[i].Folios[0] ? body[i].Folios[0].current_share : "NA";
+            row[headers[9]] = body[i].Folios[0] ? body[i].Folios[0].folio : "NA";
+            row[headers[10]] = body[i].Folios[0] ? body[i].Folios[0].current_share : "NA";
             // Folio 2 details
-            row[headers[10]] = body[i].Folios[1] ? body[i].Folios[1].folio : "NA";
-            row[headers[11]] = body[i].Folios[1] ? body[i].Folios[1].current_share : "NA";
+            row[headers[11]] = body[i].Folios[1] ? body[i].Folios[1].folio : "NA";
+            row[headers[12]] = body[i].Folios[1] ? body[i].Folios[1].current_share : "NA";
             // Folio 3 details
-            row[headers[12]] = body[i].Folios[2] ? body[i].Folios[2].folio : "NA";
-            row[headers[13]] = body[i].Folios[2] ? body[i].Folios[2].current_share : "NA";
+            row[headers[13]] = body[i].Folios[2] ? body[i].Folios[2].folio : "NA";
+            row[headers[14]] = body[i].Folios[2] ? body[i].Folios[2].current_share : "NA";
             // Folio 4 details
-            row[headers[14]] = body[i].Folios[3] ? body[i].Folios[3].folio : "NA";
-            row[headers[15]] = body[i].Folios[3] ? body[i].Folios[3].current_share : "NA";
+            row[headers[15]] = body[i].Folios[3] ? body[i].Folios[3].folio : "NA";
+            row[headers[16]] = body[i].Folios[3] ? body[i].Folios[3].current_share : "NA";
             // Folio 5 details
-            row[headers[16]] = body[i].Folios[3] ? body[i].Folios[3].folio : "NA";
-            row[headers[17]] = body[i].Folios[3] ? body[i].Folios[3].current_share : "NA";
+            row[headers[17]] = body[i].Folios[3] ? body[i].Folios[3].folio : "NA";
+            row[headers[18]] = body[i].Folios[3] ? body[i].Folios[3].current_share : "NA";
             tbody.push(row);
+            for(var j=0; j<body[i].Relatives.length; j++){
+                currRelative = body[i].Relatives[j]
+                var row = {};
+                row[headers[0]] = tbody.length+1;
+                row[headers[1]] = "";
+                row[headers[2]] = currRelative.emp_sub_code;
+                row[headers[3]] = currRelative.name;
+                row[headers[4]] = currRelative.email;
+                row[headers[5]] = currRelative.pan;
+                row[headers[6]] = currRelative.designation;
+                row[headers[7]] = currRelative.status;
+                const date = new Date(currRelative.createdAt);  
+                var d = await getDateString(date);
+                row[headers[8]] = d;
+
+                // Folio 1 details
+                row[headers[9]] = currRelative.Folios[0] ? currRelative.Folios[0].folio : "NA";
+                row[headers[10]] = currRelative.Folios[0] ? currRelative.Folios[0].current_share : "NA";
+                // Folio 2 details
+                row[headers[11]] = currRelative.Folios[1] ? currRelative.Folios[1].folio : "NA";
+                row[headers[12]] = currRelative.Folios[1] ? currRelative.Folios[1].current_share : "NA";
+                // Folio 3 details
+                row[headers[13]] = currRelative.Folios[2] ? currRelative.Folios[2].folio : "NA";
+                row[headers[14]] = currRelative.Folios[2] ? currRelative.Folios[2].current_share : "NA";
+                // Folio 4 details
+                row[headers[15]] = currRelative.Folios[3] ? currRelative.Folios[3].folio : "NA";
+                row[headers[16]] = currRelative.Folios[3] ? currRelative.Folios[3].current_share : "NA";
+                // Folio 5 details
+                row[headers[17]] = currRelative.Folios[3] ? currRelative.Folios[3].folio : "NA";
+                row[headers[18]] = currRelative.Folios[3] ? currRelative.Folios[3].current_share : "NA";
+                tbody.push(row);
+            }
+               
         }
         // // Reading our test file
         // const file = reader.readFile('./test.xlsx')
