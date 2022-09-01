@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const config = require('../config/config')
 const env = process.env.NODE_ENV || 'development';
+const saltRound = 10000
 const code = config[env].code
 const name = config[env].name
 const isin = config[env].isin
@@ -18,6 +19,8 @@ const share_value = config[env].share_value
 const contact_person = config[env].contact_person
 const meta_tag = config[env].meta_tag
 var window_close_from = config[env].window_close_from
+const encryptCredentials = require('../util/common').encryptCredentials;
+const decryptCredentials = require('../util/common').decryptCredentials;
 if(window_close_from != "" && window_close_from != null){
   if(typeof window_close_from == "string"){
     window_close_from = new Date(new Date(window_close_from.replace(pattern,'$3-$2-$1')).setHours(0,0,0))
@@ -176,10 +179,10 @@ const createTables = async (db) => {
       // console.log("companyId = ",companyId)
       COInfo["company_id"] = companyId
       if(COInfo.pan == ""){
-        COInfo["password"] = bcrypt.hashSync("co123",10)
+        COInfo["password"] = bcrypt.hashSync("co123",saltRound)
       }
       else{
-        COInfo["password"] = bcrypt.hashSync(COInfo.pan,10)
+        COInfo["password"] = bcrypt.hashSync(COInfo.pan,saltRound)
       }
       // console.log("COInfo = ",COInfo)
 

@@ -1,6 +1,8 @@
 const moment = require("moment");
 const fs= require("fs");
 var crypto = require("crypto");
+const env = process.env.NODE_ENV || 'development';
+const credentials = require('../config/config')[env]['credentials']
 
 async function getDate(date) {
   return date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
@@ -8,13 +10,13 @@ async function getDate(date) {
 
 const getUpdatedText = async (text,variables) => {
   try{
-          console.error("variables = ",variables)
+          // console.error("variables = ",variables)
           var updatedText = text
           for(i=0;i<variables.length;i++){
               try{
                   var symbol = "<<"+i.toString()+">>"
-                  console.error("symbol = ",symbol)
-                  console.error("variables[i] = ",variables[i])
+                  // console.error("symbol = ",symbol)
+                  // console.error("variables[i] = ",variables[i])
                   // console.error("updatedText = ",updatedText)
                   updatedText = updatedText.replace(symbol,variables[i])
                   // console.error("updatedText = ",updatedText)
@@ -55,12 +57,12 @@ const getPdf = async (filePath) => {
 }
 
 
-const getCredentialsText = async (text,credentials) => {
+const getCredentialsText = async (text,credentialData) => {
   try{ 
       if(text.includes("#credentials")){
         // console.error("getCredentialsText:: ",text)
         updatedText = text.replace("#credentials","login with following details:\nURL: <<0>>\nEmail: <<1>>\n")
-        updatedText = await getUpdatedText(updatedText,credentials)
+        updatedText = await getUpdatedText(updatedText,credentialData)
         // console.error("getCredentialsText:: ",updatedText)
         return updatedText
       }
@@ -510,6 +512,70 @@ const decryptData = async (encryptedData) => {
   }
 };
 
+
+const encryptCredentials = async (data,isArray = true) => {
+  try{
+    if(credentials.length > 0){
+      if(isArray){
+        for (var i=0; i<data.length; i++){
+          var currData = data[i]
+          for (var j=0; j<credentials.length; j++){
+            currCred = credentials[j]
+            if(currData.hasOwnProperty(currCred)){
+              data[i][currCred] = await encryptData(data[i][currCred])
+            }
+          }
+        }
+      }
+      else{
+        for (var j=0; j<credentials.length; j++){
+          currCred = credentials[j]
+          if(data.hasOwnProperty(currCred)){
+            data[i][currCred] = await encryptData(data[i][currCred])
+          }
+        }
+      }
+    }
+    return data
+  }
+  catch(err){
+    console.error("encryptCredentials:: error in listed credentials encryption - ",err)
+  }
+}
+
+
+const decryptCredentials = async (data,isArray = true) => {
+  try{
+    if(credentials.length > 0){
+      if(isArray){
+        for (var i=0; i<data.length; i++){
+          var currData = data[i]
+          for (var j=0; j<credentials.length; j++){
+            currCred = credentials[j]
+            if(currData.hasOwnProperty(currCred)){
+              data[i][currCred] = await decryptData(data[i][currCred])
+            }
+          }
+        }
+      }
+      else{
+        for (var j=0; j<credentials.length; j++){
+          currCred = credentials[j]
+          if(data.hasOwnProperty(currCred)){
+            data[i][currCred] = await decryptData(data[i][currCred])
+          }
+        }
+      }
+    }
+    return data
+  }
+  catch(err){
+    console.error("decryptCredentials:: error in listed credentials decryption - ",err)
+  }
+}
+
+
+
 module.exports ={
   getUpdatedText,
   // compareTransaction,
@@ -519,5 +585,7 @@ module.exports ={
   getPdf,
   getDateString,
   decryptData,
-  encryptData
+  encryptData,
+  encryptCredentials,
+  decryptCredentials
 }

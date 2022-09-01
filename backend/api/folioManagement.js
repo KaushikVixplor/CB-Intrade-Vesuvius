@@ -1,5 +1,7 @@
 const decryptData = require('../util/common').decryptData;
 const encryptData = require('../util/common').encryptData;
+const encryptCredentials = require('../util/common').encryptCredentials;
+const decryptCredentials = require('../util/common').decryptCredentials;
 
 module.exports = (app, db) =>
 {

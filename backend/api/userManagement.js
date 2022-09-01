@@ -26,7 +26,10 @@ const getUpdatedText = require('../util/common').getUpdatedText;
 const getCredentialsText = require('../util/common').getCredentialsText;
 const decryptData = require('../util/common').decryptData;
 const encryptData = require('../util/common').encryptData;
+const encryptCredentials = require('../util/common').encryptCredentials;
+const decryptCredentials = require('../util/common').decryptCredentials;
 var PDFDocument = require("pdfkit")
+const saltRound = 10000
 process.env.SECRET_KEY = 'secret';
 
 
@@ -333,7 +336,7 @@ module.exports = (app, db) =>
             const tempPass = userData.pan;
             console.log("tempPass = ",tempPass)
             console.log("userData.email = ",userData.email)
-            const hashedPass = bcrypt.hashSync(tempPass,10); //Hashing the password
+            const hashedPass = bcrypt.hashSync(tempPass,saltRound); //Hashing the password
             db.Employees.update({"password":hashedPass},{
                 where:{
                     id:req.params.userId
@@ -437,7 +440,7 @@ module.exports = (app, db) =>
                     res.status(401).json({'message': "New password can't contain your company name or your name"})
                 }
                 else{
-                    const hash = bcrypt.hashSync(req.body.newPassword,10); //Hashing the password
+                    const hash = bcrypt.hashSync(req.body.newPassword,saltRound); //Hashing the password
                     req.body.newPassword=hash
                     console.log("ID", user.email, );
                     db.Employees.update({ password:req.body.newPassword, firstLogin: false},{
@@ -550,6 +553,50 @@ module.exports = (app, db) =>
 
 
 
+    async function sentBulkInsiderJoinMail(insiderData){
+        try{
+            // forming Mail
+            var templateData = await db.Templates.findOne({
+                where:{
+                    type: "New_cp_login_details"
+                }
+            })
+            subject = templateData.subject
+            console.error("subject:: ",subject)
+            // fetch data
+            var admin = await db.Employees.findOne({
+                include:[{
+                    model:db.Company
+                }],
+                where:{
+                    is_compliance:true
+                },
+                required:false
+            })
+            for(e=0;e<insiderData.length;e++){
+                try{
+                    var variables = [insiderData[e].name, backendUrl, insiderData[e].email, insiderData[e].pan, admin.Company.name, admin.name]
+                    text = await getUpdatedText(templateData.body,variables)
+                    // console.error("subject = ")
+                    // console.error(subject)
+                    var mailRes = await sentMail({
+                        to: insiderData[e].email,
+                        subject: subject,
+                        text: text
+                    })
+                    console.error("mailRes = ",mailRes)
+                }
+                catch(error){
+                    console.error("sentBulkInsiderJoinMail:: mail sent error = ",mailRes)
+                }
+            }
+        }
+        catch(error){
+            console.error("sentBulkInsiderJoinMail:: error: ",error)
+            throw error
+        }        
+    }
+
     async function getNoPanMax(){
         try{
             var Max = 1
@@ -646,6 +693,7 @@ module.exports = (app, db) =>
                         {
                             var errorList = []
                             var addedList = []
+                            var insiderData = []
                             req.body["employeeData"] = localgetPublicUrl( req.files['employeeData'][0].filename?req.files['employeeData'][0].filename:
                                                                     req.files['employeeData'][0].key?req.files['employeeData'][0].key:
                                                                     req.files['employeeData'][0].originalname);
@@ -759,7 +807,7 @@ module.exports = (app, db) =>
                                             var companyId = await getCompanyID()
                                             console.log("last_benpos_date = ",last_benpos_date)
                                             console.log("date_of_appointment_as_insider = ",appointment_date)
-                                            var EmployeeData = {"pan": pan,"emp_code": code,"name": name,"email": email,"password": bcrypt.hashSync(pan,10),
+                                            var EmployeeData = {"pan": pan,"emp_code": code,"name": name,"email": email,"password": bcrypt.hashSync(pan,saltRound),
                                                                 "company_id": companyId,"designation": Designation,"phone": phone,"address": Address,
                                                                 "total_share": total_share,"last_benpos_date": last_benpos_date,
                                                                 "date_of_appointment_as_insider": appointment_date,"last_institute": last_institute,
@@ -776,6 +824,7 @@ module.exports = (app, db) =>
                                             for(k=0;k<Folio_info.length;k++){  
                                                 var newFolio = await db.Folios.create(Folio_info[k],{transaction: t}) 
                                             }
+                                            insiderData.push({email: email,pan: pan,name: name})
                                         }
                                         else{
                                             // relative info
@@ -889,6 +938,7 @@ module.exports = (app, db) =>
                                     console.log(error);
                                 }
                             }
+                            x = sentBulkInsiderJoinMail(insiderData)
                             res.status(200).json({'message':"employee Data uploaded", "addedList": addedList,"errorList": errorList})
                         }
                         catch(error){
@@ -975,7 +1025,7 @@ module.exports = (app, db) =>
                     }
                     var newEmp = await db.Employees.create({
                         ...req.body,
-                        password: bcrypt.hashSync(tempPass,10),
+                        password: bcrypt.hashSync(tempPass,saltRound),
                         status:'Temp',
                         type: type
                     })
@@ -1064,7 +1114,7 @@ module.exports = (app, db) =>
                         req.body["pan"] = data.pan
                     }
                     console.error("pan = ",req.body.pan)
-                    req.body["password"] = bcrypt.hashSync(req.body.pan,10)
+                    req.body["password"] = bcrypt.hashSync(req.body.pan,saltRound)
                     var activityData = {"activity": "Personal Details Add","description": "",
                                         "done_by": [req.params.id],
                                         "done_for": [req.params.id]}

@@ -11,6 +11,8 @@ const getViolationData = require('../util/common').getViolationData;
 const getViloationsPdf = require('../util/pdfGeneration').getViloationsPdf;
 const getActivityPdf = require('../util/pdfGeneration').getActivityPdf;
 const getRequestPdf = require('../util/pdfGeneration').getRequestPdf;
+const encryptCredentials = require('../util/common').encryptCredentials;
+const decryptCredentials = require('../util/common').decryptCredentials;
 var XLSX = require('xlsx');
 var Readable = require('stream').Readable; 
 

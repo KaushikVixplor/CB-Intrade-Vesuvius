@@ -9,6 +9,8 @@ const trackActivity = require('../util/activityTrack').trackActivity;
 const compareTransaction = require('../util/common').compareTransaction;
 const compareTransactionNew = require('../util/common').compareTransactionNew;
 const getViolationData = require('../util/common').getViolationData;
+const encryptCredentials = require('../util/common').encryptCredentials;
+const decryptCredentials = require('../util/common').decryptCredentials;
 var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
 const pattern1 = /(\d{2})\-(\d{2})\-(\d{4})/;
 

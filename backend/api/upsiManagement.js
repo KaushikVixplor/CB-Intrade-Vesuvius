@@ -5,6 +5,8 @@ const pattern1 = /(\d{2})\-(\d{2})\-(\d{4})/;
 const sentMail = require('../util/SentMail');
 const localUpload = require('../util/storageLocal').upload;
 const localgetPublicUrl = require('../util/storageLocal').getPublicUrl;
+const encryptCredentials = require('../util/common').encryptCredentials;
+const decryptCredentials = require('../util/common').decryptCredentials;
 const getPdf = require('../util/common').getPdf;
 const fs = require('fs');
 

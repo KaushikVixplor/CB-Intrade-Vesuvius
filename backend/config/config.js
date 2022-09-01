@@ -48,7 +48,8 @@ const config = {
     backupLocation: "backup",
     mailId:'quicser.sender@gmail.com',
     mailPassword:'dxsoluynimtaatnv',
-	  backendUrl:'http://localhost:8080'
+	  backendUrl:'http://localhost:8080',
+    credentials: ['pan','folio']
   },
   test: {
     'accessTokenSecret' : "NwqeSDI3WCYJBnn1YY5Yaq2,96y59rn8",
@@ -99,7 +100,8 @@ const config = {
     backupLocation: "backup",
     mailId:'compliance@anisdd.com',
     mailPassword:'mk9874pE@',
-    backendUrl:'https://www.anisdd.com/'
+    backendUrl:'https://www.anisdd.com/',
+    credentials: ['pan','folio']
   },
   production: {
     'accessTokenSecret' : "NwqeSDI3WCYJBnn1YY5Yaq2,96y59rn8",
@@ -150,7 +152,8 @@ const config = {
     backupLocation: "backup",
     mailId:'quicser.sender@gmail.com',
     mailPassword:'dxsoluynimtaatnv',
-	  backendUrl:'http://cbintrade.s3-website.ap-south-1.amazonaws.com'
+	  backendUrl:'http://cbintrade.s3-website.ap-south-1.amazonaws.com',
+    credentials: ['pan','folio']
   },
 };
 
