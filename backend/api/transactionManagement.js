@@ -60,13 +60,13 @@ module.exports = (app, db) =>{
         try{
             let data 
             let rDate
-            console.log("ref_date = ",ref_date.toString())
+            // console.log("ref_date = ",ref_date.toString())
             var dateLimit = new Date(limitDate.setHours(0,0,0))
             var fromDate = new Date(ref_date.setHours(0,0,0))
             var toDate = new Date(ref_date.setHours(23,59,59))
-            console.log("dateLimit = ",dateLimit.toString())
-            console.log("fromDate = ",fromDate.toString())
-            console.log("toDate = ",toDate.toString())
+            // console.log("dateLimit = ",dateLimit.toString())
+            // console.log("fromDate = ",fromDate.toString())
+            // console.log("toDate = ",toDate.toString())
             var transactionData = await gettransactionData(fromDate,toDate)
             if (transactionData.length == 0){
                 if(isCurrent){
@@ -75,15 +75,15 @@ module.exports = (app, db) =>{
                     temp_date = ref_date
                     while (flag){
                         temp_date = await subDays(temp_date,1)
-                        console.log("temp_date = ",temp_date.toString())
+                        // console.log("temp_date = ",temp_date.toString())
                         var fromDate1 = new Date(temp_date.setHours(0,0,0))
                         var toDate1 = new Date(temp_date.setHours(23,59,59))
-                        console.log("fromDate1 = ",fromDate1.toString())
-                        console.log("toDate1 = ",toDate1.toString())
+                        // console.log("fromDate1 = ",fromDate1.toString())
+                        // console.log("toDate1 = ",toDate1.toString())
                         var transactionData1 = await gettransactionData(fromDate1,toDate1)
                         benpos_data_not_fount_count += 1
-                        console.log("benpos_data_not_fount_count = ",benpos_data_not_fount_count)
-                        console.log("transactionData1.length = ",transactionData1.length)
+                        // console.log("benpos_data_not_fount_count = ",benpos_data_not_fount_count)
+                        // console.log("transactionData1.length = ",transactionData1.length)
                         if (transactionData1.length > 0){
                             flag = false 
                         }  
@@ -103,15 +103,15 @@ module.exports = (app, db) =>{
                     temp_date = ref_date
                     while (flag){
                         temp_date = await addDays(temp_date,1)
-                        console.log("temp_date = ",temp_date.toString())
+                        // console.log("temp_date = ",temp_date.toString())
                         var fromDate2 = new Date(temp_date.setHours(0,0,0))
                         var toDate2 = new Date(temp_date.setHours(23,59,59))
-                        console.log("fromDate2 = ",fromDate2.toString())
-                        console.log("toDate2 = ",toDate2.toString())
+                        // console.log("fromDate2 = ",fromDate2.toString())
+                        // console.log("toDate2 = ",toDate2.toString())
                         var transactionData2 = await gettransactionData(fromDate2,toDate2)
                         benpos_data_not_fount_count += 1
-                        console.log("benpos_data_not_fount_count = ",benpos_data_not_fount_count)
-                        console.log("transactionData2.length = ",transactionData2.length)
+                        // console.log("benpos_data_not_fount_count = ",benpos_data_not_fount_count)
+                        // console.log("transactionData2.length = ",transactionData2.length)
                         
                         if (transactionData2.length > 0){
                             flag = false 
@@ -147,8 +147,8 @@ module.exports = (app, db) =>{
         try{
             fromDateStr = req.query.startDate
             toDateStr = req.query.endDate 
-            console.error("fromDateStr = ",fromDateStr)
-            console.error("toDateStr = ",toDateStr)
+            // console.error("fromDateStr = ",fromDateStr)
+            // console.error("toDateStr = ",toDateStr)
             let fromDate
             let toDate
             if(fromDateStr.includes("/") || fromDateStr.includes("-")){
@@ -165,8 +165,8 @@ module.exports = (app, db) =>{
             else{
                 throw "Date Format Error"
             }
-            console.log('fromDate : ', fromDate)
-            console.log('toDate : ', toDate)
+            // console.log('fromDate : ', fromDate)
+            // console.log('toDate : ', toDate)
             // var prev_benpos_date = fromDate
             // var current_benpos_date = toDate
             var prev_benpos_data = await getBenposData(fromDate,toDate,false)
@@ -196,7 +196,7 @@ module.exports = (app, db) =>{
             // res.status(200).json({'message':'transaction fetch successfully',"data":{transactionData: transactionData,compareData: compareData,prev_benpos_date: transactionData.prev_benpos_date,current_benpos_date: transactionData.current_benpos_date}})
         }
         catch(error){
-            console.error("transaction fetch error:",error);
+            // console.error("transaction fetch error:",error);
             res.status(500).json({'message':'transaction fetch error :: '+error})
         }
     });
@@ -208,8 +208,8 @@ module.exports = (app, db) =>{
         try{
             fromDateStr = req.query.startDate
             toDateStr = req.query.endDate 
-            console.error("fromDateStr = ",fromDateStr)
-            console.error("toDateStr = ",toDateStr)
+            // console.error("fromDateStr = ",fromDateStr)
+            // console.error("toDateStr = ",toDateStr)
             let fromDate
             let toDate
             if(fromDateStr.includes("/") || fromDateStr.includes("-")){
@@ -297,7 +297,7 @@ module.exports = (app, db) =>{
         }
         // var fileStr = day+"/"+mon+"/"+fileDate.getFullYear()
         var fileStr = fileDate.getFullYear()+"-"+mon+"-"+day
-        console.error("fileStr = ",fileStr)
+        // console.error("fileStr = ",fileStr)
         fileDate = await new Date(new Date(fileStr).setHours(00,00,00))
         return fileDate
     }
@@ -372,16 +372,16 @@ module.exports = (app, db) =>{
         try{
             var isValid = true
             var requestInfo = []
-            console.error(">>>>>>>>>>> isValidRequestExists")
-            console.log("fileDate = ",fileDate)
+            // console.error(">>>>>>>>>>> isValidRequestExists")
+            // console.log("fileDate = ",fileDate)
             const baseDate = new Date(fileDate)
-            console.log("baseDate = ",baseDate)
+            // console.log("baseDate = ",baseDate)
             var sevenDayBack = await subDays(baseDate,7)
-            console.log("sevenDayBack = ",sevenDayBack)
+            // console.log("sevenDayBack = ",sevenDayBack)
             var benposeDate = new Date(fileDate) 
             benposeDate = new Date(benposeDate.setHours(23,59,59)) 
-            console.log("benposeDate = ",benposeDate)
-            console.log("fileDate = ",fileDate)
+            // console.log("benposeDate = ",benposeDate)
+            // console.log("fileDate = ",fileDate)
             var reqData = await db.Requests.findAll({
                 where:{
                     pan: pan,
@@ -389,7 +389,7 @@ module.exports = (app, db) =>{
                     date_requested_to: {[Op.between] : [sevenDayBack,benposeDate]}
                 }
             })
-            console.log("reqData = ",reqData)
+            // console.log("reqData = ",reqData)
             var close_dates = await db.Company.findAll()
             var window_close_from = close_dates[0].window_close_from
             var window_close_to = close_dates[0].window_close_to
@@ -397,10 +397,10 @@ module.exports = (app, db) =>{
                 window_close_from = new Date(window_close_from.setHours(0,0,0))
                 window_close_to = new Date(window_close_to.setHours(23,59,59))
                 var shrChangeDate = new Date(fileDate.setHours(0,0,0))
-                console.error("window_close_from = ",window_close_from)
-                console.error("window_close_to = ",window_close_to)
-                console.error("shrChangeDate = ",shrChangeDate)
-                console.error("currDate = ",currDate)
+                // console.error("window_close_from = ",window_close_from)
+                // console.error("window_close_to = ",window_close_to)
+                // console.error("shrChangeDate = ",shrChangeDate)
+                // console.error("currDate = ",currDate)
                 var reqData1 = await db.Requests.findAll({
                     where:{
                         pan: pan,
@@ -420,7 +420,7 @@ module.exports = (app, db) =>{
                 }
 
             }
-            console.log("reqData = ",reqData)
+            // console.log("reqData = ",reqData)
             if(reqData.length > 0){
                 for(var r=0;r<reqData.length;r++){
                     var isValid = false
@@ -431,10 +431,10 @@ module.exports = (app, db) =>{
                         var date_requested_from = reqData[r].date_requested_from
                         date_requested_from = new Date(date_requested_from.setHours(0,0,0))
                         var transaction_date = reqData[r].transaction_date
-                        console.error("transaction_date = ",transaction_date)
-                        console.error("date_requested_from = ",date_requested_from)
-                        console.error("date_requested_to = ",date_requested_to)
-                        console.error("currDate = ",currDate)
+                        // console.error("transaction_date = ",transaction_date)
+                        // console.error("date_requested_from = ",date_requested_from)
+                        // console.error("date_requested_to = ",date_requested_to)
+                        // console.error("currDate = ",currDate)
                         if(window_close_from != null || window_close_to != null){
                             if(window_close_from.getTime() <= fileDate.getTime() && fileDate.getTime() <= window_close_to.getTime()){
                                 isValid = false
@@ -464,7 +464,7 @@ module.exports = (app, db) =>{
                     }
                     requestInfo.push({reqId: reqData[r].id,isValid: isValid})
                 }
-                console.log("requestInfo = ",requestInfo)
+                // console.log("requestInfo = ",requestInfo)
                 return [true,requestInfo]
             }
             else{
@@ -515,7 +515,7 @@ module.exports = (app, db) =>{
                         return [false,newData]
                     }
                     else{
-                        console.log("Unknown Pan - ",pan)
+                        // console.log("Unknown Pan - ",pan)
                         return [false,{}]
                     }
                 }
@@ -533,13 +533,13 @@ module.exports = (app, db) =>{
     async function isDataExists(fileDate){
         try{
             var currDate = new Date(fileDate)
-            console.error("currDate = ",currDate)
+            // console.error("currDate = ",currDate)
             currDate_from = new Date(currDate.setHours(0,0,0))
-            console.error("currDate_from = ",currDate_from)
+            // console.error("currDate_from = ",currDate_from)
             currDate = new Date(fileDate)
-            console.error("currDate = ",currDate)
+            // console.error("currDate = ",currDate)
             currDate_to = new Date(currDate.setHours(23,59,59))
-            console.error("currDate_to = ",currDate_to)
+            // console.error("currDate_to = ",currDate_to)
             var benposData = await db.UploadDatas.findAll({
                 where:{
                     current_benpos_date: {[Op.between] : [currDate_from,currDate_to]}
@@ -569,7 +569,7 @@ module.exports = (app, db) =>{
                                 "done_for": []}
             var activity_id = await trackActivity(activityData, db)
             //uploading master excel to local and reading it as list od object
-            console.log("requestes params are",req.query);
+            // console.log("requestes params are",req.query);
             var out  =  await localUpload.fields([{ name: 'weeklyData', maxCount: 1}])(req, res, async function(err) {
                 // console.log("name", req.body.name);
                 try
@@ -587,7 +587,7 @@ module.exports = (app, db) =>{
                                                                     req.files['weeklyData'][0].key?req.files['weeklyData'][0].key:
                                                                     req.files['weeklyData'][0].originalname);
                             const path =  req.body['weeklyData']  
-                            console.log("path>>>>>>>>",path);                                     
+                            // console.log("path>>>>>>>>",path);                                     
                             var workbook = XLSX.readFile(req.body['weeklyData']);
                             var sheet_name_list = workbook.SheetNames;
                             weeklyData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
@@ -595,14 +595,14 @@ module.exports = (app, db) =>{
                                 try{
                                     // Date check code here
                                     inputDateStr = req.query.date
-                                    console.error("inputDateStr = ",inputDateStr)
+                                    // console.error("inputDateStr = ",inputDateStr)
                                     inputDate = await getDate(inputDateStr)
                                     fileDateStr = weeklyData[0].CUR_BENPOS_DATE
                                     fileDateStr = fileDateStr.toString()
-                                    console.error("fileDateStr = ",fileDateStr)
+                                    // console.error("fileDateStr = ",fileDateStr)
                                     let fileDate
                                     if(fileDateStr.includes("/") || fileDateStr.includes("-")){
-                                        console.error("fileDate(/) = ",fileDate)
+                                        // console.error("fileDate(/) = ",fileDate)
                                         fileDate = await getDate(fileDateStr)
                                     }
                                     else{
@@ -618,12 +618,12 @@ module.exports = (app, db) =>{
                                             fileDate = await getDate(fileDateStr)
                                         }
                                     }
-                                    console.error("inputDate = ",inputDate.toString())
-                                    console.error("fileDate = ",fileDate.toString())
+                                    // console.error("inputDate = ",inputDate.toString())
+                                    // console.error("fileDate = ",fileDate.toString())
 
                                     fs.unlinkSync(req.body['weeklyData'])
                                     var isBenposDataExists = await isDataExists(fileDate)
-                                    console.error("isBenposDataExists = ",isBenposDataExists)
+                                    // console.error("isBenposDataExists = ",isBenposDataExists)
                                     if(fileDate.getTime() != inputDate.getTime()){
                                         console.error("date match error....")
                                         res.status(400).json({'message': "input Date doesn't match with file Date "})
@@ -656,16 +656,16 @@ module.exports = (app, db) =>{
                                                         var pan = record.FPAN_NO
                                                         var total_share = record.TOT_SHARES
                                                         var empData = await getEmpDetails(pan)
-                                                        console.error("pan = ",pan)
-                                                        console.error("empData = ",empData)
+                                                        // console.error("pan = ",pan)
+                                                        // console.error("empData = ",empData)
                                                         if(empData.length == 0){
                                                             empData = await getEmpRelDetails(pan)
                                                         }
                                                         if(empData.length > 0){
-                                                            console.error("pan = ",pan)
-                                                            console.error("empData = ",empData)
+                                                            // console.error("pan = ",pan)
+                                                            // console.error("empData = ",empData)
                                                             var previous_total_share = empData[0].total_share 
-                                                            console.error("previous_total_share = ",previous_total_share)   
+                                                            // console.error("previous_total_share = ",previous_total_share)   
                                                             var is_total_share_changed = false  
                                                             if(previous_total_share != total_share){
                                                                 is_total_share_changed = true
@@ -674,7 +674,7 @@ module.exports = (app, db) =>{
                                                             file_date_str = record.CUR_BENPOS_DATE
                                                             file_date_str = file_date_str.toString()
                                                             if(file_date_str.includes("/") || file_date_str.includes("-")){
-                                                                console.error("file_date_str(/) = ",file_date_str)
+                                                                // console.error("file_date_str(/) = ",file_date_str)
                                                                 file_date = await getDate(file_date_str)
                                                             }
                                                             else{
@@ -694,13 +694,13 @@ module.exports = (app, db) =>{
                                                                 if("SHARES_1" in record){
                                                                     share_1 = record.SHARES_1
                                                                 }
-                                                                console.error("pan = ",pan)
-                                                                console.error("folio_1 = ",folio_1)
-                                                                console.error("share_1 = ",share_1)
+                                                                // console.error("pan = ",pan)
+                                                                // console.error("folio_1 = ",folio_1)
+                                                                // console.error("share_1 = ",share_1)
                                                                 var folioResp = await isFolioExists(pan,folio_1,share_1)
                                                                 var exist = folioResp[0]
                                                                 var newData = folioResp[1]
-                                                                console.error("exist = ",exist)
+                                                                // console.error("exist = ",exist)
                                                                 var previous_share_1 = 0
                                                                 // console.error("exist = ",exist)
                                                                 // console.error("folioResp = ",folioResp)
@@ -716,7 +716,7 @@ module.exports = (app, db) =>{
                                                                         var isValid = true
                                                                         if(reqExists){
                                                                             console.log("VALID REQ EXISTS")
-                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            // console.log("requestInfos = ",requestInfos)
                                                                             for(var e=0;e<requestInfos.length;e++){
                                                                                 if(!requestInfos[e].isValid){
                                                                                     isValid = false
@@ -829,7 +829,7 @@ module.exports = (app, db) =>{
                                                                     var isValid = true
                                                                     if(reqExists){
                                                                         console.log("VALIS REQ EXISTS")
-                                                                        console.log("requestInfos = ",requestInfos)
+                                                                        // console.log("requestInfos = ",requestInfos)
                                                                         for(var e=0;e<requestInfos.length;e++){
                                                                             if(!requestInfos[e].isValid){
                                                                                 isValid = false
@@ -892,7 +892,7 @@ module.exports = (app, db) =>{
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     variationDatas.push(variationData)
                                                                 }
-                                                                console.error("validFlag folio 1 = ",validFlag)
+                                                                // console.error("validFlag folio 1 = ",validFlag)
                                                             }
                                                             if("FOLIO_NO_2" in record){
                                                                 folio_2 = record.FOLIO_NO_2
@@ -903,7 +903,7 @@ module.exports = (app, db) =>{
                                                                 var folioResp = await isFolioExists(pan,folio_2,share_2)
                                                                 var exist = folioResp[0]
                                                                 var newData = folioResp[1]
-                                                                console.error("exist = ",exist)
+                                                                // console.error("exist = ",exist)
                                                                 var previous_share_2 = 0
                                                                 // console.error("newData = ",newData)
                                                                 if(exist){
@@ -918,7 +918,7 @@ module.exports = (app, db) =>{
                                                                         var isValid = true
                                                                         if(reqExists){
                                                                             console.log("VALIS REQ EXISTS")
-                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            // console.log("requestInfos = ",requestInfos)
                                                                             for(var e=0;e<requestInfos.length;e++){
                                                                                 if(!requestInfos[e].isValid){
                                                                                     isValid = false
@@ -974,14 +974,14 @@ module.exports = (app, db) =>{
                                                                         }
                                                                         newUploadDataId.push(newFolioInfo1.id)
                                                                         var variationData = newUploadData
-                                                                        console.error("variationData = ",variationData)
+                                                                        // console.error("variationData = ",variationData)
                                                                         variationData["name"] = empData[0].name
                                                                         variationData["email"] = empData[0].email
                                                                         variationData["previous_total_share"] = previous_total_share
-                                                                        console.error("variationData = ",variationData)
+                                                                        // console.error("variationData = ",variationData)
                                                                         variationDatas.push(variationData)
                                                                         // add upload data id to request 
-                                                                        console.error("requestInfos = ",requestInfos)
+                                                                        // console.error("requestInfos = ",requestInfos)
                                                                         for(var f=0;f<requestInfos.length;f++){
                                                                             // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
                                                                             //     previous_total_share: previous_total_share})
@@ -1034,7 +1034,7 @@ module.exports = (app, db) =>{
                                                                     var isValid = true
                                                                     if(reqExists){
                                                                         console.log("VALIS REQ EXISTS")
-                                                                        console.log("requestInfos = ",requestInfos)
+                                                                        // console.log("requestInfos = ",requestInfos)
                                                                         for(var e=0;e<requestInfos.length;e++){
                                                                             if(!requestInfos[e].isValid){
                                                                                 isValid = false
@@ -1092,14 +1092,14 @@ module.exports = (app, db) =>{
                                                                     }
                                                                     newUploadDataId.push(newFolioInfo1.id)
                                                                     var variationData = newUploadData
-                                                                    console.error("variationData = ",variationData)
+                                                                    // console.error("variationData = ",variationData)
                                                                     variationData["name"] = empData[0].name
                                                                     variationData["email"] = empData[0].email
                                                                     variationData["previous_total_share"] = previous_total_share
-                                                                    console.error("variationData = ",variationData)
+                                                                    // console.error("variationData = ",variationData)
                                                                     variationDatas.push(variationData)
                                                                 }
-                                                                console.error("validFlag folio 2 = ",validFlag)
+                                                                // console.error("validFlag folio 2 = ",validFlag)
                                                             }
                                                             if("FOLIO_NO_3" in record){
                                                                 folio_3 = record.FOLIO_NO_3
@@ -1110,7 +1110,7 @@ module.exports = (app, db) =>{
                                                                 var folioResp = await isFolioExists(pan,folio_3,share_3)
                                                                 var exist = folioResp[0]
                                                                 var newData = folioResp[1]
-                                                                console.error("exist = ",exist)
+                                                                // console.error("exist = ",exist)
                                                                 var previous_share_3 = 0
                                                                 // console.error("newData = ",newData)
                                                                 if(exist){
@@ -1125,7 +1125,7 @@ module.exports = (app, db) =>{
                                                                         var isValid = true
                                                                         if(reqExists){
                                                                             console.log("VALIS REQ EXISTS")
-                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            // console.log("requestInfos = ",requestInfos)
                                                                             for(var e=0;e<requestInfos.length;e++){
                                                                                 if(!requestInfos[e].isValid){
                                                                                     isValid = false
@@ -1238,7 +1238,7 @@ module.exports = (app, db) =>{
                                                                     var isValid = true
                                                                     if(reqExists){
                                                                         console.log("VALIS REQ EXISTS")
-                                                                        console.log("requestInfos = ",requestInfos)
+                                                                        // console.log("requestInfos = ",requestInfos)
                                                                         for(var e=0;e<requestInfos.length;e++){
                                                                             if(!requestInfos[e].isValid){
                                                                                 isValid = false
@@ -1301,7 +1301,7 @@ module.exports = (app, db) =>{
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     variationDatas.push(variationData)
                                                                 }
-                                                                console.error("validFlag folio 3 = ",validFlag)
+                                                                // console.error("validFlag folio 3 = ",validFlag)
                                                             }
                                                             if("FOLIO_NO_4" in record){
                                                                 folio_4 = record.FOLIO_NO_4
@@ -1312,7 +1312,7 @@ module.exports = (app, db) =>{
                                                                 var folioResp = await isFolioExists(pan,folio_4,share_4)
                                                                 var exist = folioResp[0]
                                                                 var newData = folioResp[1]
-                                                                console.error("exist = ",exist)
+                                                                // console.error("exist = ",exist)
                                                                 var previous_share_4 = 0
                                                                 // console.error("newData = ",newData)
                                                                 if(exist){
@@ -1327,7 +1327,7 @@ module.exports = (app, db) =>{
                                                                         var isValid = true
                                                                         if(reqExists){
                                                                             console.log("VALIS REQ EXISTS")
-                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            // console.log("requestInfos = ",requestInfos)
                                                                             for(var e=0;e<requestInfos.length;e++){
                                                                                 if(!requestInfos[e].isValid){
                                                                                     isValid = false
@@ -1440,7 +1440,7 @@ module.exports = (app, db) =>{
                                                                     var isValid = true
                                                                     if(reqExists){
                                                                         console.log("VALIS REQ EXISTS")
-                                                                        console.log("requestInfos = ",requestInfos)
+                                                                        // console.log("requestInfos = ",requestInfos)
                                                                         for(var e=0;e<requestInfos.length;e++){
                                                                             if(!requestInfos[e].isValid){
                                                                                 isValid = false
@@ -1503,7 +1503,7 @@ module.exports = (app, db) =>{
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     variationDatas.push(variationData)
                                                                 }
-                                                                console.error("validFlag folio 4 = ",validFlag)
+                                                                // console.error("validFlag folio 4 = ",validFlag)
                                                             }
                                                             if("FOLIO_NO_5" in record){
                                                                 folio_5 = record.FOLIO_NO_5
@@ -1514,7 +1514,7 @@ module.exports = (app, db) =>{
                                                                 var folioResp = await isFolioExists(pan,folio_5,share_5)
                                                                 var exist = folioResp[0]
                                                                 var newData = folioResp[1]
-                                                                console.error("exist = ",exist)
+                                                                // console.error("exist = ",exist)
                                                                 var previous_share_5 = 0
                                                                 // console.error("newData = ",newData)
                                                                 if(exist){
@@ -1529,7 +1529,7 @@ module.exports = (app, db) =>{
                                                                         var isValid = true
                                                                         if(reqExists){
                                                                             console.log("VALIS REQ EXISTS")
-                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            // console.log("requestInfos = ",requestInfos)
                                                                             for(var e=0;e<requestInfos.length;e++){
                                                                                 if(!requestInfos[e].isValid){
                                                                                     isValid = false
@@ -1642,7 +1642,7 @@ module.exports = (app, db) =>{
                                                                     var isValid = true
                                                                     if(reqExists){
                                                                         console.log("VALIS REQ EXISTS")
-                                                                        console.log("requestInfos = ",requestInfos)
+                                                                        // console.log("requestInfos = ",requestInfos)
                                                                         for(var e=0;e<requestInfos.length;e++){
                                                                             if(!requestInfos[e].isValid){
                                                                                 isValid = false
@@ -1705,12 +1705,12 @@ module.exports = (app, db) =>{
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     variationDatas.push(variationData)
                                                                 }
-                                                                console.error("validFlag folio 5 = ",validFlag)
+                                                                // console.error("validFlag folio 5 = ",validFlag)
                                                             }
                                                             // update valid flag if any folio transaction is invalid
-                                                            console.error("validFlag final = ",validFlag)
+                                                            // console.error("validFlag final = ",validFlag)
                                                             if(!validFlag){
-                                                                console.error("newUploadDataId= ",newUploadDataId)
+                                                                // console.error("newUploadDataId= ",newUploadDataId)
                                                                 for(var x=0;x<newUploadDataId.length;x++){
                                                                     // updatedUploadDatas.push({udId: newUploadDataId[x],validFlag: validFlag})                                                               
                                                                     var updatedUploadDataInfo1 = await db.UploadDatas.update({is_valid: validFlag},{

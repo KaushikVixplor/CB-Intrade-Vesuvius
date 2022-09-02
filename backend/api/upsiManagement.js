@@ -55,7 +55,7 @@ module.exports = (app, db) =>
 
     
     app.post('/upsiA', async (req,res) => {
-        console.error("req user", req.user)
+        // console.error("req user", req.user)
         try{
             
             var shared_by = req.body.shared_by
@@ -70,8 +70,8 @@ module.exports = (app, db) =>
             //     shared_with_info += shared_with[j]+","
             // }
             // shared_with_info = shared_with_info.substring(0,shared_with_info.length-1)
-            console.error("shared_by_info = ",shared_by_info)
-            console.error("shared_with_info = ",shared_with_info)
+            // console.error("shared_by_info = ",shared_by_info)
+            // console.error("shared_with_info = ",shared_with_info)
             req.body.shared_by = shared_by_info
             req.body.shared_with = shared_with_info
             var information = req.body.information|| ""
@@ -147,11 +147,11 @@ module.exports = (app, db) =>
                             : req.files["attachment"][0].originalname
                         );
                     }
-                    console.log(req.body.data);
+                    // console.log(req.body.data);
                     decryptedData = await decryptData(req.body.data)
                     req.body = JSON.parse(decryptedData)
                     req.body.data = JSON.parse(req.body.data);
-                    console.log(req.body.data);
+                    // console.log(req.body.data);
                     var shared_by = req.body.data.shared_by
                     var shared_with = req.body.data.shared_with
                     var shared_by_info = await getNames(shared_by)
@@ -164,8 +164,8 @@ module.exports = (app, db) =>
                     //     shared_with_info += shared_with[j]+","
                     // }
                     // shared_with_info = shared_with_info.substring(0,shared_with_info.length-1)
-                    console.error("shared_by_info = ",shared_by_info)
-                    console.error("shared_with_info = ",shared_with_info)
+                    // console.error("shared_by_info = ",shared_by_info)
+                    // console.error("shared_with_info = ",shared_with_info)
                     req.body.data.shared_by = shared_by_info
                     req.body.data.shared_with = shared_with_info
                     var information = req.body.data.information|| ""
@@ -237,12 +237,12 @@ module.exports = (app, db) =>
 
 
     app.get('/upsi', async (req,res) => {
-        console.error("req user", req.user)
+        // console.error("req user", req.user)
         try{
             fromDateStr = req.query.startDate
             toDateStr = req.query.endDate 
-            console.error("fromDateStr = ",fromDateStr)
-            console.error("toDateStr = ",toDateStr)
+            // console.error("fromDateStr = ",fromDateStr)
+            // console.error("toDateStr = ",toDateStr)
             let fromDate
             let toDate
             if(fromDateStr.includes("/") || fromDateStr.includes("-")){

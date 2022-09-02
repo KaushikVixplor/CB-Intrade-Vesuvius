@@ -86,15 +86,15 @@ module.exports = (app, db) =>
             nowDate = new Date(nowDate.setHours(0,0,0))
             var date_requested_to = reqData.date_requested_to
             date_requested_to = new Date(date_requested_to.setHours(0,0,0))
-            console.error("date_requested_to = ",date_requested_to)
-            console.error("nowDate = ",nowDate)
+            // console.error("date_requested_to = ",date_requested_to)
+            // console.error("nowDate = ",nowDate)
             if(nowDate.getTime() > date_requested_to.getTime()){
                 console.error("Transaction time Expired")
                 res.status(400).json({'message': "Transaction time Expired"})
             }
             else{
                 var request_folio = reqData.request_folio
-                console.log("request_folio = ",request_folio)
+                // console.log("request_folio = ",request_folio)
                 var companyData = await db.Folios.findOne({
                     include:[{
                         model:db.Employees,
@@ -107,7 +107,7 @@ module.exports = (app, db) =>
                     }
                 })
                 var company = companyData.Employee.Company.name
-                console.log("company = ",company)
+                // console.log("company = ",company)
                 let dateObj
                 var dateStr = req.body.transaction_date
                 if(dateStr.includes("/") || dateStr.includes("-")){
@@ -221,18 +221,18 @@ module.exports = (app, db) =>
             var activity_id = await trackActivity(activityData, db)
             const companyData = await db.Company.findAll()
             companyId = companyData[0].id
-            console.error("req.body = ", req.body);
+            // console.error("req.body = ", req.body);
             if ("purpose" in req.body){
                 req.query["purpose"] = req.body.purpose
             }
-            console.error("req.query = ", req.query);
+            // console.error("req.query = ", req.query);
             // update Company info
             const newcompanyData = await db.Company.update(req.query, {
                 where:{
                     id: companyId
                 }
             })
-            console.error("newcompanyData = ", newcompanyData);
+            // console.error("newcompanyData = ", newcompanyData);
             if(newcompanyData[0] > 0){
                 // // mail the updated close period to all Employee
                 // var emps = await db.Employees.findAll({
@@ -302,7 +302,7 @@ module.exports = (app, db) =>
 
 
     app.get('/requests', (req,res) => {
-        console.log("q", req.query);
+        // console.log("q", req.query);
         db.Requests.findAll({
             include:[
                 {
@@ -364,7 +364,7 @@ module.exports = (app, db) =>
                 })
             }
             else{
-                console.log("Requests fetched",data);
+                console.log("Requests fetched");
                 res.status(200).json({
                     data: await encryptData(JSON.stringify({
                         'message':'Requests fetched',
@@ -410,7 +410,7 @@ module.exports = (app, db) =>
                                 "done_for": [data.Folio.Employee.id]}
             var activity_id = await trackActivity(activityData, db)
             var annex7 = await getAnnexure7And8(data)
-            console.error("done for = ",data.Folio.Employee.id)
+            // console.error("done for = ",data.Folio.Employee.id)
             activityData = {"activityId": activity_id,
                                 "done_for": [data.Folio.Employee.id]}
             activity_id = await trackActivity(activityData, db)
@@ -447,7 +447,7 @@ module.exports = (app, db) =>
                                 "done_by": [req.user.userId],
                                 "done_for": [],"period": await getDateString(proposed_dealing_from_date) +" to "+ await getDateString(proposed_dealing_to_date)}
             var activity_id = await trackActivity(activityData, db)
-            console.log(">>>>>>>>>>>>>>>> requests >>>>>>>>")
+            // console.log(">>>>>>>>>>>>>>>> requests >>>>>>>>")
             var EmployeeData = await db.Employees.findOne({ 
                                 include:[{
                                             model:db.Company, 
@@ -489,7 +489,7 @@ module.exports = (app, db) =>
             var mode = req.body.mode
             var folioId = req.body.folio_id
             var category = req.body.category
-            console.error("employeeData = ",EmployeeData)
+            // console.error("employeeData = ",EmployeeData)
             var pan = EmployeeData.pan
             var security_type = req.body.security_type
             // var stock_exchange = req.body.stock_exchange
@@ -497,7 +497,7 @@ module.exports = (app, db) =>
             
             if(category == "Self"){
                 category = EmployeeData.category
-                console.log("category = ", category);
+                // console.log("category = ", category);
             }
             else{
                 pan = FolioData.emp_relative_pan
@@ -517,10 +517,10 @@ module.exports = (app, db) =>
                                 "date_requested_to": proposed_dealing_to_date,"request_quantity": proposed_quantity,previous_total_share: previous_total_share,
                                 "proposed_price": proposed_price,"market_price": market_price,
                                 "previous_quantity": prior_quantity,"request_date": nowDate}
-            console.error("request data", RequestData)
+            // console.error("request data", RequestData)
             
             var requestData = await db.Requests.create(RequestData)   
-            console.log("requestData = ",requestData.id)     
+            // console.log("requestData = ",requestData.id)     
             var requestId = requestData.id
             var reqPDF = await getAnnexure1And2(req, EmployeeData, FolioData, db,requestId)
 
@@ -569,16 +569,16 @@ module.exports = (app, db) =>
         try{
             // data preparation
             let activity_id
-            console.error("req.query = ",req.query)
+            // console.error("req.query = ",req.query)
             if("reason" in req.body){
                 req.query["reason"] = req.body.reason
             }
             else{
                 req.query["reason"] = ""
             }
-            console.error("req.query = ",req.query)
-            console.error("req.id = ",req.query.id)
-            console.error("req.status = ",req.query.status)
+            // console.error("req.query = ",req.query)
+            // console.error("req.id = ",req.query.id)
+            // console.error("req.status = ",req.query.status)
             var requestId = req.query.id
             var request_status = req.query.status
 
@@ -607,13 +607,13 @@ module.exports = (app, db) =>
             var date_requested_from = new Date()
             var date_requested_from_str = date_requested_from.toString()
             var reason = requestData.reason
-            console.error("date_requested_from_str = ",date_requested_from_str)
-            console.error("date_requested_from = ",date_requested_from)
+            // console.error("date_requested_from_str = ",date_requested_from_str)
+            // console.error("date_requested_from = ",date_requested_from)
             
             var date_requested_to = await addDays(new Date(),7)
             var date_requested_to_str = date_requested_to.toString()
-            console.error("date_requested_to_str = ",date_requested_to_str)
-            console.error("date_requested_to = ",date_requested_to)
+            // console.error("date_requested_to_str = ",date_requested_to_str)
+            // console.error("date_requested_to = ",date_requested_to)
 
             // Request Data Update
             newRequestData = {}
@@ -637,7 +637,7 @@ module.exports = (app, db) =>
                     id: requestId
                 }
             })
-            console.error("newRequestInfo = ",newRequestInfo)
+            // console.error("newRequestInfo = ",newRequestInfo)
             if(newRequestInfo[0] == 0){
                 throw "Request Update Error"
             }

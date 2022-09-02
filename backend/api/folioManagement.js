@@ -25,7 +25,7 @@ module.exports = (app, db) =>
                 },
                 required:false
             })
-            console.error("empData:: ",empData.length)
+            // console.error("empData:: ",empData.length)
             if(empData.length > 0){
                 for(o=0;o<empData[0].Folios.length;o++){
                     fol.push(empData[0].Folios[o].dataValues)
@@ -46,11 +46,11 @@ module.exports = (app, db) =>
                     },
                     required:false
                 })
-                console.error("empRelativesData:: ",empRelativesData)
+                // console.error("empRelativesData:: ",empRelativesData)
                 for(o=0;o<empRelativesData[0].Folios.length;o++){
                     fol.push(empRelativesData[0].Folios[o].dataValues)
                 }
-                console.error("fol:: ",fol)
+                // console.error("fol:: ",fol)
                 // this to push employee folio for relatives request
                 // emp_pan = empRelativesData[0].emp_pan
                 // var empData = await db.Employees.findAll({
@@ -90,13 +90,13 @@ module.exports = (app, db) =>
                     id: req.params.id
                 }
             })
-            console.log("reqData = ",reqData)
+            // console.log("reqData = ",reqData)
             var allFolios = await getAllFolios(reqData.pan)
-            console.log("allFolios = ",allFolios)
+            // console.log("allFolios = ",allFolios)
             var respData = reqData.dataValues
-            console.log("respData = ",respData)
+            // console.log("respData = ",respData)
             respData["allFolios"] = allFolios
-            console.log("respData = ",respData)
+            // console.log("respData = ",respData)
             
             res.status(200).json({
                 data: await encryptData(JSON.stringify({
@@ -114,7 +114,7 @@ module.exports = (app, db) =>
 
 
     app.get('/folios', (req,res) => {
-        console.error("req user", req.user)
+        // console.error("req user", req.user)
         db.Employees.findByPk(req.user.userPAN,{
             attributes:[],
             include:[

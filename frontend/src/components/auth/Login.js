@@ -125,7 +125,7 @@ class Login extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.common);
+  // console.log(state.common);
   return {
     auth: state.auth,
     company: state.common.getCompanyData,

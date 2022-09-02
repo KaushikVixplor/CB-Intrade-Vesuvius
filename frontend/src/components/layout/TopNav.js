@@ -98,7 +98,7 @@ class TopNav extends Component {
 
   handleChange = (e) => {
     this.setState({ ...this.state, [e.target.id]: e.target.value }, () => {
-      console.log(this.state);
+      // console.log(this.state);
     });
   };
 
@@ -167,8 +167,8 @@ class TopNav extends Component {
 
   render() {
     const { user } = this.props;
-    console.log('state', this.state);
-    console.log('props', this.props);
+    // console.log('state', this.state);
+    // console.log('props', this.props);
     return (
       <div>
         <ChangePassword
@@ -368,7 +368,7 @@ class TopNav extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.auth.user);
+  // console.log(state.auth.user);
   return {
     user: state.auth.user,
     userData: state.auth.data,

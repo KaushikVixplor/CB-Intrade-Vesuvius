@@ -56,7 +56,7 @@ export class TradingRequest extends Component {
   };
 
   HandleChange = (e) => {
-    console.log(e.target.id, e.target.value);
+    // console.log(e.target.id, e.target.value);
     this.setState({ [e.target.id]: e.target.value, flag: true });
     if (e.target.id == "category") {
       if (this.state.category != e.target.value) {
@@ -122,7 +122,7 @@ export class TradingRequest extends Component {
       var arr2 = [];
       var relatives = this.props.folios.Relatives;
       var folio = this.props.folios.Folios;
-      console.log(this.props.folios);
+      // console.log(this.props.folios);
       if (this.state.flag && this.props.userRelativeSuccess) {
         for (var i = 0; i < folio.length; i++) {
           var info1 = {
@@ -164,7 +164,7 @@ export class TradingRequest extends Component {
           ...new Map(arr2.map((obj) => [JSON.stringify(obj), obj])).values(),
         ];
         var array = arr1.concat(filtered);
-        console.log("array", arr2, array);
+        // console.log("array", arr2, array);
         this.setState({ folios: array, flag: false });
       }
     }
@@ -199,7 +199,7 @@ export class TradingRequest extends Component {
     var link = document.createElement("a");
     link.href = data;
     link.download = "request.pdf";
-    console.log(link.href);
+    // console.log(link.href);
     link.click();
   };
 
@@ -233,8 +233,8 @@ export class TradingRequest extends Component {
   }
   
   render() {
-    console.log("loc state", this.state);
-    console.log("loc state", this.props);
+    // console.log("loc state", this.state);
+    // console.log("loc state", this.props);
     if (!this.props.user) return <Redirect to="/login" />;
     return (
       <div className="row">
@@ -653,7 +653,7 @@ export class TradingRequest extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  // console.log(state);
   return {
     user: state.auth.user,
     common: state.common.leftBarItem,

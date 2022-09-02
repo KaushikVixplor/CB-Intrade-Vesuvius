@@ -35,7 +35,7 @@ module.exports = (app, db) =>
 
     
     app.post('/activity', async (req,res) => {
-        console.error("req user", req.user)
+        // console.error("req user", req.user)
         try{
             
             res.status(200).json({'message':'activity saved successfully'}); 
@@ -71,7 +71,7 @@ module.exports = (app, db) =>
 
     
     app.post('/mailA', async (req,res) => {
-        console.error("req user", req.user)
+        // console.error("req user", req.user)
         try{
             
             var send_to = req.body.to
@@ -150,9 +150,9 @@ module.exports = (app, db) =>
                             : req.files["attachment"][0].originalname
                         );
                     }
-                    console.log(req.body.data);
+                    // console.log(req.body.data);
                     req.body.data = JSON.parse(req.body.data);
-                    console.log(req.body.data);
+                    // console.log(req.body.data);
                     
                     var send_to = req.body.data.to
                     var body = req.body.data.body|| ""
@@ -222,12 +222,12 @@ module.exports = (app, db) =>
 
 
     app.get('/activity', async (req,res) => {
-        console.error("req user", req.user)
+        // console.error("req user", req.user)
         try{
             fromDateStr = req.query.startDate
             toDateStr = req.query.endDate 
-            console.error("fromDateStr = ",fromDateStr)
-            console.error("toDateStr = ",toDateStr)
+            // console.error("fromDateStr = ",fromDateStr)
+            // console.error("toDateStr = ",toDateStr)
             let fromDate
             let toDate
             if(fromDateStr.includes("/") || fromDateStr.includes("-")){

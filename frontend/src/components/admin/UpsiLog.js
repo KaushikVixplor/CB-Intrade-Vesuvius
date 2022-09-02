@@ -103,7 +103,7 @@ export const UpsiLog = ({
                 {
                   name: "Timestamp",
                   key: (d) => {
-                    console.error(d)
+                    // console.error(d)
                     return d.createdAt
                       ? moment(d.createdAt).format(
                         "DD-MM-YYYY, h:mm:ss a"

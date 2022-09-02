@@ -7,7 +7,7 @@ import "../stylesheet/style.css";
 import UploadDPModal from "../admin/UploadDPModal";
 
 export const LeftBar = (props) => {
-  console.log(props.itemChecker);
+  // console.log(props.itemChecker);
   return (
     <div>
       <UploadDocument

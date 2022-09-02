@@ -81,7 +81,7 @@ export class ClientRequest extends Component {
   };
 
   handleSearch = (data, query, keys, type = null) => {
-    console.error(data)
+    // console.error(data)
     if (query) {
       var op = []
       for (var i = 0; i < data.length; i++) {
@@ -103,7 +103,7 @@ export class ClientRequest extends Component {
   }
 
   OnAppprove = (e) => {
-    console.log("line number 67 id", e.target.id);
+    // console.log("line number 67 id", e.target.id);
     this.setState({
       id: e.target.id,
       status: "Approved",
@@ -210,7 +210,7 @@ export class ClientRequest extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("here", state);
+  // console.log("here", state);
   return {
     user: state.auth.user,
     requests: state.common.requests,

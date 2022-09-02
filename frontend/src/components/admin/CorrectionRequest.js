@@ -38,7 +38,7 @@ export class CorrectionRequest extends Component {
     var elem = document.querySelectorAll(".tooltipped");
     var instance = M.Tooltip.init(elem, {});
     if (this.props.getKmpSuccess && this.state.getuserFlag) {
-      console.log(this.props.kmps);
+      // console.log(this.props.kmps);
       var filteredUser = this.props.kmps.filter(
         (user) => user.status == "Update"
       );
@@ -75,7 +75,7 @@ export class CorrectionRequest extends Component {
   onApprove = (e) => {
     e.preventDefault();
     var user = this.props.kmps.find((o) => o.id == e.target.id);
-    console.log(user);
+    // console.log(user);
     this.setState({
       id: e.target.id,
       status: "Approved",
@@ -93,7 +93,7 @@ export class CorrectionRequest extends Component {
     e.preventDefault();
     // console.log("id",e.target.id)
     var user = this.props.kmps.find((o) => o.id == e.target.id);
-    console.log(user);
+    // console.log(user);
     this.setState({
       id: e.target.id,
       status: "Rejected",
@@ -275,7 +275,7 @@ export class CorrectionRequest extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  // console.log(state);
   return {
     user: state.auth.user,
     kmps: state.Hod.getKmp,

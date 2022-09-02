@@ -43,7 +43,7 @@ export class ViewTransictions extends Component {
   componentDidMount = () => {
     var elem = document.querySelectorAll(".tooltipped");
     var instance = M.Tooltip.init(elem, {});
-    console.log(elem, instance);
+    // console.log(elem, instance);
     if (this.props.user) {
       var today = this.getDateValue()
       this.setState({ today: today });
@@ -61,7 +61,7 @@ export class ViewTransictions extends Component {
   componentDidUpdate = () => {
     var elem = document.querySelectorAll(".tooltipped");
     var instance = M.Tooltip.init(elem, {});
-    console.log(elem, instance);
+    // console.log(elem, instance);
     // if (instance.isHovered) {
     //   instance.open();
     // }
@@ -108,7 +108,7 @@ export class ViewTransictions extends Component {
   };
 
   FillNext = (id) => {
-    console.log("id", id);
+    // console.log("id", id);
     this.setState({
       selReq: id,
       name: this.props.requests[id].Folio
@@ -207,8 +207,8 @@ export class ViewTransictions extends Component {
     );
   };
   render() {
-    console.log("loc state", this.state);
-    console.log("loc props", this.props);
+    // console.log("loc state", this.state);
+    // console.log("loc props", this.props);
     if (!this.props.user) return <Redirect to="/login" />;
     const query = this.state.query;
     const filteredUser = this.props.requests
@@ -255,7 +255,7 @@ export class ViewTransictions extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.error("csdc:: ",state.common.requests)
+  // console.error("csdc:: ",state.common.requests)
   return {
     user: state.auth.user,
     userData: state.auth.data,

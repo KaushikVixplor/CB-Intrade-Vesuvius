@@ -56,7 +56,7 @@ export class BulkMail extends Component {
   }
 
   handleSelect = (opt) => {
-    console.log(opt);
+    // console.log(opt);
     var reset = [];
     if (opt.length > 0) {
       if (opt["0"].value == "*") {
@@ -74,7 +74,7 @@ export class BulkMail extends Component {
   };
   onSubmit = (e) => {
     e.preventDefault();
-    console.log(this.state.to);
+    // console.log(this.state.to);
     if (
       this.state.to.length == 0 ||
       this.state.subject == "" ||
@@ -92,7 +92,7 @@ export class BulkMail extends Component {
         body: this.state.body,
       };
       this.setState({ onRequestFlag: true });
-      console.log("data:", data);
+      // console.log("data:", data);
       this.props.BulkMail(data, this.state.attachment, this.props.user.accessToken);
     }
   };
@@ -215,7 +215,7 @@ export class BulkMail extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  // console.log(state);
   return {
     user: state.auth.user,
     kmps: state.Hod.getKmp,

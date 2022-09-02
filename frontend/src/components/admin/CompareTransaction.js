@@ -14,7 +14,7 @@ export const CompareTransaction = ({
   prev_benpos_date,
   current_benpos_date
 }) => {
-  console.log("list", compareList, state);
+  // console.log("list", compareList, state);
   var field1 = state.startDate.split("-").reverse().join("-");
   var field = state.endDate.split("-").reverse().join("-");
   const getDate = (date) => {

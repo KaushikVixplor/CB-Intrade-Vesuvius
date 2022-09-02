@@ -60,7 +60,7 @@ export class UserInfo extends Component {
       var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
       var yyyy = today.getFullYear();
       today = mm + "-" + dd + "-" + yyyy;
-      console.log("today", today, new Date());
+      // console.log("today", today, new Date());
       this.setState({ getUserFlag: true, last_benpos_date: today });
       this.props.ResetProps();
       this.props.ViewCorrectionRequest(
@@ -259,7 +259,7 @@ export class UserInfo extends Component {
   };
 
   deleteTab = (e) => {
-    console.log(e.target);
+    // console.log(e.target);
     var index = e.target.id;
     this.state.relatives.splice(index, 1);
     this.setState({
@@ -301,7 +301,7 @@ export class UserInfo extends Component {
   HandleRelFolioChange = (e, i) => {
     var ind = Number(e.target.id.split("-")[1]);
     var type = e.target.id.split("-")[0];
-    console.log(ind, type, i);
+    // console.log(ind, type, i);
 
     var rels = this.state.relatives;
 
@@ -323,7 +323,7 @@ export class UserInfo extends Component {
     } else if (this.state.relatives.length > 0) {
       console.log("in relative condition");
       for (var i = 0; i < this.state.relatives.length; i++) {
-        console.log("in for loop", i, this.state.relatives[i]);
+        // console.log("in for loop", i, this.state.relatives[i]);
         if (
           this.state.relatives[i].type == "" ||
           this.state.relatives[i].name == "" ||
@@ -365,7 +365,7 @@ export class UserInfo extends Component {
             );
           } else {
             this.setState({ onRequestFlag: true });
-            console.log(this.state);
+            // console.log(this.state);
             this.props.UpdateUser(
               this.state,
               this.props.user.id,
@@ -409,7 +409,7 @@ export class UserInfo extends Component {
         );
       } else {
         this.setState({ onRequestFlag: true });
-        console.log(this.state);
+        // console.log(this.state);
         this.props.UpdateUser(
           this.state,
           this.props.user.id,
@@ -421,7 +421,7 @@ export class UserInfo extends Component {
   };
 
   releaseRelative = (element, id) => {
-    console.log(id, element.currentTarget.id);
+    // console.log(id, element.currentTarget.id);
     var index = element.currentTarget.id;
     this.state.relatives.splice(index, 1);
     this.setState({
@@ -443,7 +443,7 @@ export class UserInfo extends Component {
     this.props.SharePdf(type, this.props.user.id, this.props.user.accessToken);
   };
   render() {
-    console.log("loc state", this.state);
+    // console.log("loc state", this.state);
     return (
       <div>
         <DisclosureFormModal
@@ -1063,7 +1063,7 @@ export class UserInfo extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  // console.log(state);
   return {
     user: state.auth.user,
     userData: state.auth.data,

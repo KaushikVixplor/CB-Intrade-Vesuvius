@@ -8,7 +8,7 @@ module.exports = (app, db) => {
 
 
   app.get("/tmplates", async (req, res) => {
-    console.error("req user", req.user);
+    // console.error("req user", req.user);
     try {
         data = await db.Templates.findAll({
             order:[['id', 'ASC']]
@@ -23,7 +23,7 @@ module.exports = (app, db) => {
 
 
   app.put("/tmplates/:id", async (req, res) => {
-    console.error("req user", req.user);
+    // console.error("req user", req.user);
     try {
         var tempData = await db.Templates.findOne({
             where: {

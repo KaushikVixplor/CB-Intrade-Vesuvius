@@ -94,19 +94,19 @@ export class ShareUpsi extends Component {
     }
   };
   handleRemoveBy = (selectedList, removedItem) => {
-    console.log(selectedList, removedItem);
+    // console.log(selectedList, removedItem);
     if (selectedList.length == 0) {
       const result = this.state.by.filter(
         (by) => by.value == removedItem.value
       );
-      console.log(result);
+      // console.log(result);
       this.setState({ by: result });
     } else {
       this.setState({ by: selectedList });
     }
   };
   handleSelect = (opt) => {
-    console.log(opt);
+    // console.log(opt);
     var reset = [];
     if (opt.length > 0) {
       if (opt["0"].value == "*") {
@@ -120,7 +120,7 @@ export class ShareUpsi extends Component {
   };
   MailSent = (e) => {
     e.preventDefault();
-    console.log(this.state);
+    // console.log(this.state);
     if (this.state.selectedOption.length)
       if (
         (this.state.to.length == 0 && this.state.share_to == "") ||
@@ -143,7 +143,7 @@ export class ShareUpsi extends Component {
           subject: this.state.subject,
           information: this.state.body,
         };
-        console.log(data);
+        // console.log(data);
         this.setState({ onRequestFlag: true });
         this.props.ShareUpsi(data, this.state.attachment, this.props.user.accessToken);
       }

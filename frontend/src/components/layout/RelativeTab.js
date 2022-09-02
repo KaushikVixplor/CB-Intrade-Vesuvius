@@ -9,7 +9,7 @@ export const RelativeTab = ({
   deleteTab,
   HandleDelete,
 }) => {
-  console.log(state.relatives[index]);
+  // console.log(state.relatives[index]);
   return (
     <div>
       <ul className="collection">

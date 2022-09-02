@@ -44,7 +44,7 @@ export class NewKmpForm extends Component {
     });
   };
   render() {
-    console.log(this.state.change);
+    // console.log(this.state.change);
     return (
       <div>
         <div

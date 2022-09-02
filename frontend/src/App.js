@@ -18,7 +18,7 @@ import HomePage from "./components/layout/HomePage";
 class App extends Component {
   componentDidUpdate() {
     const { auth, RefreshToken } = this.props;
-    console.error('auth', auth)
+    // console.error('auth', auth)
     if (auth && auth.user && auth.user.refreshAccessToken && RefreshToken) {
       if (this.refreshTimer) clearInterval(this.refreshTimer);
       this.refreshTimer = setInterval(() => {

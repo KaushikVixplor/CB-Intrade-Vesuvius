@@ -2,7 +2,7 @@ import React from "react";
 import "../stylesheet/common.css"
 
 const ResetPasswordModal = ({pass}) => {
-  console.log(pass)
+  // console.log(pass)
   return (
     <div id="reset-password-modal" className="modal">
         <div className="modal-content reset_pass">

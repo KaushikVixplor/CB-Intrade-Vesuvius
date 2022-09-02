@@ -4,7 +4,7 @@ var storage = multer.diskStorage({
     callback(null, "./uploads");
   },
   filename: function(req, file, callback) {
-    console.error('file.originalname.split(".") = ',file.originalname.split("."))
+    // console.error('file.originalname.split(".") = ',file.originalname.split("."))
     temp = file.originalname.split(".")
     type = temp[temp.length - 1]
     console.error("type = ",type)

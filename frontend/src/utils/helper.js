@@ -20,7 +20,7 @@ export function queryBuilder(url, query) {
 }
 
 export const handleSearch = (data, query, keys) => {
-    console.error(data)
+    // console.error(data)
     if (query) {
         var op = []
         for (var i = 0; i < data.length; i++) {

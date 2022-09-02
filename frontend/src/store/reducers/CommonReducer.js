@@ -85,7 +85,7 @@ const CommonReducer = (state = initState, action) => {
         requests: [],
       };
     case "FETCH_REQUEST_LIST_SUCCESS":
-      console.error("in reducer:: ",action.payload)
+      // console.error("in reducer:: ",action.payload)
       return {
         ...state,
         requestFetchLoading: false,

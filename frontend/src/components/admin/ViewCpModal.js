@@ -4,7 +4,7 @@ import "../stylesheet/modals.css";
 import "../stylesheet/common.css";
 
 export const ViewCpModal = ({ UserInfo }) => {
-  console.log("user info", UserInfo);
+  // console.log("user info", UserInfo);
   return (
     <div>
       <div id="view-cp-modal" class="modal">

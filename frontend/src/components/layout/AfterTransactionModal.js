@@ -9,7 +9,7 @@ export default function AfterTransactionModal({
   loading,
   requestFolios,
 }) {
-  console.log(requestFolios);
+  // console.log(requestFolios);
   return (
     <div id="after-transaction-modal" class="modal">
       <div class="row modal-content">

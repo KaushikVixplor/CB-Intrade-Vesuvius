@@ -71,7 +71,7 @@ module.exports = (app, db) =>
                 {
                     return res.status(403).json({message:"unauthorised access"});
                 }
-                console.log("Access token info:: ",user);
+                // console.log("Access token info:: ",user);
                 const accessToken = jwt.sign({userId: userDetails.id, companyId: userDetails.company_id, userPAN: userDetails.pan, is_compliance: userDetails.is_compliance}, accessTokenSecret, { expiresIn: expTime });
                 console.log("Access token refreshed");
                 res.status(200).json(
@@ -141,7 +141,7 @@ module.exports = (app, db) =>
             }
             else
             {
-                console.error("No user exists:", usersInfo);
+                // console.error("No user exists:", usersInfo);
                 res.status(200).json({
                     data: await encryptData(JSON.stringify({
                         'message':'usersInfo fetched',
@@ -251,7 +251,7 @@ module.exports = (app, db) =>
                 .then(async ([nrows, rows]) => {
                     if (nrows>0)
                     {
-                        console.log("User detail fetched rows = ", nrows);
+                        // console.log("User detail fetched rows = ", nrows);
                         userDetails.password = null
                         userDetails.temp_info = null
                         // console.log("User detail fetched", userDeail);
@@ -333,9 +333,10 @@ module.exports = (app, db) =>
                     id:req.params.userId
                 }
             })
-            const tempPass = userData.pan;
-            console.log("tempPass = ",tempPass)
-            console.log("userData.email = ",userData.email)
+            // const tempPass = userData.pan;
+            var tempPass = await getRandomPass()
+            // console.log("tempPass = ",tempPass)
+            // console.log("userData.email = ",userData.email)
             const hashedPass = bcrypt.hashSync(tempPass,saltRound); //Hashing the password
             db.Employees.update({"password":hashedPass},{
                 where:{
@@ -352,13 +353,13 @@ module.exports = (app, db) =>
                     })
                     var text = "Dear Insider,\n\tYour Password has been reset successfully. Your new password is '"+tempPass+"'.\n\n"
                     text = text+"Yours faithfully,\nfor "+userData.Company.name+"\n"+adminData[0].name+"\nCompliance Officer"
-                    console.error("text = ",text)
+                    // console.error("text = ",text)
                     var mailRes = await sentMail({
                         to: userData.email,
                         subject: "Password Reset Successful",
                         text: text
                     })
-                    console.error("mailRes = ",mailRes)
+                    // console.error("mailRes = ",mailRes)
                     var activityData = {"activityId": activity_id}
                     activity_id = await trackActivity(activityData, db)
                     res.status(200).json({message:"password reset Successfully","password":tempPass,"mailRes": mailRes})
@@ -387,13 +388,13 @@ module.exports = (app, db) =>
                 cName = cNameParts[0].toLowerCase()+" "+cNameParts[1].toLowerCase()
             }
             uName = name.split(" ")[0].toLowerCase()
-            console.error("password.toLowerCase():: ",password.toLowerCase())
-            console.error("cName.toLowerCase():: ",cName.toLowerCase())
-            console.error(password.toLowerCase().includes(cName.toLowerCase()))
-            console.error("cName.replace(' ','').toLowerCase():: ",cName.replace(" ","").toLowerCase())
-            console.error(password.toLowerCase().includes(cName.replace(" ","").toLowerCase()))
-            console.error("uName.toLowerCase():: ",uName.toLowerCase())
-            console.error(password.toLowerCase().includes(uName.toLowerCase()))
+            // console.error("password.toLowerCase():: ",password.toLowerCase())
+            // console.error("cName.toLowerCase():: ",cName.toLowerCase())
+            // console.error(password.toLowerCase().includes(cName.toLowerCase()))
+            // console.error("cName.replace(' ','').toLowerCase():: ",cName.replace(" ","").toLowerCase())
+            // console.error(password.toLowerCase().includes(cName.replace(" ","").toLowerCase()))
+            // console.error("uName.toLowerCase():: ",uName.toLowerCase())
+            // console.error(password.toLowerCase().includes(uName.toLowerCase()))
             if(password.toLowerCase().includes(cName.toLowerCase()) || password.toLowerCase().includes(cName.replace(" ","").toLowerCase()) || password.toLowerCase().includes(uName.toLowerCase())){
                 return false
             }
@@ -414,7 +415,7 @@ module.exports = (app, db) =>
         // Activity add 
         decryptedData = await decryptData(req.body.data)
         req.body = JSON.parse(decryptedData)
-        console.log("changepassword by = ",req.user)
+        // console.log("changepassword by = ",req.user)
         var activityData = {"activity": "change password","description": "",
                             "done_by": [req.user.userId],
                             "done_for": [req.params.userId]}
@@ -442,7 +443,7 @@ module.exports = (app, db) =>
                 else{
                     const hash = bcrypt.hashSync(req.body.newPassword,saltRound); //Hashing the password
                     req.body.newPassword=hash
-                    console.log("ID", user.email, );
+                    // console.log("ID", user.email, );
                     db.Employees.update({ password:req.body.newPassword, firstLogin: false},{
                         where:{
                             id:req.params.userId
@@ -509,7 +510,7 @@ module.exports = (app, db) =>
             day ='0'+day
         }
         var fileStr = day+"/"+mon+"/"+fileDate.getFullYear()
-        console.error("fileStr = ",fileStr)
+        // console.error("fileStr = ",fileStr)
         fileDate = await getDate(fileStr)
         return fileDate
     }
@@ -518,7 +519,7 @@ module.exports = (app, db) =>
     async function getPAN(emp_code){
         try{
             let emp_pan
-            console.log("emp_code = ",emp_code)
+            // console.log("emp_code = ",emp_code)
             var employeeInfo = await db.Employees.findAll({
                 where: {
                     emp_code: emp_code
@@ -529,7 +530,7 @@ module.exports = (app, db) =>
             })
             // console.log("employeeInfo = ",employeeInfo)
             emp_pan = employeeInfo[0].pan
-            console.log("emp_pan = ",emp_pan)
+            // console.log("emp_pan = ",emp_pan)
             return emp_pan
         }
         catch(error){
@@ -562,7 +563,7 @@ module.exports = (app, db) =>
                 }
             })
             subject = templateData.subject
-            console.error("subject:: ",subject)
+            // console.error("subject:: ",subject)
             // fetch data
             var admin = await db.Employees.findOne({
                 include:[{
@@ -584,7 +585,7 @@ module.exports = (app, db) =>
                         subject: subject,
                         text: text
                     })
-                    console.error("mailRes = ",mailRes)
+                    // console.error("mailRes = ",mailRes)
                 }
                 catch(error){
                     console.error("sentBulkInsiderJoinMail:: mail sent error = ",mailRes)
@@ -610,12 +611,12 @@ module.exports = (app, db) =>
                     ['pan','DESC']
                 ]
             })
-            console.error("noPanData.length = ",noPanData.length)
+            // console.error("noPanData.length = ",noPanData.length)
             if(noPanData.length > 0){
                 var CountStr = noPanData[0].pan.replace("NOPAN","")
-                console.error("Max CountStr Pan = ",CountStr)
+                // console.error("Max CountStr Pan = ",CountStr)
                 Max = Number(CountStr)
-                console.error("Max Pan count= ",Max)
+                // console.error("Max Pan count= ",Max)
             }
             var noPanData1 = await db.Relatives.findAll({
                 where:{
@@ -627,19 +628,19 @@ module.exports = (app, db) =>
                     ['pan','DESC']
                 ]
             })
-            console.error("noPanData1.length = ",noPanData1.length)
+            // console.error("noPanData1.length = ",noPanData1.length)
             if(noPanData1.length > 0){
                 var CountStr = noPanData1[0].pan.replace("NOPAN","")
-                console.error("Max CountStr Pan = ",CountStr)
+                // console.error("Max CountStr Pan = ",CountStr)
                 rMax = Number(CountStr)
-                console.error("rMax Pan count= ",rMax)
-                console.error("Max Pan count= ",Max)
+                // console.error("rMax Pan count= ",rMax)
+                // console.error("Max Pan count= ",Max)
                 if(rMax > Max){
                     Max = rMax
                 }
             }
             Max += 1 
-            console.error("Max Pan count= ",Max)
+            // console.error("Max Pan count= ",Max)
             var pan = ""
             if(Max > 9999){
                 pan = "NOPAN"+Max.toString()
@@ -656,7 +657,7 @@ module.exports = (app, db) =>
             else{
                 pan = "NOPAN0000"+Max.toString()
             }
-            console.error("pan = ",pan)
+            // console.error("pan = ",pan)
             return pan
         }
         catch(error){
@@ -678,7 +679,7 @@ module.exports = (app, db) =>
                                 "done_for": []}
             var activity_id = await trackActivity(activityData, db)
             //uploading master excel to local and reading it as list od object
-            console.log("requestes params are",req.query);
+            // console.log("requestes params are",req.query);
             var out  =  await localUpload.fields([{ name: 'employeeData', maxCount: 1}])(req, res, async function(err) {
                 // console.log("name", req.body.name);
                 try
@@ -698,7 +699,7 @@ module.exports = (app, db) =>
                                                                     req.files['employeeData'][0].key?req.files['employeeData'][0].key:
                                                                     req.files['employeeData'][0].originalname);
                             const path =  req.body['employeeData']  
-                            console.log("path>>>>>>>>",path);                                     
+                            // console.log("path>>>>>>>>",path);                                     
                             var workbook = XLSX.readFile(req.body['employeeData']);
                             var sheet_name_list = workbook.SheetNames;
                             empData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
@@ -729,9 +730,9 @@ module.exports = (app, db) =>
                                             var DateOfAppointmentAsInsider = record.DateOfAppointmentAsInsider|| ''
                                             let appointment_date
                                             if(DateOfAppointmentAsInsider != ''){
-                                                console.log("appointment_date = ",DateOfAppointmentAsInsider)
+                                                // console.log("appointment_date = ",DateOfAppointmentAsInsider)
                                                 if(DateOfAppointmentAsInsider.toString().includes("/")){
-                                                    console.log("appointment_date = ",DateOfAppointmentAsInsider)
+                                                    // console.log("appointment_date = ",DateOfAppointmentAsInsider)
                                                     appointment_date = await getDate(DateOfAppointmentAsInsider)
                                                 }
                                                 else{
@@ -805,8 +806,8 @@ module.exports = (app, db) =>
                                                 }
                                             }
                                             var companyId = await getCompanyID()
-                                            console.log("last_benpos_date = ",last_benpos_date)
-                                            console.log("date_of_appointment_as_insider = ",appointment_date)
+                                            // console.log("last_benpos_date = ",last_benpos_date)
+                                            // console.log("date_of_appointment_as_insider = ",appointment_date)
                                             var EmployeeData = {"pan": pan,"emp_code": code,"name": name,"email": email,"password": bcrypt.hashSync(pan,saltRound),
                                                                 "company_id": companyId,"designation": Designation,"phone": phone,"address": Address,
                                                                 "total_share": total_share,"last_benpos_date": last_benpos_date,
@@ -816,10 +817,10 @@ module.exports = (app, db) =>
                                                                 'firstLogin': true
                                                             }
                                             
-                                            console.error("EmployeeData:: ",EmployeeData)           
+                                            // console.error("EmployeeData:: ",EmployeeData)           
                                             var newEmployeeInfo = await db.Employees.create(EmployeeData,{transaction: t}) 
 
-                                            console.error("Employee created:: ",newEmployeeInfo) 
+                                            // console.error("Employee created:: ",newEmployeeInfo) 
                                             addedList.push({name: name,type: "Employee"})      
                                             for(k=0;k<Folio_info.length;k++){  
                                                 var newFolio = await db.Folios.create(Folio_info[k],{transaction: t}) 
@@ -845,9 +846,9 @@ module.exports = (app, db) =>
                                             else{
                                                 last_benpos_date = new Date()
                                             }
-                                            console.error("name = ",name)
-                                            console.error("code = ",code)
-                                            console.error('code.split("/")[0] = ',code.split("/")[0])
+                                            // console.error("name = ",name)
+                                            // console.error("code = ",code)
+                                            // console.error('code.split("/")[0] = ',code.split("/")[0])
                                             var emp_pan = await getPAN(code.split("/")[0])
                                             var total_share = 0
                                             if("FolioNo1" in record){
@@ -901,7 +902,7 @@ module.exports = (app, db) =>
                                                 }
                                             }
                                             
-                                            console.log("last_benpos_date = ",last_benpos_date)
+                                            // console.log("last_benpos_date = ",last_benpos_date)
                                             var RelativeData = {"emp_pan": emp_pan,"pan": pan,"emp_sub_code": code,"name": name,"email": email,
                                                                 "phone": phone,"address": Address,"relation": relation,"type": RelationType,
                                                                 "total_share": total_share,"last_benpos_date": last_benpos_date,"last_institute": last_institute,
@@ -971,7 +972,7 @@ module.exports = (app, db) =>
                             "done_by": [req.user.userId],
                             "done_for": []}
         var activity_id = await trackActivity(activityData, db)
-        console.error(" activity_id = ",activity_id)
+        // console.error(" activity_id = ",activity_id)
         if(req.user&&req.user.is_compliance){
             req.body.email
             var empData = await db.Employees.findAll({ 
@@ -990,7 +991,7 @@ module.exports = (app, db) =>
                 
                 req.body["date_of_appointment_as_insider"] = new Date()
                 tempPass = await getRandomPass()
-                console.error("tempPass = ",tempPass)
+                // console.error("tempPass = ",tempPass)
 
                 // send mail
                 var coData = await db.Employees.findOne({ 
@@ -1010,13 +1011,13 @@ module.exports = (app, db) =>
                 subject = templateData.subject
                 text = await getUpdatedText(templateData.body,variables)
                 text = await getCredentialsText(text,[backendUrl,req.body.email])
-                console.error("text = ",text)
+                // console.error("text = ",text)
                 var mailRes = await sentMail({
                     to: req.body.email,
                     subject: subject,
                     text: text
                 })
-                console.error("mailRes = ",mailRes)
+                // console.error("mailRes = ",mailRes)
 
                 if(mailRes.status == 200){
                     type = 'DP'
@@ -1029,11 +1030,11 @@ module.exports = (app, db) =>
                         status:'Temp',
                         type: type
                     })
-                    console.log("Employee created", newEmp.id);
+                    // console.log("Employee created", newEmp.id);
                     activityData = {"activityId": activity_id,
                                         "done_for": [newEmp.id]}
-                    console.error(" activityData = ",activityData)
-                    console.error(" activity_id = ",activity_id)
+                    // console.error(" activityData = ",activityData)
+                    // console.error(" activity_id = ",activity_id)
                     activity_id = await trackActivity(activityData, db)
                     res.status(200).json({message:"Employee created", id: newEmp.id, mailRes})
                 }
@@ -1108,12 +1109,12 @@ module.exports = (app, db) =>
                 reqType = ""
                 mailTo = ""
                 if(data.status == 'Temp'){
-                    console.error("Temp")
-                    console.error("pan = ",req.body.pan)
+                    // console.error("Temp")
+                    // console.error("pan = ",req.body.pan)
                     if(req.body.pan == ""){
                         req.body["pan"] = data.pan
                     }
-                    console.error("pan = ",req.body.pan)
+                    // console.error("pan = ",req.body.pan)
                     req.body["password"] = bcrypt.hashSync(req.body.pan,saltRound)
                     var activityData = {"activity": "Personal Details Add","description": "",
                                         "done_by": [req.params.id],
@@ -1181,7 +1182,7 @@ module.exports = (app, db) =>
                 var relData = []
                 var mailRes = {}
                 var masterDoc = new PDFDocument();
-                console.log("mail ob", mailOb);
+                // console.log("mail ob", mailOb);
                 if(mailOb.flag){
                     if(mailOb.type == 'FIRST_ACTIVE' ||mailOb.type == 'REQUEST_UPDATE'){
                         var anex6 = await getAnnexure6(req.body)
@@ -1241,43 +1242,43 @@ module.exports = (app, db) =>
                 //update on database
                 if(mailOb.type == 'RE_ACTIVE'){
                     var tempdtStr = updateData.last_benpos_date
-                    console.error(">>>>>>>> tempdtStr(1) = ",tempdtStr)
+                    // console.error(">>>>>>>> tempdtStr(1) = ",tempdtStr)
                     if(tempdtStr == ""){
                         console.error("last benpos date is empty")
                         var nw = new Date()
                         tempdtStr = (nw.getMonth()+1)+"-"+nw.getDate()+"-"+nw.getFullYear()
-                        console.error(">>>>>>>> tempdtStr(2) = ",tempdtStr)
+                        // console.error(">>>>>>>> tempdtStr(2) = ",tempdtStr)
                         updateData.last_benpos_date = tempdtStr
-                        console.error(">>>>>>>> updateData.last_benpos_date(1) = ",updateData.last_benpos_date)
+                        // console.error(">>>>>>>> updateData.last_benpos_date(1) = ",updateData.last_benpos_date)
                     }
                     else if(tempdtStr.includes("Z")){
                         updateData.last_benpos_date = new Date(tempdtStr)
-                        console.error(">>>>>>>> updateData.last_benpos_date(2) = ",updateData.last_benpos_date)
+                        // console.error(">>>>>>>> updateData.last_benpos_date(2) = ",updateData.last_benpos_date)
                     }
                     else{
-                        console.error(">>>>>>>> tempdtStr(3) = ",tempdtStr)
+                        // console.error(">>>>>>>> tempdtStr(3) = ",tempdtStr)
                         var listStr = tempdtStr.split("-")
                         tempdtStr = listStr[1]+"-"+listStr[0]+"-"+listStr[2]
-                        console.error(">>>>>>>> tempdtStr(4) = ",tempdtStr)
+                        // console.error(">>>>>>>> tempdtStr(4) = ",tempdtStr)
                         updateData.last_benpos_date = new Date(tempdtStr)
-                        console.error(">>>>>>>> updateData.last_benpos_date(3) = ",updateData.last_benpos_date)
+                        // console.error(">>>>>>>> updateData.last_benpos_date(3) = ",updateData.last_benpos_date)
                     }
                 }
-                console.error("updateData:: ",updateData)
+                // console.error("updateData:: ",updateData)
                 db.Employees.update(updateData, {
                     where:{
                         id:req.params.id
                     }
                 })
                 .then(async ([nrows, rows] )=> {
-                    console.log("Employee data", data);
-                    console.log("Employee updated", nrows);
+                    // console.log("Employee data", data);
+                    // console.log("Employee updated", nrows);
                     var d = await db.Employees.findAll({
                         where:{
                             id:req.params.id
                         }
                     })
-                    console.log("Employee updated", d);
+                    // console.log("Employee updated", d);
                     var upRel = []
                     var upFol = []
 
@@ -1290,7 +1291,7 @@ module.exports = (app, db) =>
                     if(updateData.folios){
                         for(var i=0;i<updateData.folios.length;i++){
                             var fol = updateData.folios[i]
-                            console.log("Employee fol", fol);
+                            // console.log("Employee fol", fol);
                             try{
                                 var finFol = await db.Folios.findOne({
                                     where:{
@@ -1309,7 +1310,7 @@ module.exports = (app, db) =>
                                         upFol.push({folio:fol.folio, update:true, create:false})
                                     }
                                     catch(error){
-                                        console.error("Error for folio", fol.folio, error);
+                                        // console.error("Error for folio", fol.folio, error);
                                         upFol.push({folio:fol.folio, update:false, create:false})
 
                                     }
@@ -1326,26 +1327,26 @@ module.exports = (app, db) =>
                                             upFol.push({folio:fol.folio, update:true, create:false})
                                         }
                                         catch(error){
-                                            console.error("Error for folio", fol.folio, error);
+                                            // console.error("Error for folio", fol.folio, error);
                                             upFol.push({folio:fol.folio, update:false, create:false})
 
                                         }
                                     }
                                     else if(fol.folio&&fol.folio != ''){
                                         try{
-                                            console.log("new Employee fol", fol);
+                                            // console.log("new Employee fol", fol);
                                             var newRel = await db.Folios.create({...fol, emp_pan: req.body.pan})
                                             upFol.push({folio:fol.folio, update:false, create:true})
                                         }
                                         catch(error){
-                                            console.error("Error for folio", fol.folio, error);
+                                            // console.error("Error for folio", fol.folio, error);
                                             upFol.push({folio:fol.folio, update:false, create:true})
                                         }
                                     }
                                 }
                             }
                             catch(error){
-                                console.error("Error for folio:", fol.folio, error);
+                                // console.error("Error for folio:", fol.folio, error);
                                 upFol.push({folio:fol.folio, update:false, create:false})
                             }
                         }
@@ -1371,7 +1372,7 @@ module.exports = (app, db) =>
                                     console.error("last benpos date is empty")
                                     var nw = new Date()
                                     tempdtStr = (nw.getMonth()+1)+"-"+nw.getDate()+"-"+nw.getFullYear()
-                                    console.error(">>>>>>>> tempdtStr = ",tempdtStr)
+                                    // console.error(">>>>>>>> tempdtStr = ",tempdtStr)
                                     rel.last_benpos_date = tempdtStr
                                 }
                             }
@@ -1381,21 +1382,21 @@ module.exports = (app, db) =>
                                     console.error("last benpos date is empty")
                                     var nw = new Date()
                                     tempdtStr = (nw.getMonth()+1)+"-"+nw.getDate()+"-"+nw.getFullYear()
-                                    console.error(">>>>>>>> tempdtStr = ",tempdtStr)
+                                    // console.error(">>>>>>>> tempdtStr = ",tempdtStr)
                                     rel.last_benpos_date = tempdtStr
                                 }
                                 else if(tempdtStr.includes("Z")){
                                     rel.last_benpos_date = new Date(tempdtStr)
                                 }
                                 else{
-                                    console.error(">>>>>>>> tempdtStr = ",tempdtStr)
+                                    // console.error(">>>>>>>> tempdtStr = ",tempdtStr)
                                     var listStr = tempdtStr.split("-")
                                     tempdtStr = listStr[1]+"-"+listStr[2]+"-"+listStr[0]
-                                    console.error(">>>>>>>> tempdtStr = ",tempdtStr)
+                                    // console.error(">>>>>>>> tempdtStr = ",tempdtStr)
                                     rel.last_benpos_date = tempdtStr
                                 }
                             }
-                            console.error(">>>>>>>> rel = ",rel)
+                            // console.error(">>>>>>>> rel = ",rel)
                             rel['emp_pan'] = data.pan 
                             try{
                                 var finRel = await db.Relatives.findOne({
@@ -1416,7 +1417,7 @@ module.exports = (app, db) =>
                                         upRel.push({pan:rel.pan, update:true, create:false})
                                     }
                                     catch(error){
-                                        console.error("Error for rel with pan:", rel.pan, error);
+                                        // console.error("Error for rel with pan:", rel.pan, error);
                                         upRel.push({pan:newRel.pan, update:false, create:false})
 
                                     }
@@ -1429,7 +1430,7 @@ module.exports = (app, db) =>
                                         upRel.push({pan:newRel.pan, update:false, create:true})
                                     }
                                     catch(error){
-                                        console.error("Error for rel with pan:", rel.pan, error);
+                                        // console.error("Error for rel with pan:", rel.pan, error);
                                         upRel.push({pan:newRel.pan, update:false, create:false})
                                     }
                                 }
@@ -1443,10 +1444,10 @@ module.exports = (app, db) =>
                                 if(rel.folios){
                                     for(var k=0;k<rel.folios.length;k++){
                                         var fol = rel.folios[k]
-                                        console.error("fol info = ",fol)
+                                        // console.error("fol info = ",fol)
                                         // fol['emp_pan'] = data.pan 
                                         // fol['emp_relative_pan'] = rel.pan
-                                        console.error("fol info = ",fol)
+                                        // console.error("fol info = ",fol)
                                         try{
                                             var finFol = await db.Folios.findOne({
                                                 where:{
@@ -1465,7 +1466,7 @@ module.exports = (app, db) =>
                                                     upRelFolios.push({folio:fol.folio, update:true, create:false})
                                                 }
                                                 catch(error){
-                                                    console.error("Error for folio", fol.folio, error);
+                                                    // console.error("Error for folio", fol.folio, error);
                                                     upRelFolios.push({folio:fol.folio, update:false, create:false})
         
                                                 }
@@ -1482,7 +1483,7 @@ module.exports = (app, db) =>
                                                         upRelFolios.push({folio:fol.folio, update:true, create:false})
                                                     }
                                                     catch(error){
-                                                        console.error("Error for folio", fol.folio, error);
+                                                        // console.error("Error for folio", fol.folio, error);
                                                         upRelFolios.push({folio:fol.folio, update:false, create:false})
             
                                                     }
@@ -1493,14 +1494,14 @@ module.exports = (app, db) =>
                                                         upRelFolios.push({folio:fol.folio, update:false, create:true})
                                                     }
                                                     catch(error){
-                                                        console.error("Error for folio", fol.folio, error);
+                                                        // console.error("Error for folio", fol.folio, error);
                                                         upFol.push({folio:fol.folio, update:false, create:true})
                                                     }
                                                 }
                                             }
                                         }
                                         catch(error){
-                                            console.error("Error for folio:", fol.folio, error);
+                                            // console.error("Error for folio:", fol.folio, error);
                                             upRelFolios.push({folio:fol.folio, update:false, create:false})
                                         }
                                     }
@@ -1509,7 +1510,7 @@ module.exports = (app, db) =>
                                 }
                             }
                             catch(error){
-                                console.error("Error for rel with pan:", rel.pan, error);
+                                // console.error("Error for rel with pan:", rel.pan, error);
                                 upRel.push({pan:rel.pan, update:false, create:false})
                             }
                         }
@@ -1646,8 +1647,8 @@ module.exports = (app, db) =>
                         emp_pan: employyeData.pan
                     }
                 })
-                console.error("newRelativeData = ", newRelativeData);
-                console.error("newFolioData = ", newFolioData);
+                // console.error("newRelativeData = ", newRelativeData);
+                // console.error("newFolioData = ", newFolioData);
                 var activityData = {"activityId": activity_id}
                 activity_id = await trackActivity(activityData, db)
                 res.status(200).json({message:"Employee released successfullly"})
@@ -1686,7 +1687,7 @@ module.exports = (app, db) =>
                         emp_relative_pan: relativeData.pan
                     }
                 })
-                console.error("newFolioData = ", newFolioData);
+                // console.error("newFolioData = ", newFolioData);
                 var activityData = {"activityId": activity_id}
                 activity_id = await trackActivity(activityData, db)
                 res.status(200).json({message:"Relative released successfullly"})

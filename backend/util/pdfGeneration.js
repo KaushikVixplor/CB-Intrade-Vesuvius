@@ -7,12 +7,12 @@ async function getDateString(dateObj,timeFlag = false){
     try{
         if(!timeFlag){
             var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()
-            console.log('dateObj : ', dateObj)
+            // console.log('dateObj : ', dateObj)
             return dateStr
         }
         else{
             var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()+", "+dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds()
-            console.log('dateObj : ', dateObj)
+            // console.log('dateObj : ', dateObj)
             return dateStr
         }
     }
@@ -752,7 +752,7 @@ var getAnnexure7And8 = async (data) => {
     .stroke();
 
     if(doc.y>maxY){
-        console.log("1 doc y", doc.y, maxY);
+        // console.log("1 doc y", doc.y, maxY);
         maxY = doc.y
     }
 
@@ -764,7 +764,7 @@ var getAnnexure7And8 = async (data) => {
       }
     );
     if(doc.y>maxY){
-        console.log("2 doc y", doc.y, maxY);
+        // console.log("2 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -779,7 +779,7 @@ var getAnnexure7And8 = async (data) => {
     );
     x+=55
     if(doc.y>maxY){
-        console.log("3 doc y", doc.y, maxY);
+        // console.log("3 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -805,7 +805,7 @@ var getAnnexure7And8 = async (data) => {
 
 
     if(doc.y>maxY){
-        console.log("4 doc y", doc.y, maxY);
+        // console.log("4 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -816,7 +816,7 @@ var getAnnexure7And8 = async (data) => {
     );
     
     if(doc.y>maxY){
-        console.log("5 doc y", doc.y, maxY);
+        // console.log("5 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -840,7 +840,7 @@ var getAnnexure7And8 = async (data) => {
       }
     );
     if(doc.y>maxY){
-        console.log("6 doc y", doc.y, maxY);
+        // console.log("6 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -859,7 +859,7 @@ var getAnnexure7And8 = async (data) => {
       }
     );
     if(doc.y>maxY){
-        console.log("7 doc y", doc.y, maxY);
+        // console.log("7 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -873,7 +873,7 @@ var getAnnexure7And8 = async (data) => {
     );
     x+=45
     if(doc.y>maxY){
-        console.log("8 doc y", doc.y, maxY);
+        // console.log("8 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -895,14 +895,14 @@ var getAnnexure7And8 = async (data) => {
     
     var endX = x
     if(doc.y>maxY){
-        console.log("9 doc y", doc.y, maxY);
+        // console.log("9 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
-    console.log("endX", endX);
+    // console.log("endX", endX);
     doc.rect(50, stY - 5, endX-40, 200).stroke();
     doc.rect(50, stY - 5, endX-40, 400).stroke();
-    console.log("endX", endX);
+    // console.log("endX", endX);
     doc.rect(box2X, stY - 5, 480 , 52).stroke();
 
     var y = 370
@@ -1154,7 +1154,7 @@ var getAnnexure7And8 = async (data) => {
     .stroke();
 
     if(doc.y>maxY){
-        console.log("1 doc y", doc.y, maxY);
+        // console.log("1 doc y", doc.y, maxY);
         maxY = doc.y
     }
 
@@ -1166,7 +1166,7 @@ var getAnnexure7And8 = async (data) => {
       }
     );
     if(doc.y>maxY){
-        console.log("2 doc y", doc.y, maxY);
+        // console.log("2 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -1181,7 +1181,7 @@ var getAnnexure7And8 = async (data) => {
     );
     x+=55
     if(doc.y>maxY){
-        console.log("3 doc y", doc.y, maxY);
+        // console.log("3 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -1207,7 +1207,7 @@ var getAnnexure7And8 = async (data) => {
 
 
     if(doc.y>maxY){
-        console.log("4 doc y", doc.y, maxY);
+        // console.log("4 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -1218,7 +1218,7 @@ var getAnnexure7And8 = async (data) => {
     );
     
     if(doc.y>maxY){
-        console.log("5 doc y", doc.y, maxY);
+        // console.log("5 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -1242,7 +1242,7 @@ var getAnnexure7And8 = async (data) => {
       }
     );
     if(doc.y>maxY){
-        console.log("6 doc y", doc.y, maxY);
+        // console.log("6 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -1261,7 +1261,7 @@ var getAnnexure7And8 = async (data) => {
       }
     );
     if(doc.y>maxY){
-        console.log("7 doc y", doc.y, maxY);
+        // console.log("7 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -1275,7 +1275,7 @@ var getAnnexure7And8 = async (data) => {
     );
     x+=45
     if(doc.y>maxY){
-        console.log("8 doc y", doc.y, maxY);
+        // console.log("8 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
@@ -1297,14 +1297,14 @@ var getAnnexure7And8 = async (data) => {
     
     endX = x
     if(doc.y>maxY){
-        console.log("9 doc y", doc.y, maxY);
+        // console.log("9 doc y", doc.y, maxY);
 
         maxY = doc.y
     }
-    console.log("endX", endX);
+    // console.log("endX", endX);
     doc.rect(50, stY - 5, endX-40, 200).stroke();
     doc.rect(50, stY - 5, endX-40, 400).stroke();
-    console.log("endX", endX);
+    // console.log("endX", endX);
     doc.rect(box2X, stY - 5, 480 , 52).stroke();
 
     var y = 370
@@ -1451,7 +1451,7 @@ var getAnnexure1And2=async (req, EmployeeData, FolioData, db,requestId)=>{
     var request_type = req.body.request_type
     
     var proposed_dealing_from_date_str = req.body.date_requested_from
-    console.error("proposed_dealing_from_date_str = ",proposed_dealing_from_date_str)
+    // console.error("proposed_dealing_from_date_str = ",proposed_dealing_from_date_str)
     if(typeof proposed_dealing_from_date_str != "string"){
         dtStr = proposed_dealing_from_date_str
         dtStr = dtStr.getFullYear()+"-"+(dtStr.getMonth()+1)+"-"+dtStr.getDate()
@@ -1461,7 +1461,7 @@ var getAnnexure1And2=async (req, EmployeeData, FolioData, db,requestId)=>{
     // console.error("proposed_dealing_from_date = ",proposed_dealing_from_date)
     
     var proposed_dealing_to_date_str = req.body.date_requested_to
-    console.error("proposed_dealing_to_date_str = ",proposed_dealing_to_date_str)
+    // console.error("proposed_dealing_to_date_str = ",proposed_dealing_to_date_str)
     if(typeof proposed_dealing_to_date_str != "string"){
         dtStr = proposed_dealing_to_date_str
         dtStr = dtStr.getFullYear()+"-"+(dtStr.getMonth()+1)+"-"+dtStr.getDate()
@@ -1476,7 +1476,7 @@ var getAnnexure1And2=async (req, EmployeeData, FolioData, db,requestId)=>{
     var mode = req.body.mode
     var folioId = req.body.folio_id
     var category = req.body.category
-    console.error("employeeData = ",EmployeeData)
+    // console.error("employeeData = ",EmployeeData)
     var pan = EmployeeData.pan
     var security_type = req.body.security_type
     // var stock_exchange = req.body.stock_exchange
@@ -1684,7 +1684,7 @@ const getConnectedPersons = async (body) => {
 };
 
 const compareTransactionPdf = async (body, formDate, toDate) => {
-    console.log(body);
+    // console.log(body);
     try {
         const doc = new PDFDocument({
             size: "B4",

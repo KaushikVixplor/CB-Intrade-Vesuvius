@@ -30,7 +30,7 @@ export class PostTransaction extends Component {
     this.setState({ request: request });
     var modal = document.getElementById("view-request-modal");
     var instance = M.Modal.getInstance(modal);
-    console.log(modal, instance);
+    // console.log(modal, instance);
     instance.open();
   };
   handleDownload = (id) => {
@@ -55,7 +55,7 @@ export class PostTransaction extends Component {
   };
 
   handleSearch = (data, query, keys, type = null) => {
-    console.error(data)
+    // console.error(data)
     if (query) {
       var op = []
       for (var i = 0; i < data.length; i++) {
@@ -77,8 +77,8 @@ export class PostTransaction extends Component {
   }
 
   render() {
-    console.log(this.state);
-    console.log(this.props);
+    // console.log(this.state);
+    // console.log(this.props);
     const query = this.state.query;
     const filteredUser = this.props.requests
       ? query
@@ -401,7 +401,7 @@ export class PostTransaction extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("here", state);
+  // console.log("here", state);
   return {
     user: state.auth.user,
     requests: state.common.requests,

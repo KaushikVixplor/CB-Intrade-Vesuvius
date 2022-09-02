@@ -140,8 +140,8 @@ module.exports = (app, db) =>
                     var variables = [admin.name,data.name]
                     subject = templateData.subject
                     text = await getUpdatedText(templateData.body,variables)
-                    console.error("text = ")
-                    console.error(text)
+                    // console.error("text = ")
+                    // console.error(text)
 
                     // generate pdf
                     data["emp"] = data
@@ -205,10 +205,10 @@ module.exports = (app, db) =>
                     var variables = [data.name, backendUrl, data.email, data.pan, admin.Company.name, admin.name]
                     subject = templateData.subject
                     text = await getUpdatedText(templateData.body,variables)
-                    console.error("subject = ")
-                    console.error(subject)
-                    console.error("text = ")
-                    console.error(text)
+                    // console.error("subject = ")
+                    // console.error(subject)
+                    // console.error("text = ")
+                    // console.error(text)
 
                 }
                 else if(req.params.type == 'Cp_update_request'){
@@ -260,8 +260,8 @@ module.exports = (app, db) =>
                     var variables = [admin.name,empData.name]
                     subject = templateData.subject
                     text = await getUpdatedText(templateData.body,variables)
-                    console.error("text = ")
-                    console.error(text)
+                    // console.error("text = ")
+                    // console.error(text)
 
                     // generate pdf
                     // var data = empData.temp_info
@@ -334,8 +334,8 @@ module.exports = (app, db) =>
                     var variables = [EmployeeData[0].name,empName]
                     subject = templateData.subject
                     text = await getUpdatedText(templateData.body,variables)
-                    console.error("text = ")
-                    console.error(text)
+                    // console.error("text = ")
+                    // console.error(text)
                     
                     // generate pdf 
                     var EmployeeData = await db.Employees.findOne({ 
@@ -418,8 +418,8 @@ module.exports = (app, db) =>
                         var variables = [requestData.Folio.Employee.name,CompanyData.name,coData.name]
                         subject = templateData.subject
                         text = await getUpdatedText(templateData.body,variables)
-                        console.error("text = ")
-                        console.error(text)
+                        // console.error("text = ")
+                        // console.error(text)
 
                         // generate pdf
                         var EmployeeData = requestData.Folio.Employee
@@ -485,8 +485,8 @@ module.exports = (app, db) =>
                         var variables = [requestData.Folio.Employee.name,CompanyData.name,coData.name]
                         subject = templateData.subject
                         text = await getUpdatedText(templateData.body,variables)
-                        console.error("text = ")
-                        console.error(text)
+                        // console.error("text = ")
+                        // console.error(text)
 
                         // generate pdf
                         var EmployeeData = requestData.Folio.Employee
@@ -551,12 +551,12 @@ module.exports = (app, db) =>
                     var variables = [EmployeeData[0].name,reqData.Folio.Employee.name]
                     subject = templateData.subject
                     text = await getUpdatedText(templateData.body,variables)
-                    console.error("text = ")
-                    console.error(text)
+                    // console.error("text = ")
+                    // console.error(text)
 
                     // generation Pdf
                     var company = reqData.Folio.Employee.Company.name
-                    console.log("company = ",company)
+                    // console.log("company = ",company)
                     var pan = reqData.pan
                     var security_type = reqData.security_type
                     var request_type = reqData.request_type
@@ -614,8 +614,8 @@ module.exports = (app, db) =>
                         var variables = [EmployeeData[0].name,CompanyData.name,admin.name]
                         subject = templateData.subject
                         text = await getUpdatedText(templateData.body,variables)
-                        console.error("text = ")
-                        console.error(text)
+                        // console.error("text = ")
+                        // console.error(text)
                     }
                     else{
                         console.error("No user_id received")
@@ -654,8 +654,8 @@ module.exports = (app, db) =>
                         var variables = [EmployeeData[0].name,EmployeeData[0].reason,CompanyData.name,admin.name]
                         subject = templateData.subject
                         text = await getUpdatedText(templateData.body,variables)
-                        console.error("text = ")
-                        console.error(text)
+                        // console.error("text = ")
+                        // console.error(text)
                     }
                     else{
                         console.error("No user_id received")
@@ -672,7 +672,7 @@ module.exports = (app, db) =>
                         },
                         include:[{model:db.Company}]
                     })
-                    console.error("emps = ",emps)
+                    // console.error("emps = ",emps)
                     if(emps.length > 0){
                         // var mailIds = []
                         for(e=0;e<emps.length;e++){
@@ -698,8 +698,8 @@ module.exports = (app, db) =>
                         var variables = [window_close_from_str, window_close_to_str,emps[0].Company.purpose, emps[0].Company.name, coData.name]
                         subject = templateData.subject
                         text = await getUpdatedText(templateData.body,variables)
-                        console.error("text = ")
-                        console.error(text)
+                        // console.error("text = ")
+                        // console.error(text)
                     }
                     else{
                         console.error("No CP added yet !!")
@@ -715,7 +715,7 @@ module.exports = (app, db) =>
                         },
                         include:[{model:db.Company}]
                     })
-                    console.error("emps = ",emps)
+                    // console.error("emps = ",emps)
                     if(emps.length > 0){
                         // var mailIds = []
                         var coData = await db.Employees.findOne({
@@ -735,8 +735,8 @@ module.exports = (app, db) =>
                         for(e=0;e<emps.length;e++){
                             var variables = [emps[0].Company.name, backendUrl,emps[0].Company.meta_tag,emps[e].email,emps[e].pan,coData.name, emps[0].Company.name]
                             text = await getUpdatedText(templateData.body,variables)
-                            console.error("text = ")
-                            console.error(text)
+                            // console.error("text = ")
+                            // console.error(text)
                             mailIds.push({email: emps[e].email,text: text})
                         }
                     }
@@ -754,7 +754,7 @@ module.exports = (app, db) =>
                         },
                         include:[{model:db.Company}]
                     })
-                    console.error("emps = ",emps)
+                    // console.error("emps = ",emps)
                     if(emps.length > 0){
                         // var mailIds = []
                         var coData = await db.Employees.findOne({
@@ -774,8 +774,8 @@ module.exports = (app, db) =>
                         for(e=0;e<emps.length;e++){
                             var variables = [emps[0].Company.name, backendUrl,emps[0].Company.meta_tag,emps[e].email,emps[e].pan,coData.name, emps[0].Company.name]
                             text = await getUpdatedText(templateData.body,variables)
-                            console.error("text = ")
-                            console.error(text)
+                            // console.error("text = ")
+                            // console.error(text)
                             mailIds.push({email: emps[e].email,text: text})
                         }
                     }

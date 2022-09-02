@@ -42,7 +42,7 @@ export class ExistingTemplates extends Component {
     this.setState({updateFlag:true})
   };
   render() {
-    console.log('props : ', this.props)
+    // console.log('props : ', this.props)
     return (
       <div className="container" style={{ height: "85vh" }}>
         <form action="#">

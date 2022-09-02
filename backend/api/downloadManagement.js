@@ -115,8 +115,8 @@ module.exports = (app, db) => {
 		try {
 			fromDateStr = req.query.startDate;
 			toDateStr = req.query.endDate;
-			console.error('fromDateStr = ', fromDateStr);
-			console.error('toDateStr = ', toDateStr);
+			// console.error('fromDateStr = ', fromDateStr);
+			// console.error('toDateStr = ', toDateStr);
 			let fromDate;
 			let toDate;
 			if (fromDateStr.includes('/') || fromDateStr.includes('-')) {
@@ -174,8 +174,8 @@ module.exports = (app, db) => {
 		try {
 			fromDateStr = req.query.startDate;
 			toDateStr = req.query.endDate;
-			console.log('fromDateStr = ', fromDateStr);
-			console.log('toDateStr = ', toDateStr);
+			// console.log('fromDateStr = ', fromDateStr);
+			// console.log('toDateStr = ', toDateStr);
 			let fromDate;
 			let toDate;
 			if (fromDateStr.includes('/') || fromDateStr.includes('-')) {
@@ -252,8 +252,8 @@ module.exports = (app, db) => {
 		try {
 			fromDateStr = req.query.startDate;
 			toDateStr = req.query.endDate;
-			console.error('fromDateStr = ', fromDateStr);
-			console.error('toDateStr = ', toDateStr);
+			// console.error('fromDateStr = ', fromDateStr);
+			// console.error('toDateStr = ', toDateStr);
 			let fromDate;
 			let toDate;
 			if (fromDateStr.includes('/') || fromDateStr.includes('-')) {
@@ -357,13 +357,13 @@ module.exports = (app, db) => {
 		try {
 			let data;
 			let rDate;
-			console.log('ref_date = ', ref_date.toString());
+			// console.log('ref_date = ', ref_date.toString());
 			var dateLimit = new Date(limitDate.setHours(0, 0, 0));
 			var fromDate = new Date(ref_date.setHours(0, 0, 0));
 			var toDate = new Date(ref_date.setHours(23, 59, 59));
-			console.log('dateLimit = ', dateLimit.toString());
-			console.log('fromDate = ', fromDate.toString());
-			console.log('toDate = ', toDate.toString());
+			// console.log('dateLimit = ', dateLimit.toString());
+			// console.log('fromDate = ', fromDate.toString());
+			// console.log('toDate = ', toDate.toString());
 			var transactionData = await gettransactionData(fromDate, toDate);
 			if (transactionData.length == 0) {
 				if (isCurrent) {
@@ -372,15 +372,15 @@ module.exports = (app, db) => {
 					temp_date = ref_date;
 					while (flag) {
 						temp_date = await subDays(temp_date, 1);
-						console.log('temp_date = ', temp_date.toString());
+						// console.log('temp_date = ', temp_date.toString());
 						var fromDate1 = new Date(temp_date.setHours(0, 0, 0));
 						var toDate1 = new Date(temp_date.setHours(23, 59, 59));
-						console.log('fromDate1 = ', fromDate1.toString());
-						console.log('toDate1 = ', toDate1.toString());
+						// console.log('fromDate1 = ', fromDate1.toString());
+						// console.log('toDate1 = ', toDate1.toString());
 						var transactionData1 = await gettransactionData(fromDate1, toDate1);
 						benpos_data_not_fount_count += 1;
-						console.log('benpos_data_not_fount_count = ', benpos_data_not_fount_count);
-						console.log('transactionData1.length = ', transactionData1.length);
+						// console.log('benpos_data_not_fount_count = ', benpos_data_not_fount_count);
+						// console.log('transactionData1.length = ', transactionData1.length);
 						if (transactionData1.length > 0) {
 							flag = false;
 						}
@@ -399,15 +399,15 @@ module.exports = (app, db) => {
 					temp_date = ref_date;
 					while (flag) {
 						temp_date = await addDays(temp_date, 1);
-						console.log('temp_date = ', temp_date.toString());
+						// console.log('temp_date = ', temp_date.toString());
 						var fromDate2 = new Date(temp_date.setHours(0, 0, 0));
 						var toDate2 = new Date(temp_date.setHours(23, 59, 59));
-						console.log('fromDate2 = ', fromDate2.toString());
-						console.log('toDate2 = ', toDate2.toString());
+						// console.log('fromDate2 = ', fromDate2.toString());
+						// console.log('toDate2 = ', toDate2.toString());
 						var transactionData2 = await gettransactionData(fromDate2, toDate2);
 						benpos_data_not_fount_count += 1;
-						console.log('benpos_data_not_fount_count = ', benpos_data_not_fount_count);
-						console.log('transactionData2.length = ', transactionData2.length);
+						// console.log('benpos_data_not_fount_count = ', benpos_data_not_fount_count);
+						// console.log('transactionData2.length = ', transactionData2.length);
 
 						if (transactionData2.length > 0) {
 							flag = false;

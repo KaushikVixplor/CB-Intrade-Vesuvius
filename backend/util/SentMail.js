@@ -41,9 +41,9 @@ const sentMail = async (mailOptions) => {
     from: config[env].mailId,
   };
   try {
-    console.log("Email mailOptions: " + mailOptions);
+    // console.log("Email mailOptions: " + mailOptions);
     var response = await transporter.sendMail(mailOptions);
-    console.log("Email sent: " + response);
+    // console.log("Email sent: " + response);
     return { status: 200, message: "Mail sent" };
   } catch (error) {
     if (error) {

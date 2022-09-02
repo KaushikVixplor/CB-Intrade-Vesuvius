@@ -26,11 +26,12 @@ class ClientDashboard extends Component {
     this.setState({ chooseFlag: e.target.id });
   };
   handleChange = (e) => {
-    console.log("sdjkfb", e.target.id);
+    // console.log("sdjkfb", e.target.id);
     this.setState({ [e.target.id]: e.target.value });
   };
   handleRequest = (e) => {
-    console.log("state", this.state);
+    // console.log("state", this.state);
+    console.log("state Request");
   };
   render() {
     if (!this.props.user) return <Redirect to="/login" />;
@@ -44,7 +45,7 @@ class ClientDashboard extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  // console.log(state);
   return {
     user: state.auth.user,
     common: state.common.leftBarItem,

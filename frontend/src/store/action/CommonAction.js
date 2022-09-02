@@ -80,7 +80,7 @@ export const gotoCompare = (id) => {
 };
 
 export const getRequestList = (status, pan, token) => {
-  console.log(status, pan, token);
+  // console.log(status, pan, token);
   return (dispatch) => {
     dispatch({
       type: "FETCH_REQUEST_LIST_LOADING",
@@ -93,7 +93,7 @@ export const getRequestList = (status, pan, token) => {
     } else if (status == null) {
       fullUrl = backendUrl + "/requests";
     }
-    console.log("full url", fullUrl);
+    // console.log("full url", fullUrl);
     fetch(fullUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -151,7 +151,7 @@ export const sharePdf = (type, id, token) => {
     } else if (type == "Window_closure" || type == "Cp_annual_declaration" || type == "Co_annual_declaration") {
       var fullUrl = backendUrl + "/sendMail/" + type;
     }
-    console.log("full url", fullUrl);
+    // console.log("full url", fullUrl);
     fetch(fullUrl, {
       method: "post",
       headers: {

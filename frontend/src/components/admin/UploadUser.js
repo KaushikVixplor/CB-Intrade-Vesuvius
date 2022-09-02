@@ -3,10 +3,10 @@ import React, { useState } from "react";
 const UploadUser = (props) => {
   const fileValueClear = () => {
     const file = document.querySelector(".bulkKmp");
-    console.log(file.value);
+    // console.log(file.value);
     file.value = null;
     const File = document.querySelector(".fileUser");
-    console.log(File.value);
+    // console.log(File.value);
     File.value = null;
     props.resetValue("user");
   };

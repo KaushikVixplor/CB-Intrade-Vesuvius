@@ -48,7 +48,7 @@ export class UserInformation extends Component {
     var instance = M.Modal.init(elems, {});
     var elem = document.querySelectorAll(".tooltipped");
     var instances = M.Tooltip.init(elem, {});
-    console.log(instances);
+    // console.log(instances);
   }
   componentDidUpdate() {
     var elem = document.querySelectorAll(".tooltipped");
@@ -150,7 +150,7 @@ export class UserInformation extends Component {
   kmpView = (id) => {
     var id = id;
     var user = this.props.kmps.find((o) => o.id == id);
-    console.log("user", user);
+    // console.log("user", user);
     this.setState({ kmpFlag: true, kmp: user });
     //this.props.KmpRelative(id, this.props.user.accessToken);
   };
@@ -182,7 +182,7 @@ export class UserInformation extends Component {
   };
 
   releseKmp = (e) => {
-    console.log(e.target.id);
+    // console.log(e.target.id);
     e.preventDefault();
     this.setState({ releseKmp: true });
     var modal = document.getElementById("delete-user-modal");
@@ -255,10 +255,10 @@ export class UserInformation extends Component {
   }
 
   render() {
-    console.log("state ", this.state)
-    console.log("props ", this.props)
+    // console.log("state ", this.state)
+    // console.log("props ", this.props)
     if (!this.props.user) return <Redirect to="/login" />;
-    console.log("kmp", this.props.kmps);
+    // console.log("kmp", this.props.kmps);
     const query = this.state.query;
     const filteredUser = this.props.kmps
       ? query
@@ -460,7 +460,7 @@ export class UserInformation extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log("relative", state);
+  // console.log("relative", state);
   return {
     user: state.auth.user,
     userData: state.auth.data,

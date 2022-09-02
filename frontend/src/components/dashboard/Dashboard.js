@@ -180,7 +180,7 @@ export class Dashboard extends Component {
     var date = this.state.date;
     var formattedDate = this.dateFormatter(date);
     var excel = this.state.weeklyData;
-    console.log(formattedDate, excel);
+    // console.log(formattedDate, excel);
     var modal = document.getElementById("upload-modal");
     var instance = M.Modal.getInstance(modal);
     instance.close();
@@ -199,40 +199,40 @@ export class Dashboard extends Component {
 
 
   sendMail = (e) => {
-    console.error("sendMail = ", this.state);
+    // console.error("sendMail = ", this.state);
     if (
       !this.state.annualConfirmFlag
     ) {
       var modal = document.getElementById("confirmation-modal");
       var instance = M.Modal.getInstance(modal);
       instance.close();
-      console.error("sendMail = ", this.state);
+      // console.error("sendMail = ", this.state);
       this.props.SharePdf("Cp_annual_declaration", null, this.props.user.accessToken);
       this.setState({ annualConfirmFlag: true });
-      console.error("sendMail = ", this.state);
+      // console.error("sendMail = ", this.state);
     }
   };
 
 
   sendMailCO = (e) => {
-    console.error("sendMailCO = ", this.state);
+    // console.error("sendMailCO = ", this.state);
     if (
       !this.state.annualConfirmFlag
     ) {
       var modal = document.getElementById("confirmation-modal");
       var instance = M.Modal.getInstance(modal);
       instance.close();
-      console.error("sendMailCO = ", this.state);
+      // console.error("sendMailCO = ", this.state);
       this.props.SharePdf("Co_annual_declaration", null, this.props.user.accessToken);
       this.setState({ annualConfirmFlag: true });
-      console.error("sendMailCO = ", this.state);
+      // console.error("sendMailCO = ", this.state);
     }
   };
 
 
 
   windowCloserSubmit = (e) => {
-    console.log(this.state);
+    // console.log(this.state);
     var from = this.state.from;
     var to = this.state.to;
     var purpose = this.state.purpose;
@@ -253,7 +253,7 @@ export class Dashboard extends Component {
     var modal = document.getElementById("configure-modal");
     var instance = M.Modal.getInstance(modal);
     instance.close();
-    console.log(from, to, purpose);
+    // console.log(from, to, purpose);
     this.props.WindowConfiguration(
       type,
       from,
@@ -288,7 +288,7 @@ export class Dashboard extends Component {
     var modal = document.getElementById("configure-modal");
     var instance = M.Modal.getInstance(modal);
     instance.close();
-    console.log(from, to, purpose);
+    // console.log(from, to, purpose);
     this.setState({ configSubmitFlag: true, configShareFlag: true });
     this.props.WindowConfiguration(
       type,
@@ -329,7 +329,7 @@ export class Dashboard extends Component {
     );
   };
   handleWindowCloser = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     this.setState({ [e.target.id]: e.target.value });
   };
   onTab = (e) => {
@@ -375,8 +375,8 @@ export class Dashboard extends Component {
 
   render() {
     if (!this.props.user) return <Redirect to="/login" />;
-    console.log(this.state);
-    console.log(this.props);
+    // console.log(this.state);
+    // console.log(this.props);
     return (
       <div style={{ height: "100vh", width: "100vw", "overflow-x": "auto", "overflow-y": "auto" }}>
         <TopNav />
@@ -888,7 +888,7 @@ export class Dashboard extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  // console.log(state);
   return {
     user: state.auth.user,
     userData: state.auth.data,

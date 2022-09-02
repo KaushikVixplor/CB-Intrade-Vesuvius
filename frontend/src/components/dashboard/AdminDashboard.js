@@ -86,7 +86,7 @@ export class AdminDashboard extends Component {
     if (this.props.common == "template") {
       this.props.GetTemplate(this.props.user.accessToken);
     }
-    console.log(this.props);
+    // console.log(this.props);
     if (this.props.goToCompare == "compare") {
       this.setState({ chooseFlag: "compare" });
       this.props.GoToCompare(null);
@@ -303,7 +303,7 @@ export class AdminDashboard extends Component {
         var Data = removeRepeatNumbers(cids);
         newarr[k].transaction_folio = Data;
       }
-      console.log(newarr);
+      // console.log(newarr);
       this.setState({
         violationTransData: newarr,
         violationTransFlag: false,
@@ -333,7 +333,7 @@ export class AdminDashboard extends Component {
           swal("Bulk Insider Add Successful except the above Insider(s)  ", {
             title: [user],
           });
-          console.log(user);
+          // console.log(user);
         }
 
         this.setState({ uploadFlag: false });
@@ -566,7 +566,7 @@ export class AdminDashboard extends Component {
   // };
 
   current = (pan, arr1, arr2, flag, index) => {
-    console.log(pan);
+    // console.log(pan);
     for (var i = 0; i < arr1.length; i++) {
       for (var j = 0; j < arr2.length; j++) {
         if (arr1[i].pan == pan && arr2[j].pan == pan) {
@@ -665,7 +665,7 @@ export class AdminDashboard extends Component {
     );
   };
   handleUpload = (e) => {
-    console.log("jsdgh", e.target.files[0]);
+    // console.log("jsdgh", e.target.files[0]);
     this.setState({ weeklyData: e.target.files[0] });
   };
   handleUploadKmp = (e) => {
@@ -673,7 +673,7 @@ export class AdminDashboard extends Component {
     this.setState({ bulkKmp: e.target.files[0] });
   };
   handleUploadDate = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     this.setState({ date: e.target.value });
   };
   dateFormatter = (inputDate) => {
@@ -696,7 +696,7 @@ export class AdminDashboard extends Component {
     var end_date = this.state.end_date
       ? this.dateFormatter(this.state.end_date)
       : this.state.endDate.split("-").reverse().join("-");
-    console.log(start_date, end_date);
+    // console.log(start_date, end_date);
     if (this.state.chooseFlag == "violation") {
       this.setState({ violationTransFlag: true });
       this.props.ViolationTransaction(
@@ -750,7 +750,7 @@ export class AdminDashboard extends Component {
       var modal = document.getElementById("configure-modal");
       var instance = M.Modal.getInstance(modal);
       instance.close();
-      console.log(from, to, purpose);
+      // console.log(from, to, purpose);
       this.props.WindowConfiguration(
         from,
         to,
@@ -764,7 +764,7 @@ export class AdminDashboard extends Component {
     var date = this.state.date;
     var formattedDate = this.dateFormatter(date);
     var excel = this.state.weeklyData;
-    console.log(formattedDate, excel);
+    // console.log(formattedDate, excel);
     var modal = document.getElementById("upload-modal");
     var instance = M.Modal.getInstance(modal);
     instance.close();
@@ -818,7 +818,7 @@ export class AdminDashboard extends Component {
   }
 
   handleChooseTemplate = (e) => {
-    console.log(e.target.id, this.state.chooseFlag);
+    // console.log(e.target.id, this.state.chooseFlag);
     var template = this.props.tempaltes.find((o) => o.id == e.target.id);
     this.setState({
       templateId: e.target.id,
@@ -865,7 +865,7 @@ export class AdminDashboard extends Component {
   };
 
   handleSearch = (data, query, keys) => {
-    console.error(data)
+    // console.error(data)
     if (query) {
       var op = []
       for (var i = 0; i < data.length; i++) {
@@ -887,9 +887,9 @@ export class AdminDashboard extends Component {
 
   render() {
     if (!this.props.user) return <Redirect to="/login" />;
-    console.log("admin state", this.state);
-    console.log("file value", document.querySelector(".weeklyData"));
-    console.log('props : ', this.props)
+    // console.log("admin state", this.state);
+    // console.log("file value", document.querySelector(".weeklyData"));
+    // console.log('props : ', this.props)
     return (
       <div className="row">
         <TopNav />
@@ -1143,7 +1143,7 @@ export class AdminDashboard extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  // console.log(state);
   return {
     user: state.auth.user,
     userData: state.auth.data,

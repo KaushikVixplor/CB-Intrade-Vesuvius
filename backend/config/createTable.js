@@ -150,7 +150,7 @@ const createTables = async (db) => {
       // Company
       const companyData = await db.Company.create(companyInfo[0])
 
-      console.log("companyData id = ",companyData.id)
+      // console.log("companyData id = ",companyData.id)
       console.log("COMPANY DATA INSERTED ... ");
 
       // preparing data of compliance officer
@@ -189,7 +189,7 @@ const createTables = async (db) => {
       // Employee
       const EmployeeData = await db.Employees.create(COInfo)
 
-      console.log("EmployeeData id = ",EmployeeData.id)
+      // console.log("EmployeeData id = ",EmployeeData.id)
 
       console.log("CO DATA INSERTED ... ");
 

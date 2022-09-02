@@ -14,8 +14,8 @@ export const ViewCorrectionRequestModal = ({
   handleChange,
   state,
 }) => {
-  console.log("UserInfo:: ",UserInfo); 
-  console.log("typeof UserInfo:: ",typeof UserInfo); 
+  // console.log("UserInfo:: ",UserInfo); 
+  // console.log("typeof UserInfo:: ",typeof UserInfo); 
   // console.log("JSON.parse(UserInfo):: ",JSON.parse(UserInfo));
   return (
     <>

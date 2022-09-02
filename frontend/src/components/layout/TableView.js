@@ -224,7 +224,7 @@ export class TableView extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("here", state);
+  // console.log("here", state);
   return {
     user: state.auth.user,
     company: state.common.getCompanyData

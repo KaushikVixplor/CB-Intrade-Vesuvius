@@ -59,14 +59,14 @@ export const requestTran = (body, token) => {
     }).then((response) =>
       response.blob().then((blob) => {
         // response.headers.forEach(console.log);
-        for (let entry of response.headers.entries()) {
-          console.log(entry);
-        }
-        console.log(
-          "response",
-          response.headers.get("id"),
-          response.headers.get("Content-Type")
-        );
+        // for (let entry of response.headers.entries()) {
+        //   console.log(entry);
+        // }
+        // console.log(
+        //   "response",
+        //   response.headers.get("id"),
+        //   response.headers.get("Content-Type")
+        // );
         if (response.status === 500) {
           response.json().then(data=>{
             dispatch({

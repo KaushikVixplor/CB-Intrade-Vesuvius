@@ -262,8 +262,8 @@ const compareTransactionNew = async (param) => {
     var prev_folio = null;
     var prev_benpos_date = new Date(new Date(transactionData.prev_benpos_date).setHours(0,0,0))
     var current_benpos_date = new Date(new Date(transactionData.current_benpos_date).setHours(0,0,0))
-    console.log('prev_benpos_date ', prev_benpos_date)
-    console.log('current_benpos_date ', current_benpos_date)
+    // console.log('prev_benpos_date ', prev_benpos_date)
+    // console.log('current_benpos_date ', current_benpos_date)
     if (prev_benpos_date.getTime() ==  current_benpos_date.getTime()){
       console.log('current benpose date is equals to previous benpose date')
       var j=0;
@@ -296,8 +296,8 @@ const compareTransactionNew = async (param) => {
     else{
       for(var i=0; i<current_benpos_data.length; i++){
         currPan = current_benpos_data[i].Folio.Employee.pan
-        console.log('currPan', currPan)
-        console.log('processedPans', processedPans)
+        // console.log('currPan', currPan)
+        // console.log('processedPans', processedPans)
         if(!processedPans.includes(currPan)){
           processedPans.push(currPan);
           filteredPrevBenposData = prev_benpos_data.filter((e) => { return e.Folio.Employee.pan == currPan})
@@ -419,15 +419,15 @@ const getViolationData = async (params) => {
         var s = 0;
         for(s=0; s<data.length; s++) {
           // console.log("data", data);
-          console.log("------------------------")
+          // console.log("------------------------")
           var date1 = new Date(body[i].current_benpos_date);
           var date2 = data[s].benpose_date;
-          console.log(date1);
-          console.log(data[s].benpose_date);
+          // console.log(date1);
+          // console.log(data[s].benpose_date);
           var a = await getDate(date1);
           var b = date2; 
-          console.log(a);
-          console.log(b);
+          // console.log(a);
+          // console.log(b);
           if(a == b && data[s].pan == body[i].pan) {
             flag = true;
             break;
@@ -468,12 +468,12 @@ const getDateString = async (dateObj,timeFlag = false) => {
   try{
       if(!timeFlag){
           var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()
-          console.log('dateObj : ', dateObj)
+          // console.log('dateObj : ', dateObj)
           return dateStr
       }
       else{
           var dateStr = dateObj.getDate()+"-"+(dateObj.getMonth()+1)+"-"+dateObj.getFullYear()+", "+dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds()
-          console.log('dateObj : ', dateObj)
+          // console.log('dateObj : ', dateObj)
           return dateStr
       }
   }

@@ -19,11 +19,11 @@ export const uploadExcel = (date, excelFile, token) => {
         response
           .json()
           .then((data) => {
-            console.log("upload data", data);
+            // console.log("upload data", data);
             if (response.status === 200) {
               var respData = JSON.parse(decryptData(data.data))
               data = respData
-              console.log("Data", data);
+              // console.log("Data", data);
               dispatch({ type: "ADD_DATA_SUCCESS", message: data.message, payload: data, error: data.errorList[0] });
             } else{ dispatch({ type: "ADD_DATA_ERROR", message: data.message });}
           })
@@ -51,7 +51,7 @@ export const uploadBulkEmployee = (excelFile, type, token) => {
           .json()
           .then((data) => {
             if (response.status === 200) {
-              console.log("Data", data);
+              // console.log("Data", data);
               dispatch({ type: "ADD_BULK_KMP_SUCCESS", payload: data });
             } else dispatch({ type: "ADD_BULK_KMP_ERROR", message: data.message });
           })
@@ -292,7 +292,7 @@ export const windowConfigure = (type, from, to, purpose, token) => {
       }
     ).then((response) =>
       response.json().then((data) => {
-        console.log("header", response);
+        // console.log("header", response);
         if (response.status == 200) {
           dispatch({
             type:
@@ -554,8 +554,8 @@ export const bulkMail = (body, file, token) => {
       body: formData,
     }).then((response) =>
       response.json().then((data) => {
-        console.log("header", response.headers.get("Content-Type"));
-        console.log("header", response.headers);
+        // console.log("header", response.headers.get("Content-Type"));
+        // console.log("header", response.headers);
         if (response.status === 200) {
           dispatch({
             type: "BULK_MAIL_SUCCESS",

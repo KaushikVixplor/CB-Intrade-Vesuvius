@@ -108,7 +108,7 @@ export class Transactionrequest extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("here", state);
+  // console.log("here", state);
   return {
     user: state.auth.user,
     requests: state.common.requests,

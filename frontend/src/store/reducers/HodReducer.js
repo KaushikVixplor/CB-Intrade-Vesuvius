@@ -120,7 +120,7 @@ const initState = {
 };
 
 const HodReducer = (state = initState, action) => {
-  console.error("hod reducer:: ",action)
+  // console.error("hod reducer:: ",action)
   switch (action.type) {
     case "ADD_DATA_LOADING":
       return {
