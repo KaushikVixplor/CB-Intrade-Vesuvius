@@ -111,11 +111,11 @@ class TopNav extends Component {
     var re = new RegExp('(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])')
     var tested = re.test(this.state.newPassword)
     if (!tested) {
-      swal('Info', 'Password should contains atleast one Upper case, one lower case, one numeric and one special charecter', 'info')
+      swal('Info', 'Password should contain atleast one Capital letter, one Small letter, one Number and one special charecter', 'info')
       return
     }
     if (this.state.newPassword.length < 10) {
-      swal('Info', 'Password should contains minimum ten charecters', 'info')
+      swal('Info', 'Password should contain minimum ten charecters', 'info')
       return
     }
     this.setState({

@@ -109,7 +109,8 @@ export class AdminDashboard extends Component {
       this.props.weeklyDataError &&
       this.state.uploadFlag
     ) {
-      swal("OOPS!", this.props.message, "error");
+      // swal("OOPS!", this.props.message, "error");
+      swal("OOPS!",this.props.weeklyDataMsg, "error");
       this.setState({ uploadFlag: false, weeklyData: "", date: "" });
     }
     if (
@@ -1152,6 +1153,7 @@ const mapStateToProps = (state) => {
     weeklyDataLoading: state.Hod.weeklyDataLoading,
     weeklyDataSuccess: state.Hod.weeklyDataSuccess,
     weeklyDataError: state.Hod.weeklyDataError,
+    weeklyDataMsg: state.Hod.weeklyDataMsg,
     compareTransaction: state.Hod.compareTransaction,
     violationTransaction: state.Hod.violationTransaction,
     compareTransactionLoading: state.Hod.compareTransactionLoading,

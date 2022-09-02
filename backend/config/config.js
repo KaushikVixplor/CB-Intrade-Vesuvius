@@ -26,7 +26,7 @@ const config = {
       pan: "NOPAN00000",
       emp_code: "000001",
       name: "Subhabrata Biswas",
-      email:"joy.m@vixplor.com",
+      email:"kaushik.r@vixplor.com",
       designation: "Vice President",
       phone: "(033)4011 6715",
       address: "P-22, Bondel Road, Kolkata - 700019",

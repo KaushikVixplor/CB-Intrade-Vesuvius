@@ -1452,13 +1452,23 @@ var getAnnexure1And2=async (req, EmployeeData, FolioData, db,requestId)=>{
     
     var proposed_dealing_from_date_str = req.body.date_requested_from
     console.error("proposed_dealing_from_date_str = ",proposed_dealing_from_date_str)
-    var proposed_dealing_from_date = await getDate(proposed_dealing_from_date_str)
-    console.error("proposed_dealing_from_date = ",proposed_dealing_from_date)
+    if(typeof proposed_dealing_from_date_str != "string"){
+        dtStr = proposed_dealing_from_date_str
+        dtStr = dtStr.getFullYear()+"-"+(dtStr.getMonth()+1)+"-"+dtStr.getDate()
+        proposed_dealing_from_date_str = dtStr
+    }
+    // var proposed_dealing_from_date = await getDate(proposed_dealing_from_date_str)
+    // console.error("proposed_dealing_from_date = ",proposed_dealing_from_date)
     
     var proposed_dealing_to_date_str = req.body.date_requested_to
     console.error("proposed_dealing_to_date_str = ",proposed_dealing_to_date_str)
-    var proposed_dealing_to_date = await getDate(proposed_dealing_to_date_str)
-    console.error("proposed_dealing_to_date = ",proposed_dealing_to_date)
+    if(typeof proposed_dealing_to_date_str != "string"){
+        dtStr = proposed_dealing_to_date_str
+        dtStr = dtStr.getFullYear()+"-"+(dtStr.getMonth()+1)+"-"+dtStr.getDate()
+        proposed_dealing_to_date_str = dtStr
+    }
+    // var proposed_dealing_to_date = await getDate(proposed_dealing_to_date_str)
+    // console.error("proposed_dealing_to_date = ",proposed_dealing_to_date)
 
     var proposed_quantity = Number(req.body.request_quantity)
     var proposed_price = Number(req.body.proposed_price)

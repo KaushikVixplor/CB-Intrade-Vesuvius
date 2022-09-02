@@ -2,6 +2,7 @@ import { backendUrl } from "../../config/config";
 import { decryptData, encryptData } from "../../utils/helper";
 
 export const clientRequest = (body) => {
+  var data = encryptData(JSON.stringify(body))
   return (dispatch) => {
     dispatch({ type: "CLIENT_REQUEST_LOADING" });
     var url = backendUrl + "/request/";
@@ -11,7 +12,9 @@ export const clientRequest = (body) => {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        data: data
+      }),
     }).then((response) =>
       response.json().then((data) => {
         if (response.status === 200) {
@@ -36,6 +39,7 @@ export const clientRequest = (body) => {
 };
 
 export const requestTran = (body, token) => {
+  var data = encryptData(JSON.stringify(body))
   return (dispatch) => {
     dispatch({
       type: "REQUEST_TRANSACTION_LOADING",
@@ -49,7 +53,9 @@ export const requestTran = (body, token) => {
         Authorization: `Bearer ${token}`,
         id: "",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        data: data
+      }),
     }).then((response) =>
       response.blob().then((blob) => {
         // response.headers.forEach(console.log);
@@ -171,6 +177,7 @@ export const updateUser = (body, id, stat, token) => {
 };
 
 export const updateRequest = (body, id, token) => {
+  var data = encryptData(JSON.stringify(body))
   return (dispatch) => {
     dispatch({ type: "REQUEST_UPDATE_LOADING" });
     var url = backendUrl + "/request/" + id + "/complete";
@@ -181,7 +188,9 @@ export const updateRequest = (body, id, token) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        data: data
+      }),
     }).then((response) =>
       {
         if(response.status != 200){

@@ -19,15 +19,17 @@ export const uploadExcel = (date, excelFile, token) => {
         response
           .json()
           .then((data) => {
-            console.log("upload response", response);
+            console.log("upload data", data);
             if (response.status === 200) {
+              var respData = JSON.parse(decryptData(data.data))
+              data = respData
               console.log("Data", data);
-              dispatch({ type: "ADD_DATA_SUCCESS", payload: data });
-            } else dispatch({ type: "ADD_DATA_ERROR", message: data.message, error: data.errorList[0] });
+              dispatch({ type: "ADD_DATA_SUCCESS", message: data.message, payload: data, error: data.errorList[0] });
+            } else{ dispatch({ type: "ADD_DATA_ERROR", message: data.message });}
           })
-          .catch((error) => dispatch({ type: "ADD_DATA_ERROR" }))
+          .catch((error) => dispatch({ type: "ADD_DATA_ERROR",message: "Error to upload benpos data" }))
       )
-      .catch((error) => dispatch({ type: "ADD_DATA_ERROR" }));
+      .catch((error) => dispatch({ type: "ADD_DATA_ERROR",message: "Error to upload benpos data" }));
   };
 };
 
@@ -113,6 +115,8 @@ export const compareTransaction = (start_date, end_date, token) => {
     ).then((response) =>
       response.json().then((data) => {
         if (response.status == 200) {
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "COMPARE_TRANSACTION_FETCH_SUCCESS",
             payload: data.data,
@@ -150,6 +154,8 @@ export const violationTransaction = (start_date, end_date, token) => {
     ).then((response) =>
       response.json().then((data) => {
         if (response.status == 200) {
+          var respData = JSON.parse(decryptData(data.data))
+          data = respData
           dispatch({
             type: "VIOLATION_TRANSACTION_FETCH_SUCCESS",
             payload: data.data,
@@ -494,10 +500,11 @@ export const getUpsi = (start_date, end_date, token) => {
 };
 
 export const shareUpsi = (body, attachment, token) => {
+  var data = encryptData(JSON.stringify(body))
   return (dispatch) => {
     var formData = new FormData()
     formData.append('attachment', attachment)
-    formData.append('data', JSON.stringify(body))
+    formData.append('data', JSON.stringify({data:data}))
     dispatch({ type: "SHARE_UPSI_LOADING" });
     var url = backendUrl + "/upsi";
     fetch(url, {

@@ -89,7 +89,7 @@ export class Dashboard extends Component {
       this.props.weeklyDataError &&
       this.state.uploadFlag
     ) {
-      swal("OOPS!", 'Error to upload benpos data', "error");
+      swal("OOPS!",this.props.weeklyDataMsg, "error");
       this.setState({ uploadFlag: false, weeklyData: "", date: "" });
     }
     if (this.state.configFlag && !this.props.windowConfigLoding) {
@@ -897,6 +897,7 @@ const mapStateToProps = (state) => {
     weeklyDataLoading: state.Hod.weeklyDataLoading,
     weeklyDataSuccess: state.Hod.weeklyDataSuccess,
     weeklyDataError: state.Hod.weeklyDataError,
+    weeklyDataMsg: state.Hod.weeklyDataMsg,
     compareTransaction: state.Hod.compareTransaction,
     violationTransaction: state.Hod.violationTransaction,
     compareTransactionLoading: state.Hod.compareTransactionLoading,

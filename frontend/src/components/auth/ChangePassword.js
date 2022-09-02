@@ -31,6 +31,11 @@ const ChangePassword = ({state, HandleChange, OnSubmit}) => {
                     />
                     <label>New Password</label>
                   </div>
+                  <div>
+                    <span style={{ "font-size": 12, "font-weight": "700" }}>
+                      <b>Note:</b> Password should contains atleast one Capital letter, one Small letter.<br></br>Password should contains atleast one Number.<br></br> Password must contain a special character.<br></br>Password length must be greater than 9 characters.
+                    </span>
+                  </div>
                {/*   <div className="input-field col s12">
                     <input
                       type="password"
@@ -46,7 +51,7 @@ const ChangePassword = ({state, HandleChange, OnSubmit}) => {
             </div>
       </div>
       <div className="modal-footer">
-        <button type="submit" form="changePassword" className="modal-close waves-effect waves btn-flat">Yes</button>
+        <button type="submit" form="changePassword" className="waves-effect waves btn-flat">Yes</button>
         <button className="modal-close waves-effect waves btn-flat">No</button>
       </div>
     </div>

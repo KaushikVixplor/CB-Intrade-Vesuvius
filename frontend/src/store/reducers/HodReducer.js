@@ -4,6 +4,7 @@ const initState = {
   weeklyDataSuccess: false,
   weeklyDataError: false,
   weeklyDataLoading: false,
+  weeklyDataMsg: "",
   errorList: null,
 
   uploadBulkEmployee: "",
@@ -119,6 +120,7 @@ const initState = {
 };
 
 const HodReducer = (state = initState, action) => {
+  console.error("hod reducer:: ",action)
   switch (action.type) {
     case "ADD_DATA_LOADING":
       return {
@@ -126,6 +128,7 @@ const HodReducer = (state = initState, action) => {
         weeklyDataSuccess: false,
         weeklyDataError: false,
         weeklyDataLoading: true,
+        weeklyDataMsg: ""
       };
     case "ADD_DATA_SUCCESS":
       return {
@@ -134,6 +137,8 @@ const HodReducer = (state = initState, action) => {
         weeklyDataSuccess: true,
         weeklyDataError: false,
         weeklyDataLoading: false,
+        weeklyDataMsg: action.message,
+        errorList: action.error
       };
     case "ADD_DATA_ERROR":
       return {
@@ -141,8 +146,7 @@ const HodReducer = (state = initState, action) => {
         weeklyDataSuccess: false,
         weeklyDataError: true,
         weeklyDataLoading: false,
-        message: action.message,
-        errorList: action.error
+        weeklyDataMsg: action.message
       };
     case "ADD_BULK_KMP_LOADING":
       return {

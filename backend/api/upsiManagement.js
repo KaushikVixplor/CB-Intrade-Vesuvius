@@ -5,6 +5,8 @@ const pattern1 = /(\d{2})\-(\d{2})\-(\d{4})/;
 const sentMail = require('../util/SentMail');
 const localUpload = require('../util/storageLocal').upload;
 const localgetPublicUrl = require('../util/storageLocal').getPublicUrl;
+const decryptData = require('../util/common').decryptData;
+const encryptData = require('../util/common').encryptData;
 const encryptCredentials = require('../util/common').encryptCredentials;
 const decryptCredentials = require('../util/common').decryptCredentials;
 const getPdf = require('../util/common').getPdf;
@@ -146,6 +148,8 @@ module.exports = (app, db) =>
                         );
                     }
                     console.log(req.body.data);
+                    decryptedData = await decryptData(req.body.data)
+                    req.body = JSON.parse(decryptedData)
                     req.body.data = JSON.parse(req.body.data);
                     console.log(req.body.data);
                     var shared_by = req.body.data.shared_by

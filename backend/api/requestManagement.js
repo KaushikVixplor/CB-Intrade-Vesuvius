@@ -70,6 +70,8 @@ module.exports = (app, db) =>
     app.put("/request/:id/complete", async (req,res) => {
         try{
             // data preparation
+            decryptedData = await decryptData(req.body.data)
+            req.body = JSON.parse(decryptedData)
             var activityData = {"activity": "Transaction Information Add","description": "",
                                 "done_by": [req.user.userId],
                                 "done_for": [req.user.userId]}
@@ -281,9 +283,15 @@ module.exports = (app, db) =>
 
     app.get('/request/:id', (req,res) => {
         db.Requests.findByPk(req.params.id)
-        .then( data=> {
+        .then( async data=> {
             console.log("Request fetched");
-            res.status(200).json({message:"Request fetched", data})
+            res.status(200).json({
+                data: await encryptData(JSON.stringify({
+                    'message':'Requests fetched',
+                    "data": data
+                }))
+            })
+            // res.status(200).json({message:"Request fetched", data})
         })
         .catch(err => {
             console.error("Fetch Request error", err);
@@ -422,6 +430,8 @@ module.exports = (app, db) =>
 
     app.post("/request", async (req,res) => {
         try{
+            decryptedData = await decryptData(req.body.data)
+            req.body = JSON.parse(decryptedData)
             // data preparation
             var proposed_dealing_from_date_str = req.body.date_requested_from
             // console.error("proposed_dealing_from_date_str = ",proposed_dealing_from_date_str)

@@ -9,6 +9,8 @@ const trackActivity = require('../util/activityTrack').trackActivity;
 const compareTransaction = require('../util/common').compareTransaction;
 const compareTransactionNew = require('../util/common').compareTransactionNew;
 const getViolationData = require('../util/common').getViolationData;
+const decryptData = require('../util/common').decryptData;
+const encryptData = require('../util/common').encryptData;
 const encryptCredentials = require('../util/common').encryptCredentials;
 const decryptCredentials = require('../util/common').decryptCredentials;
 var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
@@ -185,7 +187,13 @@ module.exports = (app, db) =>{
             // compareData = await compareTransaction(transactionData)
             compareData = await compareTransactionNew(transactionData)
 
-            res.status(200).json({'message':'transaction fetch successfully',"data":{transactionData: transactionData,compareData: compareData,prev_benpos_date: transactionData.prev_benpos_date,current_benpos_date: transactionData.current_benpos_date}})
+            res.status(200).json({
+                data: await encryptData(JSON.stringify({
+                    'message':'transaction fetch successfully',
+                    "data":{transactionData: transactionData,compareData: compareData,prev_benpos_date: transactionData.prev_benpos_date,current_benpos_date: transactionData.current_benpos_date}
+                }))
+            })
+            // res.status(200).json({'message':'transaction fetch successfully',"data":{transactionData: transactionData,compareData: compareData,prev_benpos_date: transactionData.prev_benpos_date,current_benpos_date: transactionData.current_benpos_date}})
         }
         catch(error){
             console.error("transaction fetch error:",error);
@@ -245,7 +253,13 @@ module.exports = (app, db) =>{
                         }]
             })
 			violationData = await getViolationData(transactionData)
-            res.status(200).json({'message':'transaction fetch successfully',"data":violationData})
+            res.status(200).json({
+                data: await encryptData(JSON.stringify({
+                    'message':'violations fetch successfully',
+                    "data":violationData
+                }))
+            })
+            // res.status(200).json({'message':'transaction fetch successfully',"data":violationData})
         }
         catch(error){
             console.error("transaction fetch error:",error);
@@ -281,9 +295,10 @@ module.exports = (app, db) =>{
         if(day < 9){
             day ='0'+day
         }
-        var fileStr = day+"/"+mon+"/"+fileDate.getFullYear()
+        // var fileStr = day+"/"+mon+"/"+fileDate.getFullYear()
+        var fileStr = fileDate.getFullYear()+"-"+mon+"-"+day
         console.error("fileStr = ",fileStr)
-        fileDate = await getDate(fileStr)
+        fileDate = await new Date(new Date(fileStr).setHours(00,00,00))
         return fileDate
     }
 
@@ -646,60 +661,174 @@ module.exports = (app, db) =>{
                                                         if(empData.length == 0){
                                                             empData = await getEmpRelDetails(pan)
                                                         }
-                                                        console.error("pan = ",pan)
-                                                        console.error("empData = ",empData)
-                                                        var previous_total_share = empData[0].total_share 
-                                                        console.error("previous_total_share = ",previous_total_share)   
-                                                        var is_total_share_changed = false  
-                                                        if(previous_total_share != total_share){
-                                                            is_total_share_changed = true
-                                                        }
-                                                        let file_date
-                                                        file_date_str = record.CUR_BENPOS_DATE
-                                                        file_date_str = file_date_str.toString()
-                                                        if(file_date_str.includes("/") || file_date_str.includes("-")){
-                                                            console.error("file_date_str(/) = ",file_date_str)
-                                                            file_date = await getDate(file_date_str)
-                                                        }
-                                                        else{
-                                                            try{
-                                                                file_dateTime = Number(file_date_str)
-                                                                file_date = await ExcelDateToJSDate(file_dateTime) //new Date((fileDateTime - (25567 + 1))*86400*1000)
+                                                        if(empData.length > 0){
+                                                            console.error("pan = ",pan)
+                                                            console.error("empData = ",empData)
+                                                            var previous_total_share = empData[0].total_share 
+                                                            console.error("previous_total_share = ",previous_total_share)   
+                                                            var is_total_share_changed = false  
+                                                            if(previous_total_share != total_share){
+                                                                is_total_share_changed = true
                                                             }
-                                                            catch(error){
-                                                                console.error("error in weeklyData date parse",error)
+                                                            let file_date
+                                                            file_date_str = record.CUR_BENPOS_DATE
+                                                            file_date_str = file_date_str.toString()
+                                                            if(file_date_str.includes("/") || file_date_str.includes("-")){
+                                                                console.error("file_date_str(/) = ",file_date_str)
                                                                 file_date = await getDate(file_date_str)
                                                             }
-                                                        }
-                                                        record.CUR_BENPOS_DATE = file_date
-                                                        if("FOLIO_NO_1" in record){
-                                                            folio_1 = record.FOLIO_NO_1
-                                                            folio_1 = folio_1.toString()
-                                                            if("SHARES_1" in record){
-                                                                share_1 = record.SHARES_1
+                                                            else{
+                                                                try{
+                                                                    file_dateTime = Number(file_date_str)
+                                                                    file_date = await ExcelDateToJSDate(file_dateTime) //new Date((fileDateTime - (25567 + 1))*86400*1000)
+                                                                }
+                                                                catch(error){
+                                                                    console.error("error in weeklyData date parse",error)
+                                                                    file_date = await getDate(file_date_str)
+                                                                }
                                                             }
-                                                            console.error("pan = ",pan)
-                                                            console.error("folio_1 = ",folio_1)
-                                                            console.error("share_1 = ",share_1)
-                                                            var folioResp = await isFolioExists(pan,folio_1,share_1)
-                                                            var exist = folioResp[0]
-                                                            var newData = folioResp[1]
-                                                            console.error("exist = ",exist)
-                                                            var previous_share_1 = 0
-                                                            // console.error("exist = ",exist)
-                                                            // console.error("folioResp = ",folioResp)
-                                                            if(exist){
-                                                                console.log("FOLIO EXISTS")
-                                                                previous_share_1 = newData.current_share
-                                                                // update current share
-                                                                if(newData.current_share != share_1){
-                                                                    console.log("share chjanged in folio 1")
+                                                            record.CUR_BENPOS_DATE = file_date
+                                                            if("FOLIO_NO_1" in record){
+                                                                folio_1 = record.FOLIO_NO_1
+                                                                folio_1 = folio_1.toString()
+                                                                if("SHARES_1" in record){
+                                                                    share_1 = record.SHARES_1
+                                                                }
+                                                                console.error("pan = ",pan)
+                                                                console.error("folio_1 = ",folio_1)
+                                                                console.error("share_1 = ",share_1)
+                                                                var folioResp = await isFolioExists(pan,folio_1,share_1)
+                                                                var exist = folioResp[0]
+                                                                var newData = folioResp[1]
+                                                                console.error("exist = ",exist)
+                                                                var previous_share_1 = 0
+                                                                // console.error("exist = ",exist)
+                                                                // console.error("folioResp = ",folioResp)
+                                                                if(exist){
+                                                                    console.log("FOLIO EXISTS")
+                                                                    previous_share_1 = newData.current_share
+                                                                    // update current share
+                                                                    if(newData.current_share != share_1){
+                                                                        console.log("share chjanged in folio 1")
+                                                                        var reqResp = await isValidRequestExists(pan,newData,file_date,share_1) 
+                                                                        var reqExists = reqResp[0]
+                                                                        var requestInfos = reqResp[1]
+                                                                        var isValid = true
+                                                                        if(reqExists){
+                                                                            console.log("VALID REQ EXISTS")
+                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            for(var e=0;e<requestInfos.length;e++){
+                                                                                if(!requestInfos[e].isValid){
+                                                                                    isValid = false
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else{
+                                                                            isValid = false
+                                                                        }
+                                                                        // check for transaction in last 6 months
+                                                                        var base_date = new Date(file_date)
+                                                                        var old_date = await subMonths(base_date,6)
+                                                                        base_date = new Date(new Date(file_date).setHours(23,59,59))
+                                                                        var trans = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true,
+                                                                                current_benpos_date: {[Op.between] : [old_date,base_date]}
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(trans.length > 0){
+                                                                            isValid = false
+                                                                        }
+                                                                        // check if transaction done in window closure period
+                                                                        var compData = await db.Company.findAll()
+                                                                        var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
+                                                                        var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
+                                                                        base_date = new Date(new Date(file_date).setHours(00,00,00))
+                                                                        if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
+                                                                            isValid = false
+                                                                        }
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record 
+                                                                        var newUploadData = {previous_share: previous_share_1,pan: pan,current_share: share_1,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_1,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        var variationData = newUploadData 
+                                                                        variationData["name"] = empData[0].name
+                                                                        variationData["email"] = empData[0].email
+                                                                        variationData["previous_total_share"] = previous_total_share
+                                                                        variationDatas.push(variationData)
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                        // add upload data id to request 
+                                                                        for(var f=0;f<requestInfos.length;f++){
+                                                                            // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
+                                                                            //     previous_total_share: previous_total_share})
+                                                                            var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                                where:{
+                                                                                    id: requestInfos[f].reqId
+                                                                                },
+                                                                                transaction: t
+                                                                            })    
+                                                                        }    
+                                                                        // change current share in Folio table
+                                                                        var updatedFolioInfo1 = await db.Folios.update({current_share: share_1},{
+                                                                            where:{
+                                                                                folio: folio_1
+                                                                            },
+                                                                            transaction: t,
+                                                                        })
+                                                                    }
+                                                                    else{
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        var isValid = true
+                                                                        // add upload data record
+                                                                        var newUploadData = {previous_share: previous_share_1,pan: pan,current_share: share_1,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_1,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                    }
+                                                                }
+                                                                else{
+                                                                    // check if change have a valid request
                                                                     var reqResp = await isValidRequestExists(pan,newData,file_date,share_1) 
                                                                     var reqExists = reqResp[0]
                                                                     var requestInfos = reqResp[1]
                                                                     var isValid = true
                                                                     if(reqExists){
-                                                                        console.log("VALID REQ EXISTS")
+                                                                        console.log("VALIS REQ EXISTS")
                                                                         console.log("requestInfos = ",requestInfos)
                                                                         for(var e=0;e<requestInfos.length;e++){
                                                                             if(!requestInfos[e].isValid){
@@ -728,7 +857,7 @@ module.exports = (app, db) =>{
                                                                     // check if transaction done in window closure period
                                                                     var compData = await db.Company.findAll()
                                                                     var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
-                                                                    var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
+                                                                    var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59));  
                                                                     base_date = new Date(new Date(file_date).setHours(00,00,00))
                                                                     if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
                                                                         isValid = false
@@ -745,157 +874,160 @@ module.exports = (app, db) =>{
                                                                     if(lastTransInfo.length > 0){
                                                                         last_share_change_date = lastTransInfo[0].current_benpos_date
                                                                     }
-                                                                    // add upload data record 
+                                                                    // add folio info
+                                                                    var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
+                                                                    // add upload data record
                                                                     var newUploadData = {previous_share: previous_share_1,pan: pan,current_share: share_1,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_1,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
-                                                                    var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                    var variationData = newUploadData 
+                                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                                        is_valid: isValid,transaction_folio: folio_1,last_share_change_date: last_share_change_date,
+                                                                                        previous_total_share: previous_total_share}
+                                                                    var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})  
+                                                                    if(!isValid){
+                                                                        validFlag = isValid
+                                                                    }
+                                                                    newUploadDataId.push(newFolioInfo1.id)                    
+                                                                    var variationData = newUploadData
                                                                     variationData["name"] = empData[0].name
                                                                     variationData["email"] = empData[0].email
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     variationDatas.push(variationData)
-                                                                    if(!isValid){
-                                                                        validFlag = isValid
-                                                                    }
-                                                                    newUploadDataId.push(newFolioInfo1.id)
-                                                                    // add upload data id to request 
-                                                                    for(var f=0;f<requestInfos.length;f++){
-                                                                        // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
-                                                                        //     previous_total_share: previous_total_share})
-                                                                        var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                }
+                                                                console.error("validFlag folio 1 = ",validFlag)
+                                                            }
+                                                            if("FOLIO_NO_2" in record){
+                                                                folio_2 = record.FOLIO_NO_2
+                                                                folio_2 = folio_2.toString()
+                                                                if("SHARES_2" in record){
+                                                                    share_2 = record.SHARES_2
+                                                                }
+                                                                var folioResp = await isFolioExists(pan,folio_2,share_2)
+                                                                var exist = folioResp[0]
+                                                                var newData = folioResp[1]
+                                                                console.error("exist = ",exist)
+                                                                var previous_share_2 = 0
+                                                                // console.error("newData = ",newData)
+                                                                if(exist){
+                                                                    console.log("FOLIO EXISTS")
+                                                                    previous_share_2 = newData.current_share
+                                                                    // update current share
+                                                                    if(newData.current_share != share_2){
+                                                                        console.log("share chjanged in folio 2")
+                                                                        var reqResp = await isValidRequestExists(pan,newData,file_date,share_2) 
+                                                                        var reqExists = reqResp[0]
+                                                                        var requestInfos = reqResp[1]
+                                                                        var isValid = true
+                                                                        if(reqExists){
+                                                                            console.log("VALIS REQ EXISTS")
+                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            for(var e=0;e<requestInfos.length;e++){
+                                                                                if(!requestInfos[e].isValid){
+                                                                                    isValid = false
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else{
+                                                                            isValid = false
+                                                                        }
+                                                                        // check for transaction in last 6 months
+                                                                        var base_date = new Date(file_date)
+                                                                        var old_date = await subMonths(base_date,6)
+                                                                        base_date = new Date(new Date(file_date).setHours(23,59,59))
+                                                                        var trans = await db.UploadDatas.findAll({
                                                                             where:{
-                                                                                id: requestInfos[f].reqId
+                                                                                pan: pan,
+                                                                                is_share_changed: true,
+                                                                                current_benpos_date: {[Op.between] : [old_date,base_date]}
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(trans.length > 0){
+                                                                            isValid = false
+                                                                        }
+                                                                        // check if transaction done in window closure period
+                                                                        var compData = await db.Company.findAll()
+                                                                        var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
+                                                                        var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
+                                                                        base_date = new Date(new Date(file_date).setHours(00,00,00))
+                                                                        if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
+                                                                            isValid = false
+                                                                        }
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record
+                                                                        var newUploadData = {previous_share: previous_share_2,pan: pan,current_share: share_2,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_2,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                        var variationData = newUploadData
+                                                                        console.error("variationData = ",variationData)
+                                                                        variationData["name"] = empData[0].name
+                                                                        variationData["email"] = empData[0].email
+                                                                        variationData["previous_total_share"] = previous_total_share
+                                                                        console.error("variationData = ",variationData)
+                                                                        variationDatas.push(variationData)
+                                                                        // add upload data id to request 
+                                                                        console.error("requestInfos = ",requestInfos)
+                                                                        for(var f=0;f<requestInfos.length;f++){
+                                                                            // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
+                                                                            //     previous_total_share: previous_total_share})
+                                                                            var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                                where:{
+                                                                                    id: requestInfos[f].reqId
+                                                                                },
+                                                                                transaction: t
+                                                                            })    
+                                                                        } 
+                                                                        // change current share in Folio table
+                                                                        var updatedFolioInfo1 = await db.Folios.update({current_share: share_2},{
+                                                                            where:{
+                                                                                folio: folio_2
                                                                             },
                                                                             transaction: t
-                                                                        })    
-                                                                    }    
-                                                                    // change current share in Folio table
-                                                                    var updatedFolioInfo1 = await db.Folios.update({current_share: share_1},{
-                                                                        where:{
-                                                                            folio: folio_1
-                                                                        },
-                                                                        transaction: t,
-                                                                    })
+                                                                        })   
+                                                                    }
+                                                                    else{
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record
+                                                                        var isValid = true
+                                                                        var newUploadData = {previous_share: previous_share_2,pan: pan,current_share: share_2,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_2,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                    }
                                                                 }
                                                                 else{
-                                                                    // fetch the last date when share changed
-                                                                    var last_share_change_date = null
-                                                                    var lastTransInfo = await db.UploadDatas.findAll({
-                                                                        where:{
-                                                                            pan: pan,
-                                                                            is_share_changed: true
-                                                                        },
-                                                                        order:[['current_benpos_date', 'DESC']]
-                                                                    })
-                                                                    if(lastTransInfo.length > 0){
-                                                                        last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                    }
-                                                                    var isValid = true
-                                                                    // add upload data record
-                                                                    var newUploadData = {previous_share: previous_share_1,pan: pan,current_share: share_1,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_1,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
-                                                                    var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                    if(!isValid){
-                                                                        validFlag = isValid
-                                                                    }
-                                                                    newUploadDataId.push(newFolioInfo1.id)
-                                                                }
-                                                            }
-                                                            else{
-																// check if change have a valid request
-																var reqResp = await isValidRequestExists(pan,newData,file_date,share_1) 
-																var reqExists = reqResp[0]
-																var requestInfos = reqResp[1]
-																var isValid = true
-																if(reqExists){
-                                                                    console.log("VALIS REQ EXISTS")
-                                                                    console.log("requestInfos = ",requestInfos)
-																	for(var e=0;e<requestInfos.length;e++){
-																		if(!requestInfos[e].isValid){
-																			isValid = false
-																		}
-																	}
-																}
-																else{
-																	isValid = false
-																}
-																// check for transaction in last 6 months
-																var base_date = new Date(file_date)
-																var old_date = await subMonths(base_date,6)
-																base_date = new Date(new Date(file_date).setHours(23,59,59))
-																var trans = await db.UploadDatas.findAll({
-																	where:{
-																		pan: pan,
-																		is_share_changed: true,
-																		current_benpos_date: {[Op.between] : [old_date,base_date]}
-																	},
-																	order:[['current_benpos_date', 'DESC']]
-																})
-																if(trans.length > 0){
-																	isValid = false
-																}
-                                                                // check if transaction done in window closure period
-                                                                var compData = await db.Company.findAll()
-                                                                var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
-                                                                var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59));  
-																base_date = new Date(new Date(file_date).setHours(00,00,00))
-                                                                if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
-                                                                    isValid = false
-                                                                }
-                                                                // fetch the last date when share changed
-                                                                var last_share_change_date = null
-                                                                var lastTransInfo = await db.UploadDatas.findAll({
-                                                                    where:{
-                                                                        pan: pan,
-                                                                        is_share_changed: true
-                                                                    },
-                                                                    order:[['current_benpos_date', 'DESC']]
-                                                                })
-                                                                if(lastTransInfo.length > 0){
-                                                                    last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                }
-                                                                // add folio info
-                                                                var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
-                                                                // add upload data record
-                                                                var newUploadData = {previous_share: previous_share_1,pan: pan,current_share: share_1,total_share: total_share,
-                                                                                     current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                                     is_valid: isValid,transaction_folio: folio_1,last_share_change_date: last_share_change_date,
-                                                                                     previous_total_share: previous_total_share}
-                                                                var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})  
-                                                                if(!isValid){
-                                                                    validFlag = isValid
-                                                                }
-                                                                newUploadDataId.push(newFolioInfo1.id)                    
-                                                                var variationData = newUploadData
-                                                                variationData["name"] = empData[0].name
-                                                                variationData["email"] = empData[0].email
-                                                                variationData["previous_total_share"] = previous_total_share
-                                                                variationDatas.push(variationData)
-                                                            }
-                                                            console.error("validFlag folio 1 = ",validFlag)
-                                                        }
-                                                        if("FOLIO_NO_2" in record){
-                                                            folio_2 = record.FOLIO_NO_2
-                                                            folio_2 = folio_2.toString()
-                                                            if("SHARES_2" in record){
-                                                                share_2 = record.SHARES_2
-                                                            }
-                                                            var folioResp = await isFolioExists(pan,folio_2,share_2)
-                                                            var exist = folioResp[0]
-                                                            var newData = folioResp[1]
-                                                            console.error("exist = ",exist)
-                                                            var previous_share_2 = 0
-                                                            // console.error("newData = ",newData)
-                                                            if(exist){
-                                                                console.log("FOLIO EXISTS")
-                                                                previous_share_2 = newData.current_share
-                                                                // update current share
-                                                                if(newData.current_share != share_2){
-                                                                    console.log("share chjanged in folio 2")
+                                                                    // check if change have a valid request
                                                                     var reqResp = await isValidRequestExists(pan,newData,file_date,share_2) 
                                                                     var reqExists = reqResp[0]
                                                                     var requestInfos = reqResp[1]
@@ -947,11 +1079,13 @@ module.exports = (app, db) =>{
                                                                     if(lastTransInfo.length > 0){
                                                                         last_share_change_date = lastTransInfo[0].current_benpos_date
                                                                     }
+                                                                    // add folio info
+                                                                    var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
                                                                     // add upload data record
                                                                     var newUploadData = {previous_share: previous_share_2,pan: pan,current_share: share_2,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_2,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
+                                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                                        is_valid: isValid,transaction_folio: folio_2,last_share_change_date: last_share_change_date,
+                                                                                        previous_total_share: previous_total_share}
                                                                     var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
                                                                     if(!isValid){
                                                                         validFlag = isValid
@@ -964,146 +1098,141 @@ module.exports = (app, db) =>{
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     console.error("variationData = ",variationData)
                                                                     variationDatas.push(variationData)
-                                                                    // add upload data id to request 
-                                                                    console.error("requestInfos = ",requestInfos)
-                                                                    for(var f=0;f<requestInfos.length;f++){
-                                                                        // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
-                                                                        //     previous_total_share: previous_total_share})
-                                                                        var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                }
+                                                                console.error("validFlag folio 2 = ",validFlag)
+                                                            }
+                                                            if("FOLIO_NO_3" in record){
+                                                                folio_3 = record.FOLIO_NO_3
+                                                                folio_3 = folio_3.toString()
+                                                                if("SHARES_3" in record){
+                                                                    share_3 = record.SHARES_3
+                                                                }
+                                                                var folioResp = await isFolioExists(pan,folio_3,share_3)
+                                                                var exist = folioResp[0]
+                                                                var newData = folioResp[1]
+                                                                console.error("exist = ",exist)
+                                                                var previous_share_3 = 0
+                                                                // console.error("newData = ",newData)
+                                                                if(exist){
+                                                                    console.log("FOLIO EXISTS")
+                                                                    previous_share_3 = newData.current_share
+                                                                    // update current share
+                                                                    if(newData.current_share != share_3){
+                                                                        console.log("share chjanged in folio 3")
+                                                                        var reqResp = await isValidRequestExists(pan,newData,file_date,share_3)
+                                                                        var reqExists = reqResp[0]
+                                                                        var requestInfos = reqResp[1]
+                                                                        var isValid = true
+                                                                        if(reqExists){
+                                                                            console.log("VALIS REQ EXISTS")
+                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            for(var e=0;e<requestInfos.length;e++){
+                                                                                if(!requestInfos[e].isValid){
+                                                                                    isValid = false
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else{
+                                                                            isValid = false
+                                                                        }
+                                                                        // check for transaction in last 6 months
+                                                                        var base_date = new Date(file_date)
+                                                                        var old_date = await subMonths(base_date,6)
+                                                                        base_date = new Date(new Date(file_date).setHours(23,59,59))
+                                                                        var trans = await db.UploadDatas.findAll({
                                                                             where:{
-                                                                                id: requestInfos[f].reqId
+                                                                                pan: pan,
+                                                                                is_share_changed: true,
+                                                                                current_benpos_date: {[Op.between] : [old_date,base_date]}
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(trans.length > 0){
+                                                                            isValid = false
+                                                                        }
+                                                                        // check if transaction done in window closure period
+                                                                        var compData = await db.Company.findAll()
+                                                                        var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
+                                                                        var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
+                                                                        base_date = new Date(new Date(file_date).setHours(00,00,00))
+                                                                        if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
+                                                                            isValid = false
+                                                                        }
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record
+                                                                        var newUploadData = {previous_share: previous_share_3,pan: pan,current_share: share_3,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_3,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                        var variationData = newUploadData
+                                                                        variationData["name"] = empData[0].name
+                                                                        variationData["email"] = empData[0].email
+                                                                        variationData["previous_total_share"] = previous_total_share
+                                                                        variationDatas.push(variationData)
+                                                                        // add upload data id to request 
+                                                                        for(var f=0;f<requestInfos.length;f++){
+                                                                            // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
+                                                                            //     previous_total_share: previous_total_share})
+                                                                            var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                                where:{
+                                                                                    id: requestInfos[f].reqId
+                                                                                },
+                                                                                transaction: t
+                                                                            })   
+                                                                        } 
+                                                                        // change current share in Folio table
+                                                                        var updatedFolioInfo1 = await db.Folios.update({current_share: share_3},{
+                                                                            where:{
+                                                                                folio: folio_3
                                                                             },
                                                                             transaction: t
-                                                                        })    
-                                                                    } 
-                                                                    // change current share in Folio table
-                                                                    var updatedFolioInfo1 = await db.Folios.update({current_share: share_2},{
-                                                                        where:{
-                                                                            folio: folio_2
-                                                                        },
-                                                                        transaction: t
-                                                                    })   
+                                                                        })   
+                                                                    }
+                                                                    else{
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record
+                                                                        var isValid = true
+                                                                        var newUploadData = {previous_share: previous_share_3,pan: pan,current_share: share_3,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_3,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                    }
                                                                 }
                                                                 else{
-                                                                    // fetch the last date when share changed
-                                                                    var last_share_change_date = null
-                                                                    var lastTransInfo = await db.UploadDatas.findAll({
-                                                                        where:{
-                                                                            pan: pan,
-                                                                            is_share_changed: true
-                                                                        },
-                                                                        order:[['current_benpos_date', 'DESC']]
-                                                                    })
-                                                                    if(lastTransInfo.length > 0){
-                                                                        last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                    }
-                                                                    // add upload data record
-                                                                    var isValid = true
-                                                                    var newUploadData = {previous_share: previous_share_2,pan: pan,current_share: share_2,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_2,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
-                                                                    var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                    if(!isValid){
-                                                                        validFlag = isValid
-                                                                    }
-                                                                    newUploadDataId.push(newFolioInfo1.id)
-                                                                }
-                                                            }
-                                                            else{
-																// check if change have a valid request
-																var reqResp = await isValidRequestExists(pan,newData,file_date,share_2) 
-																var reqExists = reqResp[0]
-																var requestInfos = reqResp[1]
-																var isValid = true
-																if(reqExists){
-                                                                    console.log("VALIS REQ EXISTS")
-                                                                    console.log("requestInfos = ",requestInfos)
-																	for(var e=0;e<requestInfos.length;e++){
-																		if(!requestInfos[e].isValid){
-																			isValid = false
-																		}
-																	}
-																}
-																else{
-																	isValid = false
-																}
-																// check for transaction in last 6 months
-																var base_date = new Date(file_date)
-																var old_date = await subMonths(base_date,6)
-																base_date = new Date(new Date(file_date).setHours(23,59,59))
-																var trans = await db.UploadDatas.findAll({
-																	where:{
-																		pan: pan,
-																		is_share_changed: true,
-																		current_benpos_date: {[Op.between] : [old_date,base_date]}
-																	},
-																	order:[['current_benpos_date', 'DESC']]
-																})
-																if(trans.length > 0){
-																	isValid = false
-																}
-                                                                // check if transaction done in window closure period
-                                                                var compData = await db.Company.findAll()
-                                                                var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
-                                                                var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
-                                                                base_date = new Date(new Date(file_date).setHours(00,00,00))
-                                                                if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
-                                                                    isValid = false
-                                                                }
-                                                                // fetch the last date when share changed
-                                                                var last_share_change_date = null
-                                                                var lastTransInfo = await db.UploadDatas.findAll({
-                                                                    where:{
-                                                                        pan: pan,
-                                                                        is_share_changed: true
-                                                                    },
-                                                                    order:[['current_benpos_date', 'DESC']]
-                                                                })
-                                                                if(lastTransInfo.length > 0){
-                                                                    last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                }
-                                                                // add folio info
-                                                                var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
-                                                                // add upload data record
-                                                                var newUploadData = {previous_share: previous_share_2,pan: pan,current_share: share_2,total_share: total_share,
-                                                                                     current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                                     is_valid: isValid,transaction_folio: folio_2,last_share_change_date: last_share_change_date,
-                                                                                     previous_total_share: previous_total_share}
-                                                                var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                if(!isValid){
-                                                                    validFlag = isValid
-                                                                }
-                                                                newUploadDataId.push(newFolioInfo1.id)
-                                                                var variationData = newUploadData
-                                                                console.error("variationData = ",variationData)
-                                                                variationData["name"] = empData[0].name
-                                                                variationData["email"] = empData[0].email
-                                                                variationData["previous_total_share"] = previous_total_share
-                                                                console.error("variationData = ",variationData)
-                                                                variationDatas.push(variationData)
-                                                            }
-                                                            console.error("validFlag folio 2 = ",validFlag)
-                                                        }
-                                                        if("FOLIO_NO_3" in record){
-                                                            folio_3 = record.FOLIO_NO_3
-                                                            folio_3 = folio_3.toString()
-                                                            if("SHARES_3" in record){
-                                                                share_3 = record.SHARES_3
-                                                            }
-                                                            var folioResp = await isFolioExists(pan,folio_3,share_3)
-                                                            var exist = folioResp[0]
-                                                            var newData = folioResp[1]
-                                                            console.error("exist = ",exist)
-                                                            var previous_share_3 = 0
-                                                            // console.error("newData = ",newData)
-                                                            if(exist){
-                                                                console.log("FOLIO EXISTS")
-                                                                previous_share_3 = newData.current_share
-                                                                // update current share
-                                                                if(newData.current_share != share_3){
-                                                                    console.log("share chjanged in folio 3")
-                                                                    var reqResp = await isValidRequestExists(pan,newData,file_date,share_3)
+                                                                    // check if change have a valid request
+                                                                    var reqResp = await isValidRequestExists(pan,newData,file_date,share_3) 
                                                                     var reqExists = reqResp[0]
                                                                     var requestInfos = reqResp[1]
                                                                     var isValid = true
@@ -1154,11 +1283,13 @@ module.exports = (app, db) =>{
                                                                     if(lastTransInfo.length > 0){
                                                                         last_share_change_date = lastTransInfo[0].current_benpos_date
                                                                     }
+                                                                    // add folio info
+                                                                    var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
                                                                     // add upload data record
                                                                     var newUploadData = {previous_share: previous_share_3,pan: pan,current_share: share_3,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_3,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
+                                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                                        is_valid: isValid,transaction_folio: folio_3,last_share_change_date: last_share_change_date,
+                                                                                        previous_total_share: previous_total_share}
                                                                     var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
                                                                     if(!isValid){
                                                                         validFlag = isValid
@@ -1169,143 +1300,141 @@ module.exports = (app, db) =>{
                                                                     variationData["email"] = empData[0].email
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     variationDatas.push(variationData)
-                                                                    // add upload data id to request 
-                                                                    for(var f=0;f<requestInfos.length;f++){
-                                                                        // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
-                                                                        //     previous_total_share: previous_total_share})
-                                                                        var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                }
+                                                                console.error("validFlag folio 3 = ",validFlag)
+                                                            }
+                                                            if("FOLIO_NO_4" in record){
+                                                                folio_4 = record.FOLIO_NO_4
+                                                                folio_4 = folio_4.toString()
+                                                                if("SHARES_4" in record){
+                                                                    share_4 = record.SHARES_4
+                                                                }
+                                                                var folioResp = await isFolioExists(pan,folio_4,share_4)
+                                                                var exist = folioResp[0]
+                                                                var newData = folioResp[1]
+                                                                console.error("exist = ",exist)
+                                                                var previous_share_4 = 0
+                                                                // console.error("newData = ",newData)
+                                                                if(exist){
+                                                                    console.log("FOLIO EXISTS")
+                                                                    previous_share_4 = newData.current_share
+                                                                    // update current share
+                                                                    if(newData.current_share != share_4){
+                                                                        console.log("share chjanged in folio 4")
+                                                                        var reqResp = await isValidRequestExists(pan,newData,file_date,share_4)
+                                                                        var reqExists = reqResp[0]
+                                                                        var requestInfos = reqResp[1]
+                                                                        var isValid = true
+                                                                        if(reqExists){
+                                                                            console.log("VALIS REQ EXISTS")
+                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            for(var e=0;e<requestInfos.length;e++){
+                                                                                if(!requestInfos[e].isValid){
+                                                                                    isValid = false
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else{
+                                                                            isValid = false
+                                                                        }
+                                                                        // check for transaction in last 6 months
+                                                                        var base_date = new Date(file_date)
+                                                                        var old_date = await subMonths(base_date,6)
+                                                                        base_date = new Date(new Date(file_date).setHours(23,59,59))
+                                                                        var trans = await db.UploadDatas.findAll({
                                                                             where:{
-                                                                                id: requestInfos[f].reqId
+                                                                                pan: pan,
+                                                                                is_share_changed: true,
+                                                                                current_benpos_date: {[Op.between] : [old_date,base_date]}
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(trans.length > 0){
+                                                                            isValid = false
+                                                                        }
+                                                                        // check if transaction done in window closure period
+                                                                        var compData = await db.Company.findAll()
+                                                                        var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
+                                                                        var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
+                                                                        base_date = new Date(new Date(file_date).setHours(00,00,00))
+                                                                        if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
+                                                                            isValid = false
+                                                                        }
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record
+                                                                        var newUploadData = {previous_share: previous_share_4,pan: pan,current_share: share_4,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_4,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                        var variationData = newUploadData
+                                                                        variationData["name"] = empData[0].name
+                                                                        variationData["email"] = empData[0].email
+                                                                        variationData["previous_total_share"] = previous_total_share
+                                                                        variationDatas.push(variationData)
+                                                                        // add upload data id to request 
+                                                                        for(var f=0;f<requestInfos.length;f++){
+                                                                            // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
+                                                                            //     previous_total_share: previous_total_share})
+                                                                            var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                                where:{
+                                                                                    id: requestInfos[f].reqId
+                                                                                },
+                                                                                transaction: t
+                                                                            })   
+                                                                        }  
+                                                                        // change current share in Folio table
+                                                                        var updatedFolioInfo1 = await db.Folios.update({current_share: share_4},{
+                                                                            where:{
+                                                                                folio: folio_4
                                                                             },
                                                                             transaction: t
-                                                                        })   
-                                                                    } 
-                                                                    // change current share in Folio table
-                                                                    var updatedFolioInfo1 = await db.Folios.update({current_share: share_3},{
-                                                                        where:{
-                                                                            folio: folio_3
-                                                                        },
-                                                                        transaction: t
-                                                                    })   
+                                                                        })  
+                                                                    }
+                                                                    else{
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record
+                                                                        var isValid = true
+                                                                        var newUploadData = {previous_share: previous_share_4,pan: pan,current_share: share_4,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_4,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                    }
                                                                 }
                                                                 else{
-                                                                    // fetch the last date when share changed
-                                                                    var last_share_change_date = null
-                                                                    var lastTransInfo = await db.UploadDatas.findAll({
-                                                                        where:{
-                                                                            pan: pan,
-                                                                            is_share_changed: true
-                                                                        },
-                                                                        order:[['current_benpos_date', 'DESC']]
-                                                                    })
-                                                                    if(lastTransInfo.length > 0){
-                                                                        last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                    }
-                                                                    // add upload data record
-                                                                    var isValid = true
-                                                                    var newUploadData = {previous_share: previous_share_3,pan: pan,current_share: share_3,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_3,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
-                                                                    var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                    if(!isValid){
-                                                                        validFlag = isValid
-                                                                    }
-                                                                    newUploadDataId.push(newFolioInfo1.id)
-                                                                }
-                                                            }
-                                                            else{
-																// check if change have a valid request
-																var reqResp = await isValidRequestExists(pan,newData,file_date,share_3) 
-																var reqExists = reqResp[0]
-																var requestInfos = reqResp[1]
-																var isValid = true
-																if(reqExists){
-                                                                    console.log("VALIS REQ EXISTS")
-                                                                    console.log("requestInfos = ",requestInfos)
-																	for(var e=0;e<requestInfos.length;e++){
-																		if(!requestInfos[e].isValid){
-																			isValid = false
-																		}
-																	}
-																}
-																else{
-																	isValid = false
-																}
-																// check for transaction in last 6 months
-																var base_date = new Date(file_date)
-																var old_date = await subMonths(base_date,6)
-																base_date = new Date(new Date(file_date).setHours(23,59,59))
-																var trans = await db.UploadDatas.findAll({
-																	where:{
-																		pan: pan,
-																		is_share_changed: true,
-																		current_benpos_date: {[Op.between] : [old_date,base_date]}
-																	},
-																	order:[['current_benpos_date', 'DESC']]
-																})
-																if(trans.length > 0){
-																	isValid = false
-																}
-                                                                // check if transaction done in window closure period
-                                                                var compData = await db.Company.findAll()
-                                                                var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
-                                                                var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
-                                                                base_date = new Date(new Date(file_date).setHours(00,00,00))
-                                                                if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
-                                                                    isValid = false
-                                                                }
-                                                                // fetch the last date when share changed
-                                                                var last_share_change_date = null
-                                                                var lastTransInfo = await db.UploadDatas.findAll({
-                                                                    where:{
-                                                                        pan: pan,
-                                                                        is_share_changed: true
-                                                                    },
-                                                                    order:[['current_benpos_date', 'DESC']]
-                                                                })
-                                                                if(lastTransInfo.length > 0){
-                                                                    last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                }
-                                                                // add folio info
-                                                                var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
-                                                                // add upload data record
-                                                                var newUploadData = {previous_share: previous_share_3,pan: pan,current_share: share_3,total_share: total_share,
-                                                                                     current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                                     is_valid: isValid,transaction_folio: folio_3,last_share_change_date: last_share_change_date,
-                                                                                     previous_total_share: previous_total_share}
-                                                                var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                if(!isValid){
-                                                                    validFlag = isValid
-                                                                }
-                                                                newUploadDataId.push(newFolioInfo1.id)
-                                                                var variationData = newUploadData
-                                                                variationData["name"] = empData[0].name
-                                                                variationData["email"] = empData[0].email
-                                                                variationData["previous_total_share"] = previous_total_share
-                                                                variationDatas.push(variationData)
-                                                            }
-                                                            console.error("validFlag folio 3 = ",validFlag)
-                                                        }
-                                                        if("FOLIO_NO_4" in record){
-                                                            folio_4 = record.FOLIO_NO_4
-                                                            folio_4 = folio_4.toString()
-                                                            if("SHARES_4" in record){
-                                                                share_4 = record.SHARES_4
-                                                            }
-                                                            var folioResp = await isFolioExists(pan,folio_4,share_4)
-                                                            var exist = folioResp[0]
-                                                            var newData = folioResp[1]
-                                                            console.error("exist = ",exist)
-                                                            var previous_share_4 = 0
-                                                            // console.error("newData = ",newData)
-                                                            if(exist){
-                                                                console.log("FOLIO EXISTS")
-                                                                previous_share_4 = newData.current_share
-                                                                // update current share
-                                                                if(newData.current_share != share_4){
-                                                                    console.log("share chjanged in folio 4")
-                                                                    var reqResp = await isValidRequestExists(pan,newData,file_date,share_4)
+                                                                    // check if change have a valid request
+                                                                    var reqResp = await isValidRequestExists(pan,newData,file_date,share_4) 
                                                                     var reqExists = reqResp[0]
                                                                     var requestInfos = reqResp[1]
                                                                     var isValid = true
@@ -1356,11 +1485,13 @@ module.exports = (app, db) =>{
                                                                     if(lastTransInfo.length > 0){
                                                                         last_share_change_date = lastTransInfo[0].current_benpos_date
                                                                     }
+                                                                    // add folio info
+                                                                    var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
                                                                     // add upload data record
                                                                     var newUploadData = {previous_share: previous_share_4,pan: pan,current_share: share_4,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_4,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
+                                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                                        is_valid: isValid,transaction_folio: folio_4,last_share_change_date: last_share_change_date,
+                                                                                        previous_total_share: previous_total_share}
                                                                     var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
                                                                     if(!isValid){
                                                                         validFlag = isValid
@@ -1371,143 +1502,141 @@ module.exports = (app, db) =>{
                                                                     variationData["email"] = empData[0].email
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     variationDatas.push(variationData)
-                                                                    // add upload data id to request 
-                                                                    for(var f=0;f<requestInfos.length;f++){
-                                                                        // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
-                                                                        //     previous_total_share: previous_total_share})
-                                                                        var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                }
+                                                                console.error("validFlag folio 4 = ",validFlag)
+                                                            }
+                                                            if("FOLIO_NO_5" in record){
+                                                                folio_5 = record.FOLIO_NO_5
+                                                                folio_5 = folio_5.toString()
+                                                                if("SHARES_5" in record){
+                                                                    share_5 = record.SHARES_5
+                                                                }
+                                                                var folioResp = await isFolioExists(pan,folio_5,share_5)
+                                                                var exist = folioResp[0]
+                                                                var newData = folioResp[1]
+                                                                console.error("exist = ",exist)
+                                                                var previous_share_5 = 0
+                                                                // console.error("newData = ",newData)
+                                                                if(exist){
+                                                                    console.log("FOLIO EXISTS")
+                                                                    previous_share_5 = newData.current_share
+                                                                    // update current share
+                                                                    if(newData.current_share != share_5){
+                                                                        console.log("share changed in folio 5")
+                                                                        var reqResp = await isValidRequestExists(pan,newData,file_date,share_5)
+                                                                        var reqExists = reqResp[0]
+                                                                        var requestInfos = reqResp[1]
+                                                                        var isValid = true
+                                                                        if(reqExists){
+                                                                            console.log("VALIS REQ EXISTS")
+                                                                            console.log("requestInfos = ",requestInfos)
+                                                                            for(var e=0;e<requestInfos.length;e++){
+                                                                                if(!requestInfos[e].isValid){
+                                                                                    isValid = false
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else{
+                                                                            isValid = false
+                                                                        }
+                                                                        // check for transaction in last 6 months
+                                                                        var base_date = new Date(file_date)
+                                                                        var old_date = await subMonths(base_date,6)
+                                                                        base_date = new Date(new Date(file_date).setHours(23,59,59))
+                                                                        var trans = await db.UploadDatas.findAll({
                                                                             where:{
-                                                                                id: requestInfos[f].reqId
+                                                                                pan: pan,
+                                                                                is_share_changed: true,
+                                                                                current_benpos_date: {[Op.between] : [old_date,base_date]}
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(trans.length > 0){
+                                                                            isValid = false
+                                                                        }
+                                                                        // check if transaction done in window closure period
+                                                                        var compData = await db.Company.findAll()
+                                                                        var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
+                                                                        var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
+                                                                        base_date = new Date(new Date(file_date).setHours(00,00,00))
+                                                                        if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
+                                                                            isValid = false
+                                                                        }
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record
+                                                                        var newUploadData = {previous_share: previous_share_5,pan: pan,current_share: share_5,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_5,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                        var variationData = newUploadData
+                                                                        variationData["name"] = empData[0].name
+                                                                        variationData["email"] = empData[0].email
+                                                                        variationData["previous_total_share"] = previous_total_share
+                                                                        variationDatas.push(variationData)
+                                                                        // add upload data id to request 
+                                                                        for(var f=0;f<requestInfos.length;f++){
+                                                                            // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
+                                                                            //     previous_total_share: previous_total_share})
+                                                                            var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
+                                                                                where:{
+                                                                                    id: requestInfos[f].reqId
+                                                                                },
+                                                                                transaction: t
+                                                                            })   
+                                                                        }   
+                                                                        // change current share in Folio table
+                                                                        var updatedFolioInfo1 = await db.Folios.update({current_share: share_5},{
+                                                                            where:{
+                                                                                folio: folio_5
                                                                             },
                                                                             transaction: t
-                                                                        })   
-                                                                    }  
-                                                                    // change current share in Folio table
-                                                                    var updatedFolioInfo1 = await db.Folios.update({current_share: share_4},{
-                                                                        where:{
-                                                                            folio: folio_4
-                                                                        },
-                                                                        transaction: t
-                                                                    })  
+                                                                        }) 
+                                                                    }
+                                                                    else{
+                                                                        // fetch the last date when share changed
+                                                                        var last_share_change_date = null
+                                                                        var lastTransInfo = await db.UploadDatas.findAll({
+                                                                            where:{
+                                                                                pan: pan,
+                                                                                is_share_changed: true
+                                                                            },
+                                                                            order:[['current_benpos_date', 'DESC']]
+                                                                        })
+                                                                        if(lastTransInfo.length > 0){
+                                                                            last_share_change_date = lastTransInfo[0].current_benpos_date
+                                                                        }
+                                                                        // add upload data record
+                                                                        var isValid = true
+                                                                        var newUploadData = {previous_share: previous_share_5,pan: pan,current_share: share_5,total_share: total_share,
+                                                                            current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                            is_valid: isValid,transaction_folio: folio_5,last_share_change_date: last_share_change_date,
+                                                                            previous_total_share: previous_total_share}
+                                                                        var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
+                                                                        if(!isValid){
+                                                                            validFlag = isValid
+                                                                        }
+                                                                        newUploadDataId.push(newFolioInfo1.id)
+                                                                    }
                                                                 }
                                                                 else{
-                                                                    // fetch the last date when share changed
-                                                                    var last_share_change_date = null
-                                                                    var lastTransInfo = await db.UploadDatas.findAll({
-                                                                        where:{
-                                                                            pan: pan,
-                                                                            is_share_changed: true
-                                                                        },
-                                                                        order:[['current_benpos_date', 'DESC']]
-                                                                    })
-                                                                    if(lastTransInfo.length > 0){
-                                                                        last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                    }
-                                                                    // add upload data record
-                                                                    var isValid = true
-                                                                    var newUploadData = {previous_share: previous_share_4,pan: pan,current_share: share_4,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_4,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
-                                                                    var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                    if(!isValid){
-                                                                        validFlag = isValid
-                                                                    }
-                                                                    newUploadDataId.push(newFolioInfo1.id)
-                                                                }
-                                                            }
-                                                            else{
-																// check if change have a valid request
-																var reqResp = await isValidRequestExists(pan,newData,file_date,share_4) 
-																var reqExists = reqResp[0]
-																var requestInfos = reqResp[1]
-																var isValid = true
-																if(reqExists){
-                                                                    console.log("VALIS REQ EXISTS")
-                                                                    console.log("requestInfos = ",requestInfos)
-																	for(var e=0;e<requestInfos.length;e++){
-																		if(!requestInfos[e].isValid){
-																			isValid = false
-																		}
-																	}
-																}
-																else{
-																	isValid = false
-																}
-																// check for transaction in last 6 months
-																var base_date = new Date(file_date)
-																var old_date = await subMonths(base_date,6)
-																base_date = new Date(new Date(file_date).setHours(23,59,59))
-																var trans = await db.UploadDatas.findAll({
-																	where:{
-																		pan: pan,
-																		is_share_changed: true,
-																		current_benpos_date: {[Op.between] : [old_date,base_date]}
-																	},
-																	order:[['current_benpos_date', 'DESC']]
-																})
-																if(trans.length > 0){
-																	isValid = false
-																}
-                                                                // check if transaction done in window closure period
-                                                                var compData = await db.Company.findAll()
-                                                                var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
-                                                                var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
-                                                                base_date = new Date(new Date(file_date).setHours(00,00,00))
-                                                                if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
-                                                                    isValid = false
-                                                                }
-                                                                // fetch the last date when share changed
-                                                                var last_share_change_date = null
-                                                                var lastTransInfo = await db.UploadDatas.findAll({
-                                                                    where:{
-                                                                        pan: pan,
-                                                                        is_share_changed: true
-                                                                    },
-                                                                    order:[['current_benpos_date', 'DESC']]
-                                                                })
-                                                                if(lastTransInfo.length > 0){
-                                                                    last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                }
-                                                                // add folio info
-                                                                var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
-                                                                // add upload data record
-                                                                var newUploadData = {previous_share: previous_share_4,pan: pan,current_share: share_4,total_share: total_share,
-                                                                                     current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                                     is_valid: isValid,transaction_folio: folio_4,last_share_change_date: last_share_change_date,
-                                                                                     previous_total_share: previous_total_share}
-                                                                var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                if(!isValid){
-                                                                    validFlag = isValid
-                                                                }
-                                                                newUploadDataId.push(newFolioInfo1.id)
-                                                                var variationData = newUploadData
-                                                                variationData["name"] = empData[0].name
-                                                                variationData["email"] = empData[0].email
-                                                                variationData["previous_total_share"] = previous_total_share
-                                                                variationDatas.push(variationData)
-                                                            }
-                                                            console.error("validFlag folio 4 = ",validFlag)
-                                                        }
-                                                        if("FOLIO_NO_5" in record){
-                                                            folio_5 = record.FOLIO_NO_5
-                                                            folio_5 = folio_5.toString()
-                                                            if("SHARES_5" in record){
-                                                                share_5 = record.SHARES_5
-                                                            }
-                                                            var folioResp = await isFolioExists(pan,folio_5,share_5)
-                                                            var exist = folioResp[0]
-                                                            var newData = folioResp[1]
-                                                            console.error("exist = ",exist)
-                                                            var previous_share_5 = 0
-                                                            // console.error("newData = ",newData)
-                                                            if(exist){
-                                                                console.log("FOLIO EXISTS")
-                                                                previous_share_5 = newData.current_share
-                                                                // update current share
-                                                                if(newData.current_share != share_5){
-                                                                    console.log("share changed in folio 5")
-                                                                    var reqResp = await isValidRequestExists(pan,newData,file_date,share_5)
+                                                                    // check if change have a valid request
+                                                                    var reqResp = await isValidRequestExists(pan,newData,file_date,share_5) 
                                                                     var reqExists = reqResp[0]
                                                                     var requestInfos = reqResp[1]
                                                                     var isValid = true
@@ -1558,11 +1687,13 @@ module.exports = (app, db) =>{
                                                                     if(lastTransInfo.length > 0){
                                                                         last_share_change_date = lastTransInfo[0].current_benpos_date
                                                                     }
+                                                                    // add folio info
+                                                                    var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
                                                                     // add upload data record
                                                                     var newUploadData = {previous_share: previous_share_5,pan: pan,current_share: share_5,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_5,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
+                                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
+                                                                                        is_valid: isValid,transaction_folio: folio_5,last_share_change_date: last_share_change_date,
+                                                                                        previous_total_share: previous_total_share}
                                                                     var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
                                                                     if(!isValid){
                                                                         validFlag = isValid
@@ -1573,156 +1704,42 @@ module.exports = (app, db) =>{
                                                                     variationData["email"] = empData[0].email
                                                                     variationData["previous_total_share"] = previous_total_share
                                                                     variationDatas.push(variationData)
-                                                                    // add upload data id to request 
-                                                                    for(var f=0;f<requestInfos.length;f++){
-                                                                        // updatedDataId.push({data_id: newFolioInfo1.id,reqId: requestInfos[f].reqId,
-                                                                        //     previous_total_share: previous_total_share})
-                                                                        var updatedDataInfo = await db.Requests.update({data_id: newFolioInfo1.id,previous_total_share: previous_total_share},{
-                                                                            where:{
-                                                                                id: requestInfos[f].reqId
-                                                                            },
-                                                                            transaction: t
-                                                                        })   
-                                                                    }   
-                                                                    // change current share in Folio table
-                                                                    var updatedFolioInfo1 = await db.Folios.update({current_share: share_5},{
+                                                                }
+                                                                console.error("validFlag folio 5 = ",validFlag)
+                                                            }
+                                                            // update valid flag if any folio transaction is invalid
+                                                            console.error("validFlag final = ",validFlag)
+                                                            if(!validFlag){
+                                                                console.error("newUploadDataId= ",newUploadDataId)
+                                                                for(var x=0;x<newUploadDataId.length;x++){
+                                                                    // updatedUploadDatas.push({udId: newUploadDataId[x],validFlag: validFlag})                                                               
+                                                                    var updatedUploadDataInfo1 = await db.UploadDatas.update({is_valid: validFlag},{
                                                                         where:{
-                                                                            folio: folio_5
+                                                                            id: newUploadDataId[x]
                                                                         },
                                                                         transaction: t
-                                                                    }) 
-                                                                }
-                                                                else{
-                                                                    // fetch the last date when share changed
-                                                                    var last_share_change_date = null
-                                                                    var lastTransInfo = await db.UploadDatas.findAll({
-                                                                        where:{
-                                                                            pan: pan,
-                                                                            is_share_changed: true
-                                                                        },
-                                                                        order:[['current_benpos_date', 'DESC']]
                                                                     })
-                                                                    if(lastTransInfo.length > 0){
-                                                                        last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                    }
-                                                                    // add upload data record
-                                                                    var isValid = true
-                                                                    var newUploadData = {previous_share: previous_share_5,pan: pan,current_share: share_5,total_share: total_share,
-                                                                        current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                        is_valid: isValid,transaction_folio: folio_5,last_share_change_date: last_share_change_date,
-                                                                        previous_total_share: previous_total_share}
-                                                                    var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                    if(!isValid){
-                                                                        validFlag = isValid
-                                                                    }
-                                                                    newUploadDataId.push(newFolioInfo1.id)
                                                                 }
                                                             }
-                                                            else{
-																// check if change have a valid request
-																var reqResp = await isValidRequestExists(pan,newData,file_date,share_5) 
-																var reqExists = reqResp[0]
-																var requestInfos = reqResp[1]
-																var isValid = true
-																if(reqExists){
-                                                                    console.log("VALIS REQ EXISTS")
-                                                                    console.log("requestInfos = ",requestInfos)
-																	for(var e=0;e<requestInfos.length;e++){
-																		if(!requestInfos[e].isValid){
-																			isValid = false
-																		}
-																	}
-																}
-																else{
-																	isValid = false
-																}
-																// check for transaction in last 6 months
-																var base_date = new Date(file_date)
-																var old_date = await subMonths(base_date,6)
-																base_date = new Date(new Date(file_date).setHours(23,59,59))
-																var trans = await db.UploadDatas.findAll({
-																	where:{
-																		pan: pan,
-																		is_share_changed: true,
-																		current_benpos_date: {[Op.between] : [old_date,base_date]}
-																	},
-																	order:[['current_benpos_date', 'DESC']]
-																})
-																if(trans.length > 0){
-																	isValid = false
-																}
-                                                                // check if transaction done in window closure period
-                                                                var compData = await db.Company.findAll()
-                                                                var window_close_from = new Date(new Date(compData[0].window_close_from).setHours(00,00,00)); 
-                                                                var window_close_to = new Date(new Date(compData[0].window_close_to).setHours(23,59,59)); 
-                                                                base_date = new Date(new Date(file_date).setHours(00,00,00))
-                                                                if(window_close_from.getTime() <= base_date.getTime() && base_date.getTime() <= window_close_to.getTime()){
-                                                                    isValid = false
-                                                                }
-                                                                // fetch the last date when share changed
-                                                                var last_share_change_date = null
-                                                                var lastTransInfo = await db.UploadDatas.findAll({
+                                                            newUploadDataId.push(newFolioInfo1.id)
+                                                            // updateion for changed total share
+                                                            var updateTotalShare = await db.Employees.update({last_benpos_date: file_date,total_share: total_share},
+                                                                {
                                                                     where:{
                                                                         pan: pan,
-                                                                        is_share_changed: true
-                                                                    },
-                                                                    order:[['current_benpos_date', 'DESC']]
-                                                                })
-                                                                if(lastTransInfo.length > 0){
-                                                                    last_share_change_date = lastTransInfo[0].current_benpos_date
-                                                                }
-                                                                // add folio info
-                                                                var newFolioInfo1 = await db.Folios.create(newData,{transaction: t})
-                                                                // add upload data record
-                                                                var newUploadData = {previous_share: previous_share_5,pan: pan,current_share: share_5,total_share: total_share,
-                                                                                     current_benpos_date: file_date,is_share_changed: is_total_share_changed,
-                                                                                     is_valid: isValid,transaction_folio: folio_5,last_share_change_date: last_share_change_date,
-                                                                                     previous_total_share: previous_total_share}
-                                                                var newFolioInfo1 = await db.UploadDatas.create(newUploadData,{transaction: t})
-                                                                if(!isValid){
-                                                                    validFlag = isValid
-                                                                }
-                                                                newUploadDataId.push(newFolioInfo1.id)
-                                                                var variationData = newUploadData
-                                                                variationData["name"] = empData[0].name
-                                                                variationData["email"] = empData[0].email
-                                                                variationData["previous_total_share"] = previous_total_share
-                                                                variationDatas.push(variationData)
-                                                            }
-                                                            console.error("validFlag folio 5 = ",validFlag)
-                                                        }
-                                                        // update valid flag if any folio transaction is invalid
-                                                        console.error("validFlag final = ",validFlag)
-                                                        if(!validFlag){
-                                                            console.error("newUploadDataId= ",newUploadDataId)
-                                                            for(var x=0;x<newUploadDataId.length;x++){
-                                                                // updatedUploadDatas.push({udId: newUploadDataId[x],validFlag: validFlag})                                                               
-                                                                var updatedUploadDataInfo1 = await db.UploadDatas.update({is_valid: validFlag},{
-                                                                    where:{
-                                                                        id: newUploadDataId[x]
+                                                                        is_active: true
                                                                     },
                                                                     transaction: t
                                                                 })
-                                                            }
-                                                        }
-                                                        newUploadDataId.push(newFolioInfo1.id)
-                                                        // updateion for changed total share
-                                                        var updateTotalShare = await db.Employees.update({last_benpos_date: file_date,total_share: total_share},
-                                                            {
-                                                                where:{
-                                                                    pan: pan,
-                                                                    is_active: true
-                                                                },
-                                                                transaction: t
-                                                            })
-                                                        var updateTotalShare = await db.Relatives.update({last_benpos_date: file_date,total_share: total_share},
-                                                            {
-                                                                where:{
-                                                                    pan: pan,
-                                                                    is_active: true  
-                                                                },
-                                                                transaction: t
-                                                            })    
+                                                            var updateTotalShare = await db.Relatives.update({last_benpos_date: file_date,total_share: total_share},
+                                                                {
+                                                                    where:{
+                                                                        pan: pan,
+                                                                        is_active: true  
+                                                                    },
+                                                                    transaction: t
+                                                                })   
+                                                        }  
 
                                                     }
                                                     catch(error){
@@ -1769,7 +1786,14 @@ module.exports = (app, db) =>{
                                                 console.log(error);
                                             }
                                         }
-                                        res.status(200).json({'message':"weeklyData uploaded", "errorList": errorList, "variationDatas":variationDatas})
+                                        res.status(200).json({
+                                            data: await encryptData(JSON.stringify({
+                                                'message':'weeklyData uploaded successfully',
+                                                "errorList": errorList,
+                                                "variationDatas":variationDatas
+                                            }))
+                                        })
+                                        // res.status(200).json({'message':"weeklyData uploaded", "errorList": errorList, "variationDatas":variationDatas})
                                     }
                                 }
                                 catch(error){
