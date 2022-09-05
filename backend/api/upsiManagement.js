@@ -147,10 +147,12 @@ module.exports = (app, db) =>
                             : req.files["attachment"][0].originalname
                         );
                     }
-                    // console.log(req.body.data);
-                    decryptedData = await decryptData(req.body.data)
-                    req.body = JSON.parse(decryptedData)
-                    req.body.data = JSON.parse(req.body.data);
+                    
+                    // console.log(JSON.parse(req.body.data).data);
+                    decryptedData = await decryptData(JSON.parse(req.body.data).data)
+                    req.body.data = JSON.parse(decryptedData)
+                    // console.log(req.body);
+                    // req.body.data = JSON.parse(req.body.data);
                     // console.log(req.body.data);
                     var shared_by = req.body.data.shared_by
                     var shared_with = req.body.data.shared_with
@@ -259,11 +261,38 @@ module.exports = (app, db) =>
             else{
                 throw "Date Format Error"
             }
-            var UPSILogsData = await db.UPSILogs.findAll({
-                where:{
-                    createdAt: {[Op.between] : [fromDate,toDate]}
-                }
-            })
+            var UPSILogsData = [] 
+            if (req.user.is_compliance){
+                UPSILogsData = await db.UPSILogs.findAll({
+                    where:{
+                        createdAt: {[Op.between] : [fromDate,toDate]},
+                    }
+                })
+            }
+            else{
+                empData = await db.Employees.findOne({where:{id: req.user.userId}})
+                UPSILogsData = await db.UPSILogs.findAll({
+                    where:{
+                        [sequelize.Op.and]: [
+                            { createdAt: {[Op.between] : [fromDate,toDate]} },
+                            {
+                                [sequelize.Op.or]: [
+                                    {
+                                        shared_by:{
+                                            [Op.like]: '%'+empData.name+'%'
+                                        }
+                                    },
+                                    {
+                                        shared_with:{
+                                            [Op.like]: '%'+empData.name+'%'
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                })
+            }
             res.status(200).json({'message':'UPSI fetched successfully','data': UPSILogsData}); 
 
         }
