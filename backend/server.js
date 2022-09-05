@@ -16,6 +16,7 @@ var userManagement = require("./api/userManagement");
 var mailManagement = require("./api/mailManagement");
 var templateManagement = require("./api/templateManagement");
 const downloadManagement = require("./api/downloadManagement");
+const dataUploadManagement = require("./api/dataUploadManagement");
 
 const env = process.env.NODE_ENV || "development";
 var options = {
@@ -44,6 +45,7 @@ userManagement(app, db);
 mailManagement(app, db);
 templateManagement(app, db);
 downloadManagement(app, db);
+dataUploadManagement(app, db);
 
 
 // dbInit.createTables(db)
