@@ -65,3 +65,30 @@ export const encryptData = (data) => {
       console.error("decryptData:: error in encryptedData decryption - ",error)
     }
   };
+
+    export const getDateString = (dateObj, timeFlag = false) => {
+        if (!timeFlag) {
+            var dateStr = dateObj.getDate() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getFullYear()
+            console.log('dateObj : ', dateObj)
+            return dateStr
+        }
+        else {
+            var dateStr = dateObj.getDate() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getFullYear() + ", " + dateObj.getHours() + ":" + dateObj.getMinutes() + ":" + dateObj.getSeconds()
+            console.log('dateObj : ', dateObj)
+            return dateStr
+        }
+    }
+
+    export const getDateInput = (dateObj, timeFlag = false) => {
+        if (!timeFlag) {
+            var dateStr = dateObj.getFullYear() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getDate()
+            console.log('dateObj : ', dateObj)
+            return dateStr
+        }
+        else {
+            var dateStr = dateObj.getDate() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getFullYear() + ", " + dateObj.getHours() + ":" + dateObj.getMinutes() + ":" + dateObj.getSeconds()
+            var dateStr = 
+            console.log('dateObj : ', dateObj)
+            return dateStr
+        }
+    }

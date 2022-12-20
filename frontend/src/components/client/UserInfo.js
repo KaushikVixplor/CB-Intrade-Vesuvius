@@ -13,6 +13,7 @@ import moment from "moment";
 import { signOut, changePassword } from "../../store/action/AuthAction";
 import swal from "sweetalert";
 import { DisclosureFormModal } from "../layout/DisclosureFormModal";
+import { getDateInput, getDateString } from "../../utils/helper";
 
 export class UserInfo extends Component {
   state = {
@@ -443,7 +444,9 @@ export class UserInfo extends Component {
     this.props.SharePdf(type, this.props.user.id, this.props.user.accessToken);
   };
   render() {
-    // console.log("loc state", this.state);
+    console.log("loc state", this.state);
+    console.log("loc props", this.props)
+
     return (
       <div>
         <DisclosureFormModal
@@ -728,6 +731,23 @@ export class UserInfo extends Component {
                       <option value="Director">Director</option>
                       <option value="Partner">Partner</option>
                     </select>
+                  </div>
+                  <div className="row">
+                    <div class="input-field col s12 m12 l12 center">
+                      <input
+                        value={
+                          this.props.userData?.userDetails?.date_of_appointment_as_insider ?
+                            getDateInput(new Date(this.props.userData?.userDetails?.date_of_appointment_as_insider)) : null
+                        }
+                        onChange={this.HandleChange}
+                        id="date_of_appointment_as_insider"
+                        type="date"
+                        disabled
+                      />
+                      <label className="active" for="last_employer">
+                        Date of Joining
+                      </label>
+                    </div>
                   </div>
                 </div>
                 <div className="row">

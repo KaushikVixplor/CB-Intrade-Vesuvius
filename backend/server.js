@@ -49,5 +49,5 @@ dataUploadManagement(app, db);
 
 
 // dbInit.createTables(db)
-
+console.log('Database : ', config[env].database)
 app.listen(8081, () => console.log("App listening on port 8081!"));
