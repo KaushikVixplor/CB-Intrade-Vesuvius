@@ -121,6 +121,10 @@ export class ShareUpsi extends Component {
   MailSent = (e) => {
     e.preventDefault();
     // console.log(this.state);
+    if (this.state.subject === "" || this.state.body === "") {
+      swal("Info", "Subject and body is required", "info");
+      return;
+    }
     if (this.state.selectedOption.length)
       if (
         (this.state.to.length == 0 && this.state.share_to == "") ||
@@ -145,21 +149,30 @@ export class ShareUpsi extends Component {
         };
         // console.log(data);
         this.setState({ onRequestFlag: true });
-        this.props.ShareUpsi(data, this.state.attachment, this.props.user.accessToken);
+        this.props.ShareUpsi(
+          data,
+          this.state.attachment,
+          this.props.user.accessToken
+        );
       }
   };
 
-  onChangeFile=(e)=>{
+  onChangeFile = (e) => {
     // console.error('file : ', e.target.files[0])
-    if(e.target.files[0].size > 1e6) {
-      swal('Alert', 'File size more than 1 MB is not supported', 'info')
-      document.getElementById(e.target.id).value = null
-    }
-    else
-      this.setState({[e.target.id]: e.target.files[0]})
-  }
+    if (e.target.files[0].size > 30e6) {
+      swal("Alert", "File size more than 30 MB is not supported", "info");
+      document.getElementById(e.target.id).value = null;
+    } else this.setState({ [e.target.id]: e.target.files[0] });
+  };
 
   render() {
+    if (this.props.shareUpsiLoading) {
+      return (
+        <div className="progress">
+          <div className="indeterminate"></div>
+        </div>
+      );
+    }
     return (
       <div>
         <div className="container">
@@ -196,6 +209,7 @@ export class ShareUpsi extends Component {
                       <Multiselect
                         id="to"
                         displayValue="label"
+                        disable
                         selectedValues={this.state.selectedOption}
                         options={[
                           { label: "All", value: "*" },
@@ -294,12 +308,12 @@ export class ShareUpsi extends Component {
                 </div> */}
                 </div>
                 <div className="row">
-                  <div className="col s4 m4 l4" style={{marginTop: '-47px'}}>
+                  <div className="col s4 m4 l4" style={{ marginTop: "-47px" }}>
                     <span className="textarea-heading left">Attachment</span>
-                    <input 
+                    <input
                       type="file"
-                      id='attachment'
-                      accept=".pdf"
+                      id="attachment"
+                      accept=".pdf, .xlsx, .xls, .csv, .doc, .docx"
                       onChange={this.onChangeFile}
                     />
                   </div>

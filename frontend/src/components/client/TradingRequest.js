@@ -15,6 +15,12 @@ import {
 import swal from "sweetalert";
 import { DisclosureFormModal } from "../layout/DisclosureFormModal";
 import { sharePdf } from "../../store/action/CommonAction";
+import {
+  day,
+  getDateInput,
+  getDateInputNextn,
+  getDateInputprevn,
+} from "../../utils/helper";
 
 export class TradingRequest extends Component {
   state = {
@@ -69,17 +75,31 @@ export class TradingRequest extends Component {
   };
 
   OnSubmit = () => {
-    if (this.state.request_type == 'Sell') {
-      var folio = this.props.folios.Folios.find(f => f.id == this.state.folio_id)
+    var date_from = new Date(this.state.date_requested_from).getTime();
+    var date_to = new Date(this.state.date_requested_to).getTime();
+    if (date_to - date_from > day * 7) {
+      swal("Info", "Dealing date can't be more than 7 days", "info");
+      return;
+    }
+    if (this.state.request_type == "Sell") {
+      var folio = this.props.folios.Folios.find(
+        (f) => f.id == this.state.folio_id
+      );
       if (!folio) {
         for (var i = 0; i < this.props.folios.Relatives.length; i++) {
-          folio = this.props.folios.Relatives[i].Folios.find(f => f.id == this.state.folio_id)
-          if (folio) break
+          folio = this.props.folios.Relatives[i].Folios.find(
+            (f) => f.id == this.state.folio_id
+          );
+          if (folio) break;
         }
       }
       if (folio && folio.current_share < this.state.request_quantity) {
-        swal('Info', 'Request quantity should be less than or equal with current share of the selected folio', 'info')
-        return
+        swal(
+          "Info",
+          "Request quantity should be less than or equal with current share of the selected folio",
+          "info"
+        );
+        return;
       }
     }
     if (
@@ -89,14 +109,66 @@ export class TradingRequest extends Component {
       this.state.request_quantity == 0
     ) {
       alert("Please fill all the mandetory fields");
-    } else if (new Date(this.state.date_requested_from).getTime() > new Date(this.state.date_requested_to).getTime()) {
-      swal('Info', 'Dealing date request from must be less than Dealing date request to')
-    } else if (new Date(new Date(this.props.company.window_close_from).setHours(0, 0, 0)).getTime() <= new Date(this.state.date_requested_from).getTime() && new Date(this.state.date_requested_from).getTime() <= new Date(new Date(this.props.company.window_close_to).setHours(23, 59, 59)).getTime()) {
-      swal('Info', 'Trading window will be closed from ' + this.getDate(this.props.company.window_close_from) + ' to ' + this.getDate(this.props.company.window_close_to), 'info')
-    } else if (new Date(new Date(this.props.company.window_close_from).setHours(0, 0, 0)).getTime() <= new Date(this.state.date_requested_to).getTime() && new Date(this.state.date_requested_to).getTime() <= new Date(new Date(this.props.company.window_close_to).setHours(23, 59, 59)).getTime()) {
-      swal('Info', 'Trading window will be closed from ' + this.getDate(this.props.company.window_close_from) + ' to ' + this.getDate(this.props.company.window_close_to), 'info')
-    } else if (new Date(this.state.date_requested_from).getTime() < new Date(new Date(this.props.company.window_close_from).setHours(0, 0, 0)).getTime() && new Date(this.state.date_requested_to).getTime() > new Date(new Date(this.props.company.window_close_to).setHours(23, 59, 59)).getTime()) {
-      swal('Info', 'Trading window will be closed from ' + this.getDate(this.props.company.window_close_from) + ' to ' + this.getDate(this.props.company.window_close_to), 'info')
+    } else if (
+      new Date(this.state.date_requested_from).getTime() >
+      new Date(this.state.date_requested_to).getTime()
+    ) {
+      swal(
+        "Info",
+        "Dealing date request from must be less than Dealing date request to"
+      );
+    } else if (
+      new Date(
+        new Date(this.props.company.window_close_from).setHours(0, 0, 0)
+      ).getTime() <= new Date(this.state.date_requested_from).getTime() &&
+      new Date(this.state.date_requested_from).getTime() <=
+        new Date(
+          new Date(this.props.company.window_close_to).setHours(23, 59, 59)
+        ).getTime()
+    ) {
+      swal(
+        "Info",
+        "Trading window will be closed from " +
+          this.getDate(this.props.company.window_close_from) +
+          " to " +
+          this.getDate(this.props.company.window_close_to),
+        "info"
+      );
+    } else if (
+      new Date(
+        new Date(this.props.company.window_close_from).setHours(0, 0, 0)
+      ).getTime() <= new Date(this.state.date_requested_to).getTime() &&
+      new Date(this.state.date_requested_to).getTime() <=
+        new Date(
+          new Date(this.props.company.window_close_to).setHours(23, 59, 59)
+        ).getTime()
+    ) {
+      swal(
+        "Info",
+        "Trading window will be closed from " +
+          this.getDate(this.props.company.window_close_from) +
+          " to " +
+          this.getDate(this.props.company.window_close_to),
+        "info"
+      );
+    } else if (
+      new Date(this.state.date_requested_from).getTime() <
+        new Date(
+          new Date(this.props.company.window_close_from).setHours(0, 0, 0)
+        ).getTime() &&
+      new Date(this.state.date_requested_to).getTime() >
+        new Date(
+          new Date(this.props.company.window_close_to).setHours(23, 59, 59)
+        ).getTime()
+    ) {
+      swal(
+        "Info",
+        "Trading window will be closed from " +
+          this.getDate(this.props.company.window_close_from) +
+          " to " +
+          this.getDate(this.props.company.window_close_to),
+        "info"
+      );
     } else {
       this.setState({ onRequestFlag: true });
       this.props.RequestTran(this.state, this.props.user.accessToken);
@@ -105,7 +177,7 @@ export class TradingRequest extends Component {
 
   componentDidMount = () => {
     if (this.props.user) {
-      var today = this.getDateValue()
+      var today = this.getDateValue();
       this.setState({ name: this.props.user.name, today: today });
       this.props.FetchFolios(this.props.user.accessToken);
       this.props.UserRelative(this.props.user.id, this.props.user.accessToken);
@@ -215,26 +287,26 @@ export class TradingRequest extends Component {
   getDate = (date) => {
     var d = new Date(date);
     var day = d.getDate();
-    if (day.toString().length == 1) day = '0' + day
+    if (day.toString().length == 1) day = "0" + day;
     var month = d.getMonth() + 1;
-    if (month.toString().length == 1) month = '0' + month
+    if (month.toString().length == 1) month = "0" + month;
     var Year = d.getFullYear();
     return day + "-" + month + "-" + Year;
-  }
+  };
 
   getDateValue = () => {
     var d = new Date();
     var day = d.getDate();
-    if (day.toString().length == 1) day = '0' + day
+    if (day.toString().length == 1) day = "0" + day;
     var month = d.getMonth() + 1;
-    if (month.toString().length == 1) month = '0' + month
+    if (month.toString().length == 1) month = "0" + month;
     var Year = d.getFullYear();
     return Year + "-" + month + "-" + day;
-  }
-  
+  };
+
   render() {
-    // console.log("loc state", this.state);
-    // console.log("loc state", this.props);
+    console.log("loc state", this.state);
+    console.log("loc state", this.props);
     if (!this.props.user) return <Redirect to="/login" />;
     return (
       <div className="row">
@@ -244,7 +316,7 @@ export class TradingRequest extends Component {
           file={this.props.requestTrans}
           share={this.onSharePdf}
           props={this.props}
-          type='request'
+          type="request"
         />
 
         <div
@@ -675,7 +747,7 @@ const mapStateToProps = (state) => {
     sharePdfError: state.common.sharePdfError,
     sharePdfMsg: state.common.sharePdfMsg,
 
-    company: state.common.getCompanyData
+    company: state.common.getCompanyData,
   };
 };
 

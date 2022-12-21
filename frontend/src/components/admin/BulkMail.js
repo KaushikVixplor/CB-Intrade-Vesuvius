@@ -75,6 +75,10 @@ export class BulkMail extends Component {
   onSubmit = (e) => {
     e.preventDefault();
     // console.log(this.state.to);
+    if (this.state.subject === "" || this.state.body === "") {
+      swal("Info", "Subject and body is required", "info");
+      return;
+    }
     if (
       this.state.to.length == 0 ||
       this.state.subject == "" ||
@@ -93,21 +97,30 @@ export class BulkMail extends Component {
       };
       this.setState({ onRequestFlag: true });
       // console.log("data:", data);
-      this.props.BulkMail(data, this.state.attachment, this.props.user.accessToken);
+      this.props.BulkMail(
+        data,
+        this.state.attachment,
+        this.props.user.accessToken
+      );
     }
   };
 
-  onChangeFile=(e)=>{
+  onChangeFile = (e) => {
     // console.error('file : ', e.target.files[0])
-    if(e.target.files[0].size > 1e6) {
-      swal('Alert', 'File size more than 1 MB is not supported', 'info')
-      document.getElementById(e.target.id).value = null
-    }
-    else
-      this.setState({[e.target.id]: e.target.files[0]})
-  }
+    if (e.target.files[0].size > 30e6) {
+      swal("Alert", "File size more than 30 MB is not supported", "info");
+      document.getElementById(e.target.id).value = null;
+    } else this.setState({ [e.target.id]: e.target.files[0] });
+  };
 
   render() {
+    if (this.props.bulkMailLoading) {
+      return (
+        <div className="progress">
+          <div className="indeterminate"></div>
+        </div>
+      );
+    }
     return (
       <div className="container">
         <form
@@ -175,16 +188,19 @@ export class BulkMail extends Component {
                     </div>
                     <div className="col s12 m12 l12">
                       <div className="row">
-                        <div className="col s22 m22 l2 left" style={{transform: 'translate(-32px, 19px)'}}>
-                          <label style={{fontSize: '12px'}}>Attachment</label>
+                        <div
+                          className="col s22 m22 l2 left"
+                          style={{ transform: "translate(-32px, 19px)" }}
+                        >
+                          <label style={{ fontSize: "12px" }}>Attachment</label>
                         </div>
                       </div>
                       <div className="row">
                         <div className="col s2 m2 l2 left">
                           <input
                             type="file"
-                            id='attachment'
-                            accept=".pdf"
+                            id="attachment"
+                            accept=".pdf, .xlsx, .xls, .csv, .doc, .docx"
                             onChange={this.onChangeFile}
                           />
                         </div>
@@ -199,7 +215,7 @@ export class BulkMail extends Component {
               </div>
             </div>
           </div>
-          <div style={{transform: 'translate(10px, -104px)'}}>
+          <div style={{ transform: "translate(10px, -104px)" }}>
             <button
               className="btn btn-button right"
               onClick={this.onSubmit}
