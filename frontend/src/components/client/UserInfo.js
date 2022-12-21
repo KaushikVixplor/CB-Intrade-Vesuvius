@@ -271,7 +271,7 @@ export class UserInfo extends Component {
   HandleChange = (e) => {
     if (e.target.id == "last_benpos_date") {
       this.setState({
-        [e.target.id]: e.target.value
+        [e.target.id]: e.target.value,
       });
     } else {
       this.setState({ [e.target.id]: e.target.value });
@@ -350,16 +350,16 @@ export class UserInfo extends Component {
             //     this.props.user.accessToken
             //   );
             // });
-            var d = new Date()
+            var d = new Date();
             var day = d.getDate();
-            if (day.toString().length == 1) day = '0' + day
+            if (day.toString().length == 1) day = "0" + day;
             var month = d.getMonth() + 1;
-            if (month.toString().length == 1) month = '0' + month
+            if (month.toString().length == 1) month = "0" + month;
             var Year = d.getFullYear();
-            var today = Year + "-" + month + "-" + day
+            var today = Year + "-" + month + "-" + day;
             this.setState({ onRequestFlag: true });
             this.props.UpdateUser(
-              {...this.state, last_benpos_date: today},
+              { ...this.state, last_benpos_date: today },
               this.props.user.id,
               this.props.userData.userDetails.status,
               this.props.user.accessToken
@@ -394,16 +394,16 @@ export class UserInfo extends Component {
         //     this.props.user.accessToken
         //   );
         // });
-        var d = new Date()
+        var d = new Date();
         var day = d.getDate();
-        if (day.toString().length == 1) day = '0' + day
+        if (day.toString().length == 1) day = "0" + day;
         var month = d.getMonth() + 1;
-        if (month.toString().length == 1) month = '0' + month
+        if (month.toString().length == 1) month = "0" + month;
         var Year = d.getFullYear();
-        var today_rel = Year + "-" + month + "-" + day
+        var today_rel = Year + "-" + month + "-" + day;
         this.setState({ onRequestFlag: true });
         this.props.UpdateUser(
-          {...this.state, last_benpos_date: today_rel},
+          { ...this.state, last_benpos_date: today_rel },
           this.props.user.id,
           this.props.userData.userDetails.status,
           this.props.user.accessToken
@@ -445,7 +445,7 @@ export class UserInfo extends Component {
   };
   render() {
     console.log("loc state", this.state);
-    console.log("loc props", this.props)
+    console.log("loc props", this.props);
 
     return (
       <div>
@@ -473,37 +473,41 @@ export class UserInfo extends Component {
                 this.props.updateSuccess
               }
             >
-              {this.props.userData && this.props.userData.userDetails && (this.props.userData.userDetails.status == 'Temp' || this.props.userData.userDetails.canEdit) &&
-                <div className="row">
-                  <div
-                    className="col s10 m10 l10"
-                    style={{
-                      height: 40,
-                      color: "slategrey",
-                      fontWeight: 900,
-                      marginLeft: 72,
-                    }}
-                  >
-                    <span className="right" style={{ marginTop: 10 }}>
-                      To fill up/update the following data click on the pen --{">"}
-                      {/* <i className="material-icons">trending_flat</i> */}
-                    </span>
-                  </div>
-
-                  <div className="col s1 m1 l1 right">
-                    <a
-                      className={
-                        this.state.edit
-                          ? "btn-floating right btn-small"
-                          : "btn-floating right btn-button"
-                      }
-                      onClick={this.editFlag}
+              {this.props.userData &&
+                this.props.userData.userDetails &&
+                (this.props.userData.userDetails.status == "Temp" ||
+                  this.props.userData.userDetails.canEdit) && (
+                  <div className="row">
+                    <div
+                      className="col s10 m10 l10"
+                      style={{
+                        height: 40,
+                        color: "slategrey",
+                        fontWeight: 900,
+                        marginLeft: 72,
+                      }}
                     >
-                      <i className="material-icons">edit</i>
-                    </a>
+                      <span className="right" style={{ marginTop: 10 }}>
+                        To fill up/update the following data click on the pen --
+                        {">"}
+                        {/* <i className="material-icons">trending_flat</i> */}
+                      </span>
+                    </div>
+
+                    <div className="col s1 m1 l1 right">
+                      <a
+                        className={
+                          this.state.edit
+                            ? "btn-floating right btn-small"
+                            : "btn-floating right btn-button"
+                        }
+                        onClick={this.editFlag}
+                      >
+                        <i className="material-icons">edit</i>
+                      </a>
+                    </div>
                   </div>
-                </div>
-              }
+                )}
               <div>
                 <span
                   style={{
@@ -542,9 +546,7 @@ export class UserInfo extends Component {
                     <input
                       disabled
                       onChange={this.HandleChange}
-                      value={
-                        this.state.pan
-                      }
+                      value={this.state.pan}
                       id="pan"
                       type="text"
                       required
@@ -727,7 +729,7 @@ export class UserInfo extends Component {
                         Choose your option
                       </option>
                       <option value="Promoter">Promoter</option>
-                      {/* <option value="Employee">Employee</option> */}
+                      <option value="Employee">Employee</option>
                       <option value="Director">Director</option>
                       <option value="Partner">Partner</option>
                     </select>
@@ -736,8 +738,14 @@ export class UserInfo extends Component {
                     <div class="input-field col s12 m12 l12 center">
                       <input
                         value={
-                          this.props.userData?.userDetails?.date_of_appointment_as_insider ?
-                            getDateInput(new Date(this.props.userData?.userDetails?.date_of_appointment_as_insider)) : null
+                          this.props.userData?.userDetails
+                            ?.date_of_appointment_as_insider
+                            ? getDateInput(
+                                new Date(
+                                  this.props.userData?.userDetails?.date_of_appointment_as_insider
+                                )
+                              )
+                            : null
                         }
                         onChange={this.HandleChange}
                         id="date_of_appointment_as_insider"
