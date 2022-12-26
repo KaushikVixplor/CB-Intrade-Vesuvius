@@ -6,6 +6,7 @@ import { getKmp, shareUpsi } from "../../store/action/HodAction";
 import ReactMultiSelectCheckboxes from "react-multiselect-checkboxes";
 
 import swal from "sweetalert";
+import { Redirect } from "react-router-dom";
 
 export class ShareUpsi extends Component {
   state = {
@@ -70,7 +71,11 @@ export class ShareUpsi extends Component {
     if (this.state.onRequestFlag && !this.props.shareUpsiLoading) {
       if (this.props.shareUpsiSuccess) {
         swal("Success", "SuccessFul", "success");
-        this.setState({ type: "success", onRequestFlag: false });
+        this.setState({
+          type: "success",
+          onRequestFlag: false,
+          navigatToDashFlag: true,
+        });
       } else if (this.props.shareUpsiError) {
         swal("OOPS!", this.props.shareUpsiMsg, "error");
         this.setState({ type: "error", onRequestFlag: false });
@@ -166,6 +171,9 @@ export class ShareUpsi extends Component {
   };
 
   render() {
+    if (this.state.navigatToDashFlag) {
+      return <Redirect to="/" />;
+    }
     if (this.props.shareUpsiLoading) {
       return (
         <div className="progress">
