@@ -111,12 +111,10 @@ module.exports = (app, db) => {
         });
         mailresponses.push(mailRes);
       }
-      res
-        .status(200)
-        .json({
-          message: "UPSI Shared successfully",
-          mailresponses: mailresponses,
-        });
+      res.status(200).json({
+        message: "UPSI Shared successfully",
+        mailresponses: mailresponses,
+      });
     } catch (error) {
       console.error("upsi info add error", error);
       res.status(500).json({ message: "upsi info add error:: " + error });
@@ -193,14 +191,19 @@ module.exports = (app, db) => {
               // })
               // add UPSI Log
               const UPSILogsData = await db.UPSILogs.create(req.body.data);
+              const emp = await db.Employees.findByPk(req.user.userPAN);
+              const designation = req.user.is_compliance
+                ? "Compliance Officer"
+                : "Insider";
               var Disclaimer = "Dear Insider,\n\n";
               // Disclaimer = Disclaimer+"The UPSI is shared with you on a need-to-know basis.You should maintain the confidentiality of all the Price-Sensitive Information and should not pass on such information to any person directly or indirectly, by way of making a recommendation for the purchase or sale of securities relating to "+companyData.name+".\n"
               Disclaimer = Disclaimer + "\n" + information + "\n\n";
               Disclaimer =
                 Disclaimer +
                 "Yours faithfully,\n" +
-                coData.name +
-                "\nCompliance Officer";
+                emp.name +
+                "\n" +
+                designation;
 
               // shared_by = shared_by.split(",")
               // shared_with = shared_with.split(",")
@@ -227,12 +230,10 @@ module.exports = (app, db) => {
               if (url) {
                 fs.unlinkSync(url);
               }
-              res
-                .status(200)
-                .json({
-                  message: "UPSI Shared successfully",
-                  mailresponses: mailresponses,
-                });
+              res.status(200).json({
+                message: "UPSI Shared successfully",
+                mailresponses: mailresponses,
+              });
             }
           } catch (err) {
             console.log(err);

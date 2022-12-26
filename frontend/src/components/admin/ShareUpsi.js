@@ -321,7 +321,7 @@ export class ShareUpsi extends Component {
                     <input
                       type="file"
                       id="attachment"
-                      accept=".pdf, .xlsx, .xls, .csv, .doc, .docx"
+                      accept=".*"
                       onChange={this.onChangeFile}
                     />
                   </div>

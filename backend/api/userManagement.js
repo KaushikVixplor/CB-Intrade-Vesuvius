@@ -385,13 +385,11 @@ module.exports = (app, db) => {
           // console.error("mailRes = ",mailRes)
           var activityData = { activityId: activity_id };
           activity_id = await trackActivity(activityData, db);
-          res
-            .status(200)
-            .json({
-              message: "password reset Successfully",
-              password: tempPass,
-              mailRes: mailRes,
-            });
+          res.status(200).json({
+            message: "password reset Successfully",
+            password: tempPass,
+            mailRes: mailRes,
+          });
         } else {
           console.error("Database error in reset password");
           res.status(500).json({ message: "Database error in reset password" });
@@ -462,21 +460,17 @@ module.exports = (app, db) => {
           isValidPass = await validatePassword(req.body.newPassword, user.name);
           if (bcrypt.compareSync(req.body.newPassword, user.password)) {
             console.error("New password can't be same with previous password");
-            res
-              .status(401)
-              .json({
-                message: "New password can't be same with previous password",
-              });
+            res.status(401).json({
+              message: "New password can't be same with previous password",
+            });
           } else if (!isValidPass) {
             console.error(
               "New password can't contain your company name or your name"
             );
-            res
-              .status(401)
-              .json({
-                message:
-                  "New password can't contain your company name or your name",
-              });
+            res.status(401).json({
+              message:
+                "New password can't contain your company name or your name",
+            });
           } else {
             const hash = bcrypt.hashSync(req.body.newPassword, saltRound); //Hashing the password
             req.body.newPassword = hash;
@@ -1097,13 +1091,11 @@ module.exports = (app, db) => {
                 }
               }
               x = sentBulkInsiderJoinMail(insiderData);
-              res
-                .status(200)
-                .json({
-                  message: "employee Data uploaded",
-                  addedList: addedList,
-                  errorList: errorList,
-                });
+              res.status(200).json({
+                message: "employee Data uploaded",
+                addedList: addedList,
+                errorList: errorList,
+              });
             } catch (error) {
               console.error("Error in employeeData upload and read", error);
               throw error;
@@ -1142,13 +1134,11 @@ module.exports = (app, db) => {
         },
       });
       if (empData.length > 0) {
-        res
-          .status(400)
-          .json({
-            message:
-              "This email Id already exist in dataBase try with another email Id",
-            empData,
-          });
+        res.status(400).json({
+          message:
+            "This email Id already exist in dataBase try with another email Id",
+          empData,
+        });
       } else {
         var tempPan = await getNoPanMax();
         if (!req.body.hasOwnProperty("pan")) {
@@ -1460,7 +1450,7 @@ module.exports = (app, db) => {
                 // console.error(">>>>>>>> updateData.last_benpos_date(3) = ",updateData.last_benpos_date)
               }
             }
-            // console.error("updateData:: ",updateData)
+            console.error("updateData:: ", updateData);
             db.Employees.update(updateData, {
               where: {
                 id: req.params.id,

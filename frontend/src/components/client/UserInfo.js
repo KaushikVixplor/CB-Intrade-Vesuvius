@@ -738,8 +738,10 @@ export class UserInfo extends Component {
                     <div class="input-field col s12 m12 l12 center">
                       <input
                         value={
-                          this.props.userData?.userDetails
-                            ?.date_of_appointment_as_insider
+                          this.state.date_of_appointment_as_insider
+                            ? this.state.date_of_appointment_as_insider
+                            : this.props.userData?.userDetails
+                                ?.date_of_appointment_as_insider
                             ? getDateInput(
                                 new Date(
                                   this.props.userData?.userDetails?.date_of_appointment_as_insider
@@ -750,7 +752,6 @@ export class UserInfo extends Component {
                         onChange={this.HandleChange}
                         id="date_of_appointment_as_insider"
                         type="date"
-                        disabled
                       />
                       <label className="active" for="last_employer">
                         Date of Joining
