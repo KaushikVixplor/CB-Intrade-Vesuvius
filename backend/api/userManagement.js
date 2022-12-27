@@ -1145,7 +1145,7 @@ module.exports = (app, db) => {
           req.body["pan"] = tempPan;
         }
 
-        req.body["date_of_appointment_as_insider"] = new Date();
+        // req.body["date_of_appointment_as_insider"] = new Date();
         tempPass = await getRandomPass();
         // console.error("tempPass = ",tempPass)
 

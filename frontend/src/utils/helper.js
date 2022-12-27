@@ -102,32 +102,15 @@ export const getDateString = (dateObj, timeFlag = false) => {
   }
 };
 
-export const getDateInput = (dateObj, timeFlag = false) => {
-  if (!timeFlag) {
-    var dateStr =
-      dateObj.getFullYear() +
-      "-" +
-      (dateObj.getMonth() + 1) +
-      "-" +
-      dateObj.getDate();
-    console.log("dateObj : ", dateObj);
-    return dateStr;
-  } else {
-    var dateStr =
-      dateObj.getDate() +
-      "-" +
-      (dateObj.getMonth() + 1) +
-      "-" +
-      dateObj.getFullYear() +
-      ", " +
-      dateObj.getHours() +
-      ":" +
-      dateObj.getMinutes() +
-      ":" +
-      dateObj.getSeconds();
-    var dateStr = console.log("dateObj : ", dateObj);
-    return dateStr;
-  }
+export const getDateInput = (dateObj) => {
+  var Year = dateObj.getFullYear();
+  var month = dateObj.getMonth() + 1;
+  if (month < 10) month = "0" + String(month);
+  var day = dateObj.getDate();
+  if (day < 10) day = "0" + String(day);
+  var dateStr = Year + "-" + month + "-" + day;
+  console.log("dateObj : ", dateStr);
+  return dateStr;
 };
 
 export const getDateInputNextn = (date, n) => {

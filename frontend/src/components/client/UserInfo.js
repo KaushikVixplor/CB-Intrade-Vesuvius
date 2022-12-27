@@ -752,6 +752,7 @@ export class UserInfo extends Component {
                         onChange={this.HandleChange}
                         id="date_of_appointment_as_insider"
                         type="date"
+                        disabled={this.state.edit ? false : true}
                       />
                       <label className="active" for="last_employer">
                         Date of Joining

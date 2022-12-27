@@ -3,6 +3,7 @@ import moment from "moment";
 import "../stylesheet/modals.css";
 import "../stylesheet/common.css";
 import { ApproveRejectModal } from "../layout/ApproveRejectModal";
+import { getDateString } from "../../utils/helper";
 
 export const ViewCorrectionRequestModal = ({
   id,
@@ -14,8 +15,8 @@ export const ViewCorrectionRequestModal = ({
   handleChange,
   state,
 }) => {
-  // console.log("UserInfo:: ",UserInfo); 
-  // console.log("typeof UserInfo:: ",typeof UserInfo); 
+  console.log("UserInfo:: ", UserInfo);
+  // console.log("typeof UserInfo:: ",typeof UserInfo);
   // console.log("JSON.parse(UserInfo):: ",JSON.parse(UserInfo));
   return (
     <>
@@ -104,6 +105,22 @@ export const ViewCorrectionRequestModal = ({
                   >
                     Address
                   </textarea>
+                </div>
+              </div>
+              <p>
+                <label>Date of Joining</label>
+              </p>
+              <div className="row">
+                <div className="col s12 m12 l12">
+                  <input
+                    type="date"
+                    value={
+                      UserInfo?.date_of_appointment_as_insider
+                        ? UserInfo?.date_of_appointment_as_insider
+                        : null
+                    }
+                    disabled
+                  />
                 </div>
               </div>
               <p>
@@ -419,7 +436,6 @@ export const ViewCorrectionRequestModal = ({
                           type="text"
                           disabled
                           id={"pan-" /*+ index*/}
-                          disabled
                           value={user.pan}
                           required
                         />
