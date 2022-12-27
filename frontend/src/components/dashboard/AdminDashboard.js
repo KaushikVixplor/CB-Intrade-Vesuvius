@@ -24,6 +24,7 @@ import {
   getTempaltes,
 } from "../../store/action/HodAction";
 import {
+  downloadUpsi,
   gotoCompare,
   pdfDownload,
   resetReducer,
@@ -896,6 +897,21 @@ export class AdminDashboard extends Component {
     this.setState({ [e.target.id]: e.target.value });
   };
 
+  onDownloadUPSI = (e) => {
+    e.preventDefault();
+    this.props.DownloadUpsi(
+      {
+        startDate: this.state.start_date
+          ? this.state.start_date
+          : this.state.startDate,
+        endDate: this.state.end_date ? this.state.end_date : this.state.endDate,
+        query: this.state.query,
+      },
+      this.props.user.accessToken
+    );
+    this.setState({ downloadUpsiFlag: true });
+  };
+
   render() {
     if (!this.props.user) return <Redirect to="/login" />;
     // console.log("admin state", this.state);
@@ -1134,6 +1150,7 @@ export class AdminDashboard extends Component {
                   handleUploadDate={this.handleStartEndDate}
                   handleSearchWithDate={this.handleSearchWithDate}
                   userDetails={this.props.userData?.userDetails}
+                  onDownloadUPSI={this.onDownloadUPSI}
                 />
               ) : this.state.chooseFlag == "share" ? (
                 <ShareUpsi
@@ -1197,6 +1214,12 @@ const mapStateToProps = (state) => {
 
     tempaltes: state.Hod.tempaltes,
     pdfDownloadError: state.common.pdfDownloadError,
+
+    downloadUPSILoading: state.common.downloadUPSILoading,
+    downloadUPSISuccess: state.common.downloadUPSISuccess,
+    downloadUPSIError: state.common.downloadUPSIError,
+    downloadUPSIData: state.common.downloadUPSIData,
+    downloadUPSIMsg: state.common.downloadUPSIMsg,
   };
 };
 
@@ -1240,6 +1263,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     ResetReducer: (data) => {
       dispatch(resetReducer(data));
+    },
+    DownloadUpsi: (query, token) => {
+      dispatch(downloadUpsi(query, token));
     },
   };
 };

@@ -11,6 +11,7 @@ export const UpsiLog = ({
   handleSearchWithDate,
   state,
   userDetails,
+  onDownloadUPSI,
 }) => {
   var field1 = state.startDate.split("-").reverse().join("-");
   var field = state.endDate.split("-").reverse().join("-");
@@ -77,7 +78,7 @@ export const UpsiLog = ({
             </i>
           </div>
         </div>
-        <div className="col s12 m12 l12">
+        <div className="col s11 m11 l11">
           <span
             className="left"
             style={{
@@ -86,8 +87,27 @@ export const UpsiLog = ({
               fontWeight: 600,
             }}
           >
-            Total Data: {upsiList && upsiList.length}
+            Total Data:{" "}
+            {upsiList &&
+              handleSearch(upsiList, state.query, [
+                "createdAt",
+                "shared_by",
+                "shared_with",
+                "subject",
+                "information",
+              ]).length}
           </span>
+        </div>
+        <div className="col s1 m1 l1">
+          <button
+            className="btn-floating btn-button"
+            onClick={onDownloadUPSI}
+            title="Download Benpose Comparison Report"
+          >
+            <i class="material-icons" style={{ color: "black" }}>
+              download
+            </i>
+          </button>
         </div>
       </div>
       <div className="clientRequest container">

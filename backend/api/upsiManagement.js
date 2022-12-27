@@ -248,12 +248,12 @@ module.exports = (app, db) => {
   });
 
   app.get("/upsi", async (req, res) => {
-    // console.error("req user", req.user)
+    console.error("req user", req.user);
     try {
       fromDateStr = req.query.startDate;
       toDateStr = req.query.endDate;
-      // console.error("fromDateStr = ",fromDateStr)
-      // console.error("toDateStr = ",toDateStr)
+      console.error("fromDateStr = ", fromDateStr);
+      console.error("toDateStr = ", toDateStr);
       let fromDate;
       let toDate;
       if (fromDateStr.includes("/") || fromDateStr.includes("-")) {
@@ -287,12 +287,12 @@ module.exports = (app, db) => {
                 [sequelize.Op.or]: [
                   {
                     shared_by: {
-                      [Op.like]: "%" + empData.name + "%",
+                      [Op.like]: "%" + empData.pan + "%",
                     },
                   },
                   {
                     shared_with: {
-                      [Op.like]: "%" + empData.name + "%",
+                      [Op.like]: "%" + empData.pan + "%",
                     },
                   },
                 ],

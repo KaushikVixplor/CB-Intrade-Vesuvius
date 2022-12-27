@@ -1,5 +1,5 @@
 import { backendUrl } from "../../config/config";
-import { queryBuilder,decryptData, encryptData } from "../../utils/helper";
+import { queryBuilder, decryptData, encryptData } from "../../utils/helper";
 
 export const companyData = () => {
   return (dispatch) => {
@@ -105,8 +105,8 @@ export const getRequestList = (status, pan, token) => {
           // data = respData
           if (response.status === 200) {
             // console.log("action", data)
-            var respData = JSON.parse(decryptData(data.data))
-            data = respData
+            var respData = JSON.parse(decryptData(data.data));
+            data = respData;
             dispatch({
               type: "FETCH_REQUEST_LIST_SUCCESS",
               payload: data.data,
@@ -148,7 +148,11 @@ export const sharePdf = (type, id, token) => {
       type == "New_cp_login_details"
     ) {
       var fullUrl = backendUrl + "/sendMail/" + type + "?user_id=" + id;
-    } else if (type == "Window_closure" || type == "Cp_annual_declaration" || type == "Co_annual_declaration") {
+    } else if (
+      type == "Window_closure" ||
+      type == "Cp_annual_declaration" ||
+      type == "Co_annual_declaration"
+    ) {
       var fullUrl = backendUrl + "/sendMail/" + type;
     }
     // console.log("full url", fullUrl);
@@ -189,10 +193,17 @@ export const sharePdf = (type, id, token) => {
   };
 };
 
-export const pdfDownload = (startDate, endDate, pan, type, token, query = null) => {
+export const pdfDownload = (
+  startDate,
+  endDate,
+  pan,
+  type,
+  token,
+  query = null
+) => {
   return (dispatch) => {
     if (type === "CONNECTED_PERSONS") {
-      var newUrl = '/usersPdf'
+      var newUrl = "/usersPdf";
       if (query && Object.keys(query).length > 0) {
         newUrl += "?";
         Object.keys(query).map((q, index) => {
@@ -209,7 +220,8 @@ export const pdfDownload = (startDate, endDate, pan, type, token, query = null) 
         headers: {
           // "Content-Type": "application/json",
           // "Content-disposition": "attachment; filename=Connected Persons.pdf",
-          "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "Content-Type":
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
           "Content-disposition": "attachment; filename=Connected Persons.xlsx",
           Authorization: `Bearer ${token}`,
         },
@@ -465,10 +477,10 @@ export const pdfDownload = (startDate, endDate, pan, type, token, query = null) 
   };
 };
 
-export const updateEmployee = (query,body, token) => {
+export const updateEmployee = (query, body, token) => {
   return (dispatch) => {
-    dispatch({ type: 'UPDATE_EMPLOYEE_LOADING' });
-    var newUrl = queryBuilder('/users/canEdit', query)
+    dispatch({ type: "UPDATE_EMPLOYEE_LOADING" });
+    var newUrl = queryBuilder("/users/canEdit", query);
     fetch(backendUrl + newUrl, {
       method: "put",
       headers: {
@@ -476,39 +488,40 @@ export const updateEmployee = (query,body, token) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     })
-      .then(res => res.json().then(data => {
-        if (res.status == 200) {
-          dispatch({
-            type: 'UPDATE_EMPLOYEE_SUCCESS',
-            message: data.message,
-          });
-        } else if (res.status === 403 || res.status === 401) {
-          dispatch({
-            type: "AUTHENTICATION_ERROR",
-          });
-        } else {
-          dispatch({
-            type: 'UPDATE_EMPLOYEE_ERROR',
-            message: data.message
-          });
-        }
-      }))
-      .catch(err => {
+      .then((res) =>
+        res.json().then((data) => {
+          if (res.status == 200) {
+            dispatch({
+              type: "UPDATE_EMPLOYEE_SUCCESS",
+              message: data.message,
+            });
+          } else if (res.status === 403 || res.status === 401) {
+            dispatch({
+              type: "AUTHENTICATION_ERROR",
+            });
+          } else {
+            dispatch({
+              type: "UPDATE_EMPLOYEE_ERROR",
+              message: data.message,
+            });
+          }
+        })
+      )
+      .catch((err) => {
         dispatch({
-          type: 'UPDATE_EMPLOYEE_ERROR',
-          message: 'Internal Error'
+          type: "UPDATE_EMPLOYEE_ERROR",
+          message: "Internal Error",
         });
-      })
-  }
-}
+      });
+  };
+};
 
-
-export const updateUPSIAccess = (query,body, token) => {
+export const updateUPSIAccess = (query, body, token) => {
   return (dispatch) => {
-    dispatch({ type: 'UPDATE_UPSI_ACCESS_LOADING' });
-    var newUrl = queryBuilder('/users/haveUPSI', query)
+    dispatch({ type: "UPDATE_UPSI_ACCESS_LOADING" });
+    var newUrl = queryBuilder("/users/haveUPSI", query);
     fetch(backendUrl + newUrl, {
       method: "put",
       headers: {
@@ -516,107 +529,175 @@ export const updateUPSIAccess = (query,body, token) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     })
-      .then(res => res.json().then(data => {
-        if (res.status == 200) {
-          dispatch({
-            type: 'UPDATE_UPSI_ACCESS_SUCCESS',
-            message: data.message,
-          });
-        } else if (res.status === 403 || res.status === 401) {
-          dispatch({
-            type: "AUTHENTICATION_ERROR",
-          });
-        } else {
-          dispatch({
-            type: 'UPDATE_UPSI_ACCESS_ERROR',
-            message: data.message
-          });
-        }
-      }))
-      .catch(err => {
+      .then((res) =>
+        res.json().then((data) => {
+          if (res.status == 200) {
+            dispatch({
+              type: "UPDATE_UPSI_ACCESS_SUCCESS",
+              message: data.message,
+            });
+          } else if (res.status === 403 || res.status === 401) {
+            dispatch({
+              type: "AUTHENTICATION_ERROR",
+            });
+          } else {
+            dispatch({
+              type: "UPDATE_UPSI_ACCESS_ERROR",
+              message: data.message,
+            });
+          }
+        })
+      )
+      .catch((err) => {
         dispatch({
-          type: 'UPDATE_EMPLOYEE_ERROR',
-          message: 'Internal Error'
+          type: "UPDATE_EMPLOYEE_ERROR",
+          message: "Internal Error",
         });
-      })
-  }
-}
-
+      });
+  };
+};
 
 export const resetReducer = (data) => {
   return (dispatch) => {
     dispatch({
-      type: 'RESET_REDUCER',
-      data: data
-    })
-  }
-}
+      type: "RESET_REDUCER",
+      data: data,
+    });
+  };
+};
 
 export const getInsidersexcel = (query, token) => {
   return (dispatch) => {
-      dispatch({
-          type: "INSIDERS_EXCEL_LOADING",
+    dispatch({
+      type: "INSIDERS_EXCEL_LOADING",
+    });
+    var newUrl = "/insidersPdf";
+    if (query && Object.keys(query).length > 0) {
+      newUrl += "?";
+      Object.keys(query).map((q, index) => {
+        if (query[q]) {
+          if (index > 0 || newUrl.charAt(newUrl.length - 1) != "?") {
+            newUrl += "&" + q + "=" + query[q];
+          } else {
+            newUrl += q + "=" + query[q];
+          }
+        }
       });
-      var newUrl = '/insidersPdf'
-      if (query && Object.keys(query).length > 0) {
-          newUrl += "?";
-          Object.keys(query).map((q, index) => {
-              if (query[q]) {
-                  if (index > 0 || newUrl.charAt(newUrl.length - 1) != "?") {
-                      newUrl += "&" + q + "=" + query[q];
-                  } else {
-                      newUrl += q + "=" + query[q];
-                  }
-              }
-          });
-      }
-      fetch(backendUrl + newUrl, {
-          headers: {
-              "Content-Type": "application/json",
-              "Content-disposition": "attachment; filename=insiders.xlsx",
-              Authorization: `Bearer ${token}`,
-          },
-      })
-          .then((response) =>
-              response.blob().then((blob) => {
-                  if (response.status === 500) {
-                      dispatch({
-                          type: "INSIDERS_EXCEL_ERROR",
-                          message: "No insiders found",
-                      });
-                  } else if (response.status === 200) {
-                      const data = window.URL.createObjectURL(blob);
-                      var link = document.createElement("a");
-                      link.href = data;
-                      link.download = "insiders.xlsx";
-                      link.click();
-                      setTimeout(function () {
-                          // For Firefox it is necessary to delay revoking the ObjectURL
-                          window.URL.revokeObjectURL(data);
-                      }, 100);
-                      dispatch({
-                          type: "INSIDERS_EXCEL_SUCCESS",
-                          payload: data,
-                      });
-                  } else if (response.status === 403) {
-                      dispatch({
-                          type: "AUTHENTICATION_ERROR",
-                      });
-                  } else {
-                      dispatch({
-                          type: "INSIDERS_EXCEL_ERROR",
-                          message: "No employee found",
-                      });
-                  }
-              })
-          )
-          .catch((err) => {
-              dispatch({
-                  type: "INSIDERS_EXCEL_ERROR",
-                  message: "internal Error",
-              });
-          });
+    }
+    fetch(backendUrl + newUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        "Content-disposition": "attachment; filename=insiders.xlsx",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) =>
+        response.blob().then((blob) => {
+          if (response.status === 500) {
+            dispatch({
+              type: "INSIDERS_EXCEL_ERROR",
+              message: "No insiders found",
+            });
+          } else if (response.status === 200) {
+            const data = window.URL.createObjectURL(blob);
+            var link = document.createElement("a");
+            link.href = data;
+            link.download = "insiders.xlsx";
+            link.click();
+            setTimeout(function () {
+              // For Firefox it is necessary to delay revoking the ObjectURL
+              window.URL.revokeObjectURL(data);
+            }, 100);
+            dispatch({
+              type: "INSIDERS_EXCEL_SUCCESS",
+              payload: data,
+            });
+          } else if (response.status === 403) {
+            dispatch({
+              type: "AUTHENTICATION_ERROR",
+            });
+          } else {
+            dispatch({
+              type: "INSIDERS_EXCEL_ERROR",
+              message: "No employee found",
+            });
+          }
+        })
+      )
+      .catch((err) => {
+        dispatch({
+          type: "INSIDERS_EXCEL_ERROR",
+          message: "internal Error",
+        });
+      });
+  };
+};
+
+export const downloadUpsi = (query, token) => {
+  return (dispatch) => {
+    dispatch({
+      type: "DOWNLOAD_UPSI_LOADING",
+    });
+    var newUrl = "/upsiPDF";
+    if (query && Object.keys(query).length > 0) {
+      newUrl += "?";
+      Object.keys(query).map((q, index) => {
+        if (query[q]) {
+          if (index > 0 || newUrl.charAt(newUrl.length - 1) != "?") {
+            newUrl += "&" + q + "=" + query[q];
+          } else {
+            newUrl += q + "=" + query[q];
+          }
+        }
+      });
+    }
+    fetch(backendUrl + newUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        "Content-disposition": "attachment; filename=upsi.pdf",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) =>
+        response.blob().then((blob) => {
+          if (response.status === 500) {
+            dispatch({
+              type: "DOWNLOAD_UPSI_ERROR",
+              message: "Error to download UPSI",
+            });
+          } else if (response.status === 200) {
+            const data = window.URL.createObjectURL(blob);
+            var link = document.createElement("a");
+            link.href = data;
+            link.download = "upsi.pdf";
+            link.click();
+            setTimeout(function () {
+              // For Firefox it is necessary to delay revoking the ObjectURL
+              window.URL.revokeObjectURL(data);
+            }, 100);
+            dispatch({
+              type: "DOWNLOAD_UPSI_SUCCESS",
+              data: data,
+            });
+          } else if (response.status === 403) {
+            dispatch({
+              type: "AUTHENTICATION_ERROR",
+            });
+          } else {
+            dispatch({
+              type: "DOWNLOAD_UPSI_ERROR",
+              message: "Error to download UPSI",
+            });
+          }
+        })
+      )
+      .catch((err) => {
+        dispatch({
+          type: "DOWNLOAD_UPSI_ERROR",
+          message: "internal Error",
+        });
+      });
   };
 };

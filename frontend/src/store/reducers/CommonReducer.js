@@ -42,12 +42,17 @@ const initState = {
   updateEmployeeData: null,
   updateEmployeeMsg: null,
 
-  
   updateUPSIAccessLoading: false,
   updateUPSIAccessSuccess: false,
   updateUPSIAccessError: false,
   updateUPSIAccessData: null,
-  updateUPSIAccessMsg: null
+  updateUPSIAccessMsg: null,
+
+  downloadUPSILoading: false,
+  downloadUPSISuccess: false,
+  downloadUPSIError: false,
+  downloadUPSIData: null,
+  downloadUPSIMsg: null,
 };
 
 const CommonReducer = (state = initState, action) => {
@@ -154,60 +159,60 @@ const CommonReducer = (state = initState, action) => {
         sharePdfLoading: true,
         sharePdfError: false,
       };
-    case 'UPDATE_EMPLOYEE_LOADING':
+    case "UPDATE_EMPLOYEE_LOADING":
       return {
         ...state,
         updateEmployeeLoading: true,
         updateEmployeeSuccess: false,
         updateEmployeeErroe: false,
         updateEmployeeData: null,
-        updateEmployeeMsg: null
-      }
-    case 'UPDATE_EMPLOYEE_SUCCESS':
+        updateEmployeeMsg: null,
+      };
+    case "UPDATE_EMPLOYEE_SUCCESS":
       return {
         ...state,
         updateEmployeeLoading: false,
         updateEmployeeSuccess: true,
         updateEmployeeErroe: false,
         updateEmployeeData: action.data,
-        updateEmployeeMsg: action.message
-      }
-    case 'UPDATE_EMPLOYEE_ERROR':
+        updateEmployeeMsg: action.message,
+      };
+    case "UPDATE_EMPLOYEE_ERROR":
       return {
         ...state,
         updateEmployeeLoading: false,
         updateEmployeeSuccess: false,
         updateEmployeeErroe: true,
         updateEmployeeData: action.data,
-        updateEmployeeMsg: action.message
-      }
-    case 'UPDATE_UPSI_ACCESS_LOADING':
+        updateEmployeeMsg: action.message,
+      };
+    case "UPDATE_UPSI_ACCESS_LOADING":
       return {
         ...state,
         updateUPSIAccessLoading: true,
         updateUPSIAccessSuccess: false,
         updateUPSIAccessError: false,
         updateUPSIAccessData: null,
-        updateUPSIAccessMsg: null
-      }
-    case 'UPDATE_UPSI_ACCESS_SUCCESS':
+        updateUPSIAccessMsg: null,
+      };
+    case "UPDATE_UPSI_ACCESS_SUCCESS":
       return {
         ...state,
         updateUPSIAccessLoading: false,
         updateUPSIAccessSuccess: true,
         updateUPSIAccessError: false,
         updateUPSIAccessData: action.data,
-        updateUPSIAccessMsg: action.message
-      }
-    case 'UPDATE_UPSI_ACCESS_ERROR':
+        updateUPSIAccessMsg: action.message,
+      };
+    case "UPDATE_UPSI_ACCESS_ERROR":
       return {
         ...state,
         updateUPSIAccessLoading: false,
         updateUPSIAccessSuccess: false,
         updateUPSIAccessError: true,
         updateUPSIAccessData: action.data,
-        updateUPSIAccessMsg: action.message
-      }
+        updateUPSIAccessMsg: action.message,
+      };
     // case "LOGOUT_SUCCESS":
     //   return {
     //     leftBarItem: "",
@@ -243,10 +248,38 @@ const CommonReducer = (state = initState, action) => {
         ...state,
         pdfDownloadError: true,
       };
-    case 'RESET_REDUCER': 
-    return {
-      ...state, ...action.data
-    }
+    case "DOWNLOAD_UPSI_LOADING":
+      return {
+        ...state,
+        downloadUPSILoading: true,
+        downloadUPSISuccess: false,
+        downloadUPSIError: false,
+        downloadUPSIData: null,
+        downloadUPSIMsg: null,
+      };
+    case "DOWNLOAD_UPSI_SUCCESS":
+      return {
+        ...state,
+        downloadUPSILoading: false,
+        downloadUPSISuccess: true,
+        downloadUPSIError: false,
+        downloadUPSIData: action.data,
+        downloadUPSIMsg: action.message,
+      };
+    case "DOWNLOAD_UPSI_ERROR":
+      return {
+        ...state,
+        downloadUPSILoading: false,
+        downloadUPSISuccess: false,
+        downloadUPSIError: true,
+        downloadUPSIData: null,
+        downloadUPSIMsg: action.message,
+      };
+    case "RESET_REDUCER":
+      return {
+        ...state,
+        ...action.data,
+      };
     default:
       return state;
   }
