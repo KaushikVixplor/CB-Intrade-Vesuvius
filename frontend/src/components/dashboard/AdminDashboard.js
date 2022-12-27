@@ -23,7 +23,11 @@ import {
   emailPanRequest,
   getTempaltes,
 } from "../../store/action/HodAction";
-import { gotoCompare, pdfDownload, resetReducer } from "../../store/action/CommonAction";
+import {
+  gotoCompare,
+  pdfDownload,
+  resetReducer,
+} from "../../store/action/CommonAction";
 import { ActivityLog } from "../admin/ActivityLog";
 import CorrectionRequest from "../admin/CorrectionRequest";
 import moment from "moment";
@@ -110,7 +114,7 @@ export class AdminDashboard extends Component {
       this.state.uploadFlag
     ) {
       // swal("OOPS!", this.props.message, "error");
-      swal("OOPS!",this.props.weeklyDataMsg, "error");
+      swal("OOPS!", this.props.weeklyDataMsg, "error");
       this.setState({ uploadFlag: false, weeklyData: "", date: "" });
     }
     if (
@@ -357,7 +361,7 @@ export class AdminDashboard extends Component {
     }
     if (this.state.pdfDownloadFlag && this.props.pdfDownloadError) {
       swal("OOPS!", "Failed to download pdf", "error");
-      this.props.ResetReducer({ pdfDownloadError: false })
+      this.props.ResetReducer({ pdfDownloadError: false });
       this.setState({ pdfDownloadFlag: false });
     }
   }
@@ -811,11 +815,11 @@ export class AdminDashboard extends Component {
     this.props.EmailPanRequest(data, this.props.user.accessToken);
   };
 
-  handleChangeTemplateValue=(e)=>{
-    var selectedTemplate = {...this.state.selectedTemplate}
-    selectedTemplate[e.target.id] = e.target.value
-    this.setState({selectedTemplate: selectedTemplate})
-  }
+  handleChangeTemplateValue = (e) => {
+    var selectedTemplate = { ...this.state.selectedTemplate };
+    selectedTemplate[e.target.id] = e.target.value;
+    this.setState({ selectedTemplate: selectedTemplate });
+  };
 
   handleChooseTemplate = (e) => {
     // console.log(e.target.id, this.state.chooseFlag);
@@ -824,7 +828,7 @@ export class AdminDashboard extends Component {
       templateId: e.target.id,
       chooseFlag: "template" + e.target.id,
       selectedTemplate: template,
-      edit: false
+      edit: false,
     });
   };
 
@@ -867,23 +871,30 @@ export class AdminDashboard extends Component {
   handleSearch = (data, query, keys) => {
     // console.error(data)
     if (query) {
-      var op = []
+      var op = [];
       for (var i = 0; i < data.length; i++) {
         for (var j = 0; j < keys.length; j++) {
-          if (data[i][keys[j]] && data[i][keys[j]].toString().toLowerCase().includes(query.toLowerCase()) && !op.find(f => f.id == data[i].id)) {
-            op.push(data[i])
+          if (
+            data[i][keys[j]] &&
+            data[i][keys[j]]
+              .toString()
+              .toLowerCase()
+              .includes(query.toLowerCase()) &&
+            !op.find((f) => f.id == data[i].id)
+          ) {
+            op.push(data[i]);
           }
         }
       }
-      return op
+      return op;
     } else {
-      return data
+      return data;
     }
-  }
+  };
 
-  handelChange=(e)=>{
-    this.setState({[e.target.id]: e.target.value})
-  }
+  handelChange = (e) => {
+    this.setState({ [e.target.id]: e.target.value });
+  };
 
   render() {
     if (!this.props.user) return <Redirect to="/login" />;
@@ -969,8 +980,9 @@ export class AdminDashboard extends Component {
                         <li>
                           Transaction Request -{" "}
                           <span>
-                            Click the button to look on and Approve/Reject/download the
-                            transaction requests comming from insiders
+                            Click the button to look on and
+                            Approve/Reject/download the transaction requests
+                            comming from insiders
                           </span>
                         </li>
                         <li>
@@ -1027,8 +1039,9 @@ export class AdminDashboard extends Component {
                         <li>
                           View Insiders -{" "}
                           <span>
-                           Click the button to look on the insider list and Reset
-                            Password/View Relatives/Relese User as your need
+                            Click the button to look on the insider list and
+                            Reset Password/View Relatives/Relese User as your
+                            need
                           </span>
                         </li>
                         <li>
@@ -1095,8 +1108,12 @@ export class AdminDashboard extends Component {
                   previousData={this.props.compareTransaction.prev_benpos_data}
                   onDownload={this.onDownload}
                   compareTransaction={this.props.compareTransaction.compareData}
-                  current_benpos_date={this.props.compareTransaction.current_benpos_date}
-                  prev_benpos_date={this.props.compareTransaction.prev_benpos_date}
+                  current_benpos_date={
+                    this.props.compareTransaction.current_benpos_date
+                  }
+                  prev_benpos_date={
+                    this.props.compareTransaction.prev_benpos_date
+                  }
                 />
               ) : this.state.chooseFlag == "activity" ? (
                 <ActivityLog
@@ -1116,6 +1133,7 @@ export class AdminDashboard extends Component {
                   upsiList={this.props.upsiList}
                   handleUploadDate={this.handleStartEndDate}
                   handleSearchWithDate={this.handleSearchWithDate}
+                  userDetails={this.props.userData?.userDetails}
                 />
               ) : this.state.chooseFlag == "share" ? (
                 <ShareUpsi
@@ -1221,8 +1239,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(pdfDownload(startDate, endDate, request_status, type, token));
     },
     ResetReducer: (data) => {
-      dispatch(resetReducer(data))
-    }
+      dispatch(resetReducer(data));
+    },
   };
 };
 

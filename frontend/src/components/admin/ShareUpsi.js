@@ -164,7 +164,7 @@ export class ShareUpsi extends Component {
 
   onChangeFile = (e) => {
     // console.error('file : ', e.target.files[0])
-    if (e.target.files[0].size > 30e6) {
+    if (e.target.files[0]?.size > 30e6) {
       swal("Alert", "File size more than 30 MB is not supported", "info");
       document.getElementById(e.target.id).value = null;
     } else this.setState({ [e.target.id]: e.target.files[0] });

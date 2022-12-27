@@ -39,9 +39,9 @@ module.exports = (app, db) => {
         },
       });
       if (data) {
-        names = names + data.name + ",";
+        names = names + data.name + "(" + data.pan + ")" + ",";
       } else {
-        names = names + mailIds[i] + ",";
+        names = names + mailIds[i] + "(NOPAN),";
       }
     }
     names = names.substring(0, names.length - 1);
