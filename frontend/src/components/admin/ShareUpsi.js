@@ -14,6 +14,7 @@ export class ShareUpsi extends Component {
     options: [],
     selectedOption: [
       {
+        id: this.props.userData.userDetails.pan,
         value: this.props.userData.userDetails.email,
         label:
           this.props.userData.userDetails.emp_code +
@@ -44,6 +45,7 @@ export class ShareUpsi extends Component {
       var kmps = this.props.kmps;
       var by = [];
       var info = {
+        id: this.props.userData.userDetails.pan,
         value: this.props.userData.userDetails.email,
         label:
           this.props.userData.userDetails.emp_code +
@@ -55,6 +57,7 @@ export class ShareUpsi extends Component {
       for (var i = 0; i < kmps.length; i++) {
         if (kmps[i].is_active == true && kmps[i].status == "Active") {
           var info = {
+            id: kmps[i].pan,
             value: kmps[i].email,
             label: kmps[i].emp_code + "|" + kmps[i].name,
           };
@@ -70,7 +73,7 @@ export class ShareUpsi extends Component {
 
     if (this.state.onRequestFlag && !this.props.shareUpsiLoading) {
       if (this.props.shareUpsiSuccess) {
-        swal("Success", "SuccessFul", "success");
+        swal("Success", this.props.shareUpsiMsg, "success");
         this.setState({
           type: "success",
           onRequestFlag: false,
@@ -145,12 +148,30 @@ export class ShareUpsi extends Component {
         for (var i = 0; i < this.state.by.length; i++) {
           mail_by.push(this.state.by[i].value);
         }
+        var sender_id = "";
+        for (var i = 0; i < this.state.by.length; i++) {
+          if (i === 0) {
+            sender_id = this.state.by[i].id;
+          } else {
+            sender_id += "," + this.state.by[i].id;
+          }
+        }
+        var receiver_id = "";
+        for (var i = 0; i < this.state.to.length; i++) {
+          if (i === 0) {
+            receiver_id = this.state.to[i].id;
+          } else {
+            receiver_id += "," + this.state.to[i].id;
+          }
+        }
         var data = {
           shared_by: mail_by,
           shared_with:
             this.state.share_to == "" ? mail : mail.concat(this.state.share_to),
           subject: this.state.subject,
           information: this.state.body,
+          receiver_id: receiver_id,
+          sender_id: sender_id,
         };
         // console.log(data);
         this.setState({ onRequestFlag: true });
@@ -171,6 +192,8 @@ export class ShareUpsi extends Component {
   };
 
   render() {
+    console.log("state", this.state);
+    console.log("props", this.props);
     if (this.state.navigatToDashFlag) {
       return <Redirect to="/" />;
     }
@@ -354,6 +377,7 @@ const mapStateToProps = (state) => ({
   shareUpsiError: state.Hod.shareUpsiError,
   shareUpsiLoading: state.Hod.shareUpsiLoading,
   shareUpsiMsg: state.Hod.shareUpsiMsg,
+  shareUpsiMailresponses: state.Hod.shareUpsiMailresponses,
 });
 
 const mapDispatchToProps = (dispatch) => {

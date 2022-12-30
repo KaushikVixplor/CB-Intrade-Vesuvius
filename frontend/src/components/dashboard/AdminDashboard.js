@@ -22,12 +22,14 @@ import {
   activityLog,
   emailPanRequest,
   getTempaltes,
+  getConversations,
 } from "../../store/action/HodAction";
 import {
   downloadUpsi,
   gotoCompare,
   pdfDownload,
   resetReducer,
+  toogleConversationFlag,
 } from "../../store/action/CommonAction";
 import { ActivityLog } from "../admin/ActivityLog";
 import CorrectionRequest from "../admin/CorrectionRequest";
@@ -38,6 +40,9 @@ import UserInformation from "../admin/UserInformation";
 import swal from "sweetalert";
 import ExistingTemplates from "../admin/ExistingTemplates";
 import Transactionrequest from "../admin/Transactionrequest";
+import SentLogs from "../upsiConversations/SentLogs";
+import ReceiveLog from "../upsiConversations/ReceiveLog";
+import UpsiConversationLogModal from "../layout/UpsiConversationLogModal";
 
 export class AdminDashboard extends Component {
   state = {
@@ -95,6 +100,11 @@ export class AdminDashboard extends Component {
     if (this.props.goToCompare == "compare") {
       this.setState({ chooseFlag: "compare" });
       this.props.GoToCompare(null);
+    }
+    if (this.props.query?.type === "upsi_conversation") {
+      if (this.props.query?.category === "receive")
+        this.setState({ chooseFlag: "upsi_receive_log" });
+      else this.setState({ chooseFlag: "upsi_sent_log" });
     }
   };
 
@@ -644,6 +654,18 @@ export class AdminDashboard extends Component {
     if (e.target.id == "upsi_log") {
       this.props.GetUpsi(start_date, end_date, this.props.user.accessToken);
     }
+    if (
+      e.target.id === "upsi_sent_log" &&
+      this.state.chooseFlag === "upsi_sent_log"
+    ) {
+      this.props.ToogleConversationFlag(false);
+    }
+    if (
+      e.target.id === "upsi_receive_log" &&
+      this.state.chooseFlag === "upsi_receive_log"
+    ) {
+      this.props.ToogleConversationFlag(false);
+    }
   };
   handleGo = (e) => {
     this.setState({ chooseFlag: "compare" });
@@ -912,13 +934,36 @@ export class AdminDashboard extends Component {
     this.setState({ downloadUpsiFlag: true });
   };
 
+  onOpenConversation = (e, upsi) => {
+    this.props.GetConversation(
+      {
+        upsi_id: upsi.id,
+        type: "log",
+      },
+      this.props.user.accessToken
+    );
+    var modal = document.getElementById("UpsiConversationLogModal");
+    console.error(modal);
+    var instance = M.Modal.getInstance(modal);
+    console.error(instance);
+    if (instance) instance.open();
+  };
+
   render() {
     if (!this.props.user) return <Redirect to="/login" />;
-    // console.log("admin state", this.state);
+    console.log("admin state", this.state);
     // console.log("file value", document.querySelector(".weeklyData"));
-    // console.log('props : ', this.props)
+    console.log("props : ", this.props);
+    if (this.props.emailPanRequestLoading) {
+      return (
+        <div className="progress">
+          <div className="indeterminate"></div>
+        </div>
+      );
+    }
     return (
       <div className="row">
+        <UpsiConversationLogModal state={this.state} props={this.props} />
         <TopNav />
         {/* <MassegeModal
           handleGo={this.handleGo}
@@ -1093,6 +1138,25 @@ export class AdminDashboard extends Component {
                       </ul>
                     </div>
                   </div>
+                ) : this.props.common === "conversation" ? (
+                  <div className="row container initial-writeups">
+                    <li>
+                      UPSI SENT LOG -{" "}
+                      <span>
+                        Click the button to view the list of UPSI send by the
+                        user and click on the conversation icon to start
+                        conversation
+                      </span>
+                    </li>
+                    <li>
+                      UPSI RECEIVE LOG -{" "}
+                      <span>
+                        Click the button to view the list of UPSI received by
+                        the user and click on the conversation icon to start
+                        conversation
+                      </span>
+                    </li>
+                  </div>
                 ) : null
               ) : this.state.chooseFlag == "home" ? (
                 <Transactionrequest />
@@ -1151,6 +1215,7 @@ export class AdminDashboard extends Component {
                   handleSearchWithDate={this.handleSearchWithDate}
                   userDetails={this.props.userData?.userDetails}
                   onDownloadUPSI={this.onDownloadUPSI}
+                  onOpenConversation={this.onOpenConversation}
                 />
               ) : this.state.chooseFlag == "share" ? (
                 <ShareUpsi
@@ -1168,6 +1233,10 @@ export class AdminDashboard extends Component {
                   templates={this.state.selectedTemplate}
                   id={this.state.templateId}
                 />
+              ) : this.state.chooseFlag === "upsi_sent_log" ? (
+                <SentLogs />
+              ) : this.state.chooseFlag === "upsi_receive_log" ? (
+                <ReceiveLog />
               ) : null}
             </div>
           </>
@@ -1220,6 +1289,16 @@ const mapStateToProps = (state) => {
     downloadUPSIError: state.common.downloadUPSIError,
     downloadUPSIData: state.common.downloadUPSIData,
     downloadUPSIMsg: state.common.downloadUPSIMsg,
+
+    query: state.common.query,
+
+    toogleConversationFlag: state.common.toogleConversationFlag,
+
+    getConversationLoading: state.Hod.getConversationLoading,
+    getConversationSuccess: state.Hod.getConversationSuccess,
+    getConversationError: state.Hod.getConversationError,
+    conversation: state.Hod.conversation,
+    getConversationMsg: state.Hod.getConversationMsg,
   };
 };
 
@@ -1266,6 +1345,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     DownloadUpsi: (query, token) => {
       dispatch(downloadUpsi(query, token));
+    },
+    ToogleConversationFlag: (flag) => {
+      dispatch(toogleConversationFlag(flag));
+    },
+    GetConversation: (query, token) => {
+      dispatch(getConversations(query, token));
     },
   };
 };

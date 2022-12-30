@@ -12,12 +12,13 @@ export const UpsiLog = ({
   state,
   userDetails,
   onDownloadUPSI,
+  onOpenConversation,
 }) => {
   var field1 = state.startDate.split("-").reverse().join("-");
   var field = state.endDate.split("-").reverse().join("-");
   return (
     <div>
-      <div className="row container">
+      <div className="row container" style={{ marginTop: "-20px" }}>
         <div
           className="row item-header"
           style={{ width: "100%", marginLeft: 20 }}
@@ -110,60 +111,70 @@ export const UpsiLog = ({
           </button>
         </div>
       </div>
-      <div className="clientRequest container">
+      <div className="clientRequest container" style={{ marginTop: "-15px" }}>
         {upsiList && upsiList.length > 0 ? (
-          <TableView
-            data={handleSearch(upsiList, state.query, [
-              "createdAt",
-              "shared_by",
-              "shared_with",
-              "subject",
-              "information",
-            ]).sort((a, b) =>
-              new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1
-            )}
-            headers={[
-              {
-                name: "Sl. No.",
-                key: (d) => {
-                  return d + 1;
-                },
-              },
-              {
-                name: "Timestamp",
-                key: (d) => {
-                  return getDateString(new Date(d.createdAt), true);
-                },
-              },
-              {
-                name: "Sender(PAN)",
-                key: (d) => {
-                  return d.shared_by;
-                },
-              },
-              {
-                name: "Receiver(PAN)",
-                key: (d) => {
-                  return userDetails?.is_compliance ||
-                    d.shared_by.includes(userDetails?.pan)
-                    ? d.shared_with
-                    : userDetails?.name + "(" + userDetails?.pan + ")";
-                },
-              },
-              {
-                name: "Information Shared",
-                key: (d) => {
-                  return d.subject;
-                },
-              },
-              // {
-              //   name: "Information",
-              //   key: (d) => {
-              //     return d.information
-              //   }
-              // },
-            ]}
-          />
+          <div className="tableView responsive-table-div">
+            <table class="responsive-table highlight">
+              <thead>
+                <tr>
+                  <th>Sl. No.</th>
+                  <th>Timestamp </th>
+                  <th>Sender(PAN)</th>
+                  <th>Receiver(PAN)</th>
+                  <th>
+                    Information
+                    <br />
+                    Shared
+                  </th>
+                  {userDetails?.is_compliance ? (
+                    <th>
+                      Conversations <br />& Time
+                    </th>
+                  ) : null}
+                </tr>
+              </thead>
+              <tbody>
+                {handleSearch(upsiList, state.query, [
+                  "createdAt",
+                  "shared_by",
+                  "shared_with",
+                  "subject",
+                  "information",
+                ])
+                  .sort((a, b) =>
+                    new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1
+                  )
+                  ?.map((d, i) => (
+                    <tr key={i}>
+                      <td>{i + 1}</td>
+                      <td>{getDateString(new Date(d.createdAt), true)}</td>
+                      <td>{d.shared_by}</td>
+                      <td>
+                        {userDetails?.is_compliance ||
+                        d.shared_by.includes(userDetails?.pan)
+                          ? d.shared_with
+                          : userDetails?.name + "(" + userDetails?.pan + ")"}
+                      </td>
+                      <td>{d.subject}</td>
+                      {userDetails?.is_compliance ? (
+                        <td>
+                          <a
+                            className="btn-floating center btn-small"
+                            data-target="UpsiConversationLogModal"
+                            id={d.id}
+                            onClick={(e) => {
+                              onOpenConversation(e, d);
+                            }}
+                          >
+                            <i class="material-icons">sms</i>
+                          </a>
+                        </td>
+                      ) : null}
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <span style={{ fontWeight: 600, fontSize: 20 }}>No Data Found</span>
         )}

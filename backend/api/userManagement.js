@@ -374,8 +374,7 @@ module.exports = (app, db) => {
             "Yours faithfully,\nfor " +
             userData.Company.name +
             "\n" +
-            adminData[0].name +
-            "\nCompliance Officer";
+            adminData[0].name;
           // console.error("text = ",text)
           var mailRes = await sentMail({
             to: userData.email,

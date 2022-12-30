@@ -3,6 +3,7 @@ const fs = require("fs");
 var crypto = require("crypto");
 const env = process.env.NODE_ENV || "development";
 const credentials = require("../config/config")[env]["credentials"];
+var db = require("../models");
 
 async function getDate(date) {
   return (
@@ -678,6 +679,82 @@ const handleSearch = (data, query, keys) => {
   }
 };
 
+async function createConversation(upsi, t = null) {
+  try {
+    console.log(upsi);
+    var sender_id_list = upsi.sender_id.split(",");
+    var receiver_id_list = upsi.receiver_id.split(",");
+    if (upsi.receiver_id.trim() == "") {
+      console.log("No conversation");
+    } else {
+      for (var i = 0; i < sender_id_list.length; i++) {
+        for (var j = 0; j < receiver_id_list.length; j++) {
+          var nc = await db.Conversations.create(
+            {
+              information: upsi.information,
+              upsi_id: upsi.id,
+              status: "initial",
+              sender_id: sender_id_list[i],
+              receiver_id: receiver_id_list[j],
+            },
+            { transaction: t }
+          );
+        }
+      }
+      console.log("Conversations created successfully");
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+function queryBuilder(url, query) {
+  var newUrl = url;
+  if (
+    query &&
+    Object.keys(query).length > 0 &&
+    Object.values(query).find((v) => v && v != "")
+  ) {
+    newUrl += "?";
+    Object.keys(query).map((q, index) => {
+      if (query[q]) {
+        if (index > 0 && newUrl.charAt(newUrl.length - 1) != "?") {
+          newUrl += "&" + q + "=" + query[q];
+        } else {
+          newUrl += q + "=" + query[q];
+        }
+      }
+    });
+  }
+  return newUrl;
+}
+
+async function getConversationLog(conversation) {
+  try {
+    var s = "";
+    for (var i = 0; i < conversation.length; i++) {
+      var c = conversation[i].dataValues;
+      s +=
+        "From : " +
+        c.Sender.dataValues.name +
+        " (" +
+        c.Sender.dataValues.pan +
+        ") \nTo : " +
+        c.Receiver.dataValues.name +
+        " (" +
+        c.Receiver.dataValues.pan +
+        ")" +
+        " \nTime : " +
+        (await getDateString(new Date(c.createdAt), true)) +
+        "\n-----------------------------------\n";
+    }
+    return s;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
+
 module.exports = {
   getUpdatedText,
   // compareTransaction,
@@ -691,4 +768,7 @@ module.exports = {
   encryptCredentials,
   decryptCredentials,
   handleSearch,
+  createConversation,
+  queryBuilder,
+  getConversationLog,
 };

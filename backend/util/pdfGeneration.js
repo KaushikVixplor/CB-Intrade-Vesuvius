@@ -1,6 +1,7 @@
 var pdf = require("pdfkit");
 const moment = require("moment");
 const PDFDocument = require("../api/pdfkit-tables");
+const getConversationLog = require("../util/common").getConversationLog;
 
 async function getDateString(dateObj, timeFlag = false) {
   try {
@@ -2136,6 +2137,7 @@ async function upsiPDF(data, is_compliance, empData) {
       "Receiver(PAN)",
       "Information Shared",
     ];
+    if (is_compliance) headers.push("Conversations & Time");
     var tbody = [];
     for (var i = 0; i < data.length; i++) {
       var row = [];
@@ -2150,6 +2152,12 @@ async function upsiPDF(data, is_compliance, empData) {
       }
       row[3] = shared_with;
       row[4] = data[i].subject;
+      if (is_compliance) {
+        row[5] =
+          data[i].Conversations?.length > 0
+            ? await getConversationLog(data[i].Conversations)
+            : "No Conversation";
+      }
       tbody.push(row);
     }
     var table = {

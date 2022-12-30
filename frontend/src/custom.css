@@ -11,3 +11,7 @@
 .switch label input[type=checkbox]:checked+.lever {
     background-color: #022d36;
 }
+
+.conversation-modal{
+    width: 60% !important;
+}

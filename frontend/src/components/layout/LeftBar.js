@@ -108,10 +108,10 @@ export const LeftBar = (props) => {
             id="home"
             onClick={props.handleChoose}
           >
-                  transaction Request
+            transaction Request
           </a>
           <br />
-                {/*<a
+          {/*<a
             className="btn btn-modal needMargin col s12 m12 l12"
             id="post"
             onClick={props.handleChoose}
@@ -210,6 +210,23 @@ export const LeftBar = (props) => {
             add new CP
           </a>
           <br />
+        </div>
+      ) : props.itemChecker === "conversation" ? (
+        <div className="left-bar row left">
+          <a
+            id="upsi_sent_log"
+            className="btn btn-modal needMargin col s12 m12 l12"
+            onClick={props.handleChoose}
+          >
+            UPSI Sent Log
+          </a>
+          <a
+            id="upsi_receive_log"
+            className="btn btn-modal needMargin col s12 m12 l12"
+            onClick={props.handleChoose}
+          >
+            UPSI Receive Log
+          </a>
         </div>
       ) : null}
     </div>

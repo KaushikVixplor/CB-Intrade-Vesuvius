@@ -25,9 +25,6 @@ var options = {
   type: "application/octet-stream",
 };
 
-// dbInit.createTables(db)
-
-
 const app = express();
 app.use(express.static("uploads"));
 app.use(express.static("build"));
@@ -47,7 +44,6 @@ templateManagement(app, db);
 downloadManagement(app, db);
 dataUploadManagement(app, db);
 
-
-// dbInit.createTables(db)
-console.log('Database : ', config[env].database)
+// dbInit.createTables(db);
+console.log("Database : ", config[env].database);
 app.listen(8081, () => console.log("App listening on port 8081!"));

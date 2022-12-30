@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { signIn } from "../../store/action/AuthAction";
 import { Redirect } from "react-router-dom";
 import "../stylesheet/common.css";
-import { companyData } from "../../store/action/CommonAction";
+import { companyData, setQuery } from "../../store/action/CommonAction";
 
 class Login extends Component {
   state = {
@@ -11,6 +11,21 @@ class Login extends Component {
     password: "",
   };
   componentDidMount() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const email = queryParams.get("email");
+    const upsi_id = queryParams.get("upsi_id");
+    const type = queryParams.get("type");
+    const pan = atob(queryParams.get("sender_id"));
+    if (email && upsi_id && type) {
+      this.props.SetQuery({
+        email: email,
+        upsi_id: upsi_id,
+        category: type,
+        type: "upsi_conversation",
+        pan: pan,
+      });
+    }
+    this.setState({ email: email });
     this.props.CompanyData();
   }
   handleChange = (e) => {
@@ -85,6 +100,7 @@ class Login extends Component {
                           type="email"
                           id="email"
                           onChange={this.handleChange}
+                          value={this.state.email}
                           required
                         />
                       </div>
@@ -138,6 +154,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     signIn: (credentials) => {
       dispatch(signIn(credentials));
+    },
+    SetQuery: (query) => {
+      dispatch(setQuery(query));
     },
   };
 };

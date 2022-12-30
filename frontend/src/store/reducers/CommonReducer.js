@@ -53,6 +53,10 @@ const initState = {
   downloadUPSIError: false,
   downloadUPSIData: null,
   downloadUPSIMsg: null,
+
+  query: null,
+
+  toogleConversationFlag: false,
 };
 
 const CommonReducer = (state = initState, action) => {
@@ -107,6 +111,7 @@ const CommonReducer = (state = initState, action) => {
       };
     case "GET_COMPANY_DATA_SUCCESS":
       return {
+        ...state,
         getCompanyData: action.payload.data["0"],
         getCompanyDataLoading: false,
         getCompanyDataSuccess: true,
@@ -114,24 +119,28 @@ const CommonReducer = (state = initState, action) => {
       };
     case "GET_COMPANY_DATA_ERROR":
       return {
+        ...state,
         getCompanyDataLoading: false,
         getCompanyDataSuccess: false,
         getCompanyDataError: true,
       };
     case "SYSTEM_RESET_LOADING":
       return {
+        ...state,
         systemResetSuccess: false,
         systemResetLoading: true,
         systemResetError: false,
       };
     case "SYSTEM_RESET_SUCCESS":
       return {
+        ...state,
         systemResetSuccess: true,
         systemResetLoading: false,
         systemResetError: false,
       };
     case "SYSTEM_RESET_ERROR":
       return {
+        ...state,
         systemResetSuccess: false,
         systemResetLoading: false,
         systemResetError: true,
@@ -275,6 +284,10 @@ const CommonReducer = (state = initState, action) => {
         downloadUPSIData: null,
         downloadUPSIMsg: action.message,
       };
+    case "SET_QUERY_SECCESS":
+      return { ...state, query: action.query };
+    case "TOOGLE_CONVERSATION_FLAG":
+      return { ...state, toogleConversationFlag: action.flag };
     case "RESET_REDUCER":
       return {
         ...state,

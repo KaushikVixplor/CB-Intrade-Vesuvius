@@ -389,6 +389,22 @@ module.exports = (app, db) => {
           where: {
             createdAt: { [Op.between]: [fromDate, toDate] },
           },
+          include: {
+            model: db.Conversations,
+            where: { status: "conversation" },
+            required: false,
+            include: [
+              {
+                model: db.Employees,
+                as: "Sender",
+              },
+              {
+                model: db.Employees,
+                as: "Receiver",
+              },
+            ],
+            order: [["createdAt", "ASC"]],
+          },
         });
       } else {
         empData = await db.Employees.findOne({
@@ -413,6 +429,22 @@ module.exports = (app, db) => {
                 ],
               },
             ],
+          },
+          include: {
+            model: db.Conversations,
+            where: { status: "conversation" },
+            required: false,
+            include: [
+              {
+                model: db.Employees,
+                as: "Sender",
+              },
+              {
+                model: db.Employees,
+                as: "Receiver",
+              },
+            ],
+            order: [["createdAt", "ASC"]],
           },
         });
       }

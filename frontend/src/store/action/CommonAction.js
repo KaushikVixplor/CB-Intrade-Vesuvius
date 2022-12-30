@@ -701,3 +701,21 @@ export const downloadUpsi = (query, token) => {
       });
   };
 };
+
+export const setQuery = (query) => {
+  return (dispatch) => {
+    dispatch({
+      type: "SET_QUERY_SECCESS",
+      query: query,
+    });
+  };
+};
+
+export const toogleConversationFlag = (flag) => {
+  return (dispatch) => {
+    dispatch({
+      type: "TOOGLE_CONVERSATION_FLAG",
+      flag: flag,
+    });
+  };
+};

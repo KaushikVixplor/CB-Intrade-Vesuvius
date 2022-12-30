@@ -79,6 +79,7 @@ const initState = {
   shareUpsiError: false,
   shareUpsiLoading: false,
   shareUpsiMsg: "",
+  shareUpsiMailresponses: null,
 
   resetPass: "",
   resestPassSuccess: false,
@@ -117,6 +118,18 @@ const initState = {
   backupLoading: false,
   backupSuccess: false,
   backupError: false,
+
+  getConversationLoading: false,
+  getConversationSuccess: false,
+  getConversationError: false,
+  conversation: null,
+  getConversationMsg: null,
+
+  createConversationLoading: false,
+  createConversationSuccess: false,
+  createConversationError: false,
+  createConversationId: null,
+  createConversationMsg: null,
 };
 
 const HodReducer = (state = initState, action) => {
@@ -128,7 +141,7 @@ const HodReducer = (state = initState, action) => {
         weeklyDataSuccess: false,
         weeklyDataError: false,
         weeklyDataLoading: true,
-        weeklyDataMsg: ""
+        weeklyDataMsg: "",
       };
     case "ADD_DATA_SUCCESS":
       return {
@@ -138,7 +151,7 @@ const HodReducer = (state = initState, action) => {
         weeklyDataError: false,
         weeklyDataLoading: false,
         weeklyDataMsg: action.message,
-        errorList: action.error
+        errorList: action.error,
       };
     case "ADD_DATA_ERROR":
       return {
@@ -146,7 +159,7 @@ const HodReducer = (state = initState, action) => {
         weeklyDataSuccess: false,
         weeklyDataError: true,
         weeklyDataLoading: false,
-        weeklyDataMsg: action.message
+        weeklyDataMsg: action.message,
       };
     case "ADD_BULK_KMP_LOADING":
       return {
@@ -169,7 +182,7 @@ const HodReducer = (state = initState, action) => {
         uploadBulkEmployeeSuccess: false,
         uploadBulkEmployeeError: true,
         uploadBulkEmployeeLoading: false,
-        uploadBulkEmployeeMsg: action.message
+        uploadBulkEmployeeMsg: action.message,
       };
     case "KMP_FETCH_SUCCESS":
       return {
@@ -345,7 +358,7 @@ const HodReducer = (state = initState, action) => {
         releseKmpSuccess: false,
         releseKmpError: true,
         releseKmpLoading: false,
-        releseKmpMsg: action.message
+        releseKmpMsg: action.message,
       };
     case "ACTIVITY_LOG_SUCCESS":
       return {
@@ -420,6 +433,8 @@ const HodReducer = (state = initState, action) => {
         shareUpsiSuccess: true,
         shareUpsiError: false,
         shareUpsiLoading: false,
+        shareUpsiMsg: action.payload.message,
+        shareUpsiMailresponses: action.payload.mailresponses,
       };
     case "SHARE_UPSI_ERROR":
       return {
@@ -428,6 +443,7 @@ const HodReducer = (state = initState, action) => {
         shareUpsiError: true,
         shareUpsiLoading: false,
         shareUpsiMsg: action.message,
+        shareUpsiMailresponses: action.mailresponses,
       };
     case "RESET_PASSWORD_LOADING":
       return {
@@ -443,7 +459,7 @@ const HodReducer = (state = initState, action) => {
         resestPassSuccess: true,
         resestPassError: false,
         resestPassLoading: false,
-        resestPassMsg: action.message
+        resestPassMsg: action.message,
       };
     case "RESET_PASSWORD_FAIL":
       return {
@@ -561,42 +577,96 @@ const HodReducer = (state = initState, action) => {
         restoreLoading: true,
         restoreSuccess: false,
         restoreError: false,
-      }
+      };
     case "RESTORE_SUCCESS":
       return {
         ...state,
         restoreLoading: false,
         restoreSuccess: true,
         restoreError: false,
-      }
+      };
     case "RESTORE_ERROR":
       return {
         ...state,
         restoreLoading: false,
         restoreSuccess: false,
         restoreError: true,
-      }
+      };
     case "BACKUP_LOADING":
       return {
         ...state,
         backupLoading: true,
         backupSuccess: false,
         backupError: false,
-      }
+      };
     case "BACKUP_SUCCESS":
       return {
         ...state,
         backupLoading: false,
         backupSuccess: true,
         backupError: false,
-      }
+      };
     case "BACKUP_ERROR":
       return {
         ...state,
         backupLoading: false,
         backupSuccess: false,
         backupError: true,
-      }
+      };
+    case "GET_CONVERSATION_LOADING":
+      return {
+        ...state,
+        getConversationLoading: true,
+        getConversationSuccess: false,
+        getConversationError: false,
+        conversation: null,
+        getConversationMsg: null,
+      };
+    case "GET_CONVERSATION_SUCCESS":
+      return {
+        ...state,
+        getConversationLoading: false,
+        getConversationSuccess: true,
+        getConversationError: false,
+        conversation: action.payload,
+        getConversationMsg: action.message,
+      };
+    case "GET_CONVERSATION_ERROR":
+      return {
+        ...state,
+        getConversationLoading: false,
+        getConversationSuccess: false,
+        getConversationError: true,
+        conversation: null,
+        getConversationMsg: action.message,
+      };
+    case "CREATE_CONVERSATION_LOADING":
+      return {
+        ...state,
+        createConversationLoading: true,
+        createConversationSuccess: false,
+        createConversationError: false,
+        createConversationId: null,
+        createConversationMsg: null,
+      };
+    case "CREATE_CONVERSATION_SUCCESS":
+      return {
+        ...state,
+        createConversationLoading: false,
+        createConversationSuccess: true,
+        createConversationError: false,
+        createConversationId: action.id,
+        createConversationMsg: action.message,
+      };
+    case "CREATE_CONVERSATION_ERROR":
+      return {
+        ...state,
+        createConversationLoading: false,
+        createConversationSuccess: false,
+        createConversationError: true,
+        createConversationId: null,
+        createConversationMsg: action.message,
+      };
     case "LOGOUT_SUCCESS":
       return initState;
     default:

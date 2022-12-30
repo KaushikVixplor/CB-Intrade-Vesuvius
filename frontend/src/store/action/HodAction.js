@@ -1,6 +1,11 @@
 import { backendUrl } from "../../config/config";
 import moment from "moment";
-import { queryBuilder,decryptData, encryptData } from "../../utils/helper";
+import {
+  queryBuilder,
+  decryptData,
+  encryptData,
+  createFormData,
+} from "../../utils/helper";
 
 export const uploadExcel = (date, excelFile, token) => {
   return (dispatch, getState) => {
@@ -21,15 +26,32 @@ export const uploadExcel = (date, excelFile, token) => {
           .then((data) => {
             // console.log("upload data", data);
             if (response.status === 200) {
-              var respData = JSON.parse(decryptData(data.data))
-              data = respData
+              var respData = JSON.parse(decryptData(data.data));
+              data = respData;
               // console.log("Data", data);
-              dispatch({ type: "ADD_DATA_SUCCESS", message: data.message, payload: data, error: data.errorList[0] });
-            } else{ dispatch({ type: "ADD_DATA_ERROR", message: data.message });}
+              dispatch({
+                type: "ADD_DATA_SUCCESS",
+                message: data.message,
+                payload: data,
+                error: data.errorList[0],
+              });
+            } else {
+              dispatch({ type: "ADD_DATA_ERROR", message: data.message });
+            }
           })
-          .catch((error) => dispatch({ type: "ADD_DATA_ERROR",message: "Error to upload benpos data" }))
+          .catch((error) =>
+            dispatch({
+              type: "ADD_DATA_ERROR",
+              message: "Error to upload benpos data",
+            })
+          )
       )
-      .catch((error) => dispatch({ type: "ADD_DATA_ERROR",message: "Error to upload benpos data" }));
+      .catch((error) =>
+        dispatch({
+          type: "ADD_DATA_ERROR",
+          message: "Error to upload benpos data",
+        })
+      );
   };
 };
 
@@ -53,11 +75,16 @@ export const uploadBulkEmployee = (excelFile, type, token) => {
             if (response.status === 200) {
               // console.log("Data", data);
               dispatch({ type: "ADD_BULK_KMP_SUCCESS", payload: data });
-            } else dispatch({ type: "ADD_BULK_KMP_ERROR", message: data.message });
+            } else
+              dispatch({ type: "ADD_BULK_KMP_ERROR", message: data.message });
           })
-          .catch((error) => dispatch({ type: "ADD_BULK_KMP_ERROR", message: "Error Occured" }))
+          .catch((error) =>
+            dispatch({ type: "ADD_BULK_KMP_ERROR", message: "Error Occured" })
+          )
       )
-      .catch((error) => dispatch({ type: "ADD_BULK_KMP_ERROR", message: "Error Occured" }));
+      .catch((error) =>
+        dispatch({ type: "ADD_BULK_KMP_ERROR", message: "Error Occured" })
+      );
   };
 };
 
@@ -66,7 +93,7 @@ export const getKmp = (token, query = null) => {
     // dispatch({
     //     type: "COURSE_FETCH_LOADING"
     //   });
-    var newUrl = queryBuilder('/users', query)
+    var newUrl = queryBuilder("/users", query);
     fetch(backendUrl + newUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -76,8 +103,8 @@ export const getKmp = (token, query = null) => {
         // var respData = JSON.parse(decryptData(data.data))
         // data = respData
         if (response.status == 200) {
-          var respData = JSON.parse(decryptData(data.data))
-          data = respData
+          var respData = JSON.parse(decryptData(data.data));
+          data = respData;
           dispatch({
             type: "KMP_FETCH_SUCCESS",
             payload: data.data,
@@ -115,8 +142,8 @@ export const compareTransaction = (start_date, end_date, token) => {
     ).then((response) =>
       response.json().then((data) => {
         if (response.status == 200) {
-          var respData = JSON.parse(decryptData(data.data))
-          data = respData
+          var respData = JSON.parse(decryptData(data.data));
+          data = respData;
           dispatch({
             type: "COMPARE_TRANSACTION_FETCH_SUCCESS",
             payload: data.data,
@@ -154,8 +181,8 @@ export const violationTransaction = (start_date, end_date, token) => {
     ).then((response) =>
       response.json().then((data) => {
         if (response.status == 200) {
-          var respData = JSON.parse(decryptData(data.data))
-          data = respData
+          var respData = JSON.parse(decryptData(data.data));
+          data = respData;
           dispatch({
             type: "VIOLATION_TRANSACTION_FETCH_SUCCESS",
             payload: data.data,
@@ -186,13 +213,13 @@ export const requestAction = (status, id, token, body = {}) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     }).then((response) =>
       response.blob().then((blob) => {
         if (response.status === 500) {
-          response.status.json.then(data=>{
-            dispatch({type: "REQUEST_ACTION_FAIL", message: data.message});
-          })
+          response.status.json.then((data) => {
+            dispatch({ type: "REQUEST_ACTION_FAIL", message: data.message });
+          });
         } else if (response.status === 200) {
           const data = window.URL.createObjectURL(blob);
           dispatch({
@@ -311,7 +338,7 @@ export const windowConfigure = (type, from, to, purpose, token) => {
               type == "submit"
                 ? "WINDOW_CONFIGURATION_ERROR"
                 : "WINDOW_CONFIGURATION_SUBMIT_&_SEND_ERROR",
-            message: data.message
+            message: data.message,
           });
         }
       })
@@ -320,7 +347,7 @@ export const windowConfigure = (type, from, to, purpose, token) => {
 };
 
 export const correctionRequest = (data, id, token) => {
-  data = encryptData(JSON.stringify(data))
+  data = encryptData(JSON.stringify(data));
   return (dispatch) => {
     dispatch({
       type: "CORRECTION_REQUEST_LOADING",
@@ -332,7 +359,7 @@ export const correctionRequest = (data, id, token) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({data: data}),
+      body: JSON.stringify({ data: data }),
     }).then((response) =>
       response
         .json()
@@ -348,7 +375,8 @@ export const correctionRequest = (data, id, token) => {
             });
           } else {
             dispatch({
-              type: "CORRECTION_REQUEST_FAILED", message: data.message
+              type: "CORRECTION_REQUEST_FAILED",
+              message: data.message,
             });
           }
         })
@@ -418,8 +446,8 @@ export const kmpRelative = (id, token) => {
         // var respData = JSON.parse(decryptData(data.data))
         // data = respData
         if (response.status == 200) {
-          var respData = JSON.parse(decryptData(data.data))
-          data = respData
+          var respData = JSON.parse(decryptData(data.data));
+          data = respData;
           dispatch({
             type: "KMP_RELATIVE_FETCH_SUCCESS",
             payload: data.data,
@@ -446,9 +474,8 @@ export const getFolios = (data, pan, refDate) => {
       if (data[d].pan == pan) {
         var refDateStr = moment(refDate).format("DD-MM-YYYY");
         var current_benpos_date = data[d].current_benpos_date;
-        var current_benpos_date_str = moment(current_benpos_date).format(
-          "DD-MM-YYYY"
-        );
+        var current_benpos_date_str =
+          moment(current_benpos_date).format("DD-MM-YYYY");
         if (refDateStr == current_benpos_date_str) {
           filterData.push(data[d]);
         } else {
@@ -500,11 +527,11 @@ export const getUpsi = (start_date, end_date, token) => {
 };
 
 export const shareUpsi = (body, attachment, token) => {
-  var data = encryptData(JSON.stringify(body))
+  var data = encryptData(JSON.stringify(body));
   return (dispatch) => {
-    var formData = new FormData()
-    formData.append('attachment', attachment)
-    formData.append('data', JSON.stringify({data:data}))
+    var formData = new FormData();
+    formData.append("attachment", attachment);
+    formData.append("data", JSON.stringify({ data: data }));
     dispatch({ type: "SHARE_UPSI_LOADING" });
     var url = backendUrl + "/upsi";
     fetch(url, {
@@ -529,7 +556,8 @@ export const shareUpsi = (body, attachment, token) => {
         } else {
           dispatch({
             type: "SHARE_UPSI_ERROR",
-            message: data.message
+            message: data.message,
+            mailresponses: data.mailresponses,
           });
         }
       })
@@ -539,9 +567,9 @@ export const shareUpsi = (body, attachment, token) => {
 
 export const bulkMail = (body, file, token) => {
   return (dispatch) => {
-    var formData = new FormData()
-    formData.append('attachment', file)
-    formData.append('data', JSON.stringify(body))
+    var formData = new FormData();
+    formData.append("attachment", file);
+    formData.append("data", JSON.stringify(body));
     dispatch({ type: "BULK_MAIL_LOADING" });
     var url = backendUrl + "/mail";
     fetch(url, {
@@ -568,7 +596,7 @@ export const bulkMail = (body, file, token) => {
         } else {
           dispatch({
             type: "BULK_MAIL_ERROR",
-            message: data.message
+            message: data.message,
           });
         }
       })
@@ -590,8 +618,8 @@ export const viewCorrectionRequest = (id, token) => {
         // var respData = JSON.parse(decryptData(data.data))
         // data = respData
         if (response.status == 200) {
-          var respData = JSON.parse(decryptData(data.data))
-          data = respData
+          var respData = JSON.parse(decryptData(data.data));
+          data = respData;
           dispatch({
             type: "CORRECTION_FETCH_SUCCESS",
             payload: data.data,
@@ -634,7 +662,8 @@ export const releaseKmp = (id, token) => {
           });
         } else {
           dispatch({
-            type: "RELESE_KMP_ERROR", message: data.message
+            type: "RELESE_KMP_ERROR",
+            message: data.message,
           });
         }
       })
@@ -703,7 +732,7 @@ export const resetPassword = (id, token) => {
         } else {
           dispatch({
             type: "RESET_PASSWORD_FAIL",
-            message: data.message
+            message: data.message,
           });
         }
       })
@@ -776,7 +805,7 @@ export const updateTemplate = (body, id, token) => {
 
 export const restore = (token) => {
   return (dispatch) => {
-    dispatch({type: "RESTORE_LOADING"});
+    dispatch({ type: "RESTORE_LOADING" });
     fetch(backendUrl + "/restore", {
       method: "post",
       headers: {
@@ -785,22 +814,22 @@ export const restore = (token) => {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then(res => {
-        if(res.status === 200) {
-          dispatch({type: "RESTORE_SUCCESS"});
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch({ type: "RESTORE_SUCCESS" });
         } else {
-          dispatch({type: "RESTORE_ERROR"});
+          dispatch({ type: "RESTORE_ERROR" });
         }
       })
-      .catch(err => {
-        dispatch({type: "RESTORE_ERROR"});
-      })
-  }
+      .catch((err) => {
+        dispatch({ type: "RESTORE_ERROR" });
+      });
+  };
 };
 
 export const backup = (token) => {
   return (dispatch) => {
-    dispatch({type: "BACKUP_LOADING"});
+    dispatch({ type: "BACKUP_LOADING" });
     fetch(backendUrl + "/backup", {
       method: "post",
       headers: {
@@ -809,15 +838,99 @@ export const backup = (token) => {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then(res => {
-        if(res.status === 200) {
-          dispatch({type: "BACKUP_SUCCESS"});
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch({ type: "BACKUP_SUCCESS" });
         } else {
-          dispatch({type: "BACKUP_ERROR"});
+          dispatch({ type: "BACKUP_ERROR" });
         }
       })
-      .catch(err => {
-        dispatch({type: "BACKUP_ERROR"});
-      })
-  }
+      .catch((err) => {
+        dispatch({ type: "BACKUP_ERROR" });
+      });
+  };
+};
+
+export const getConversations = (query, token) => {
+  return (dispatch) => {
+    dispatch({
+      type: "GET_CONVERSATION_LOADING",
+    });
+    var url = queryBuilder("/conversation", query);
+    fetch(backendUrl + url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((response) =>
+      response
+        .json()
+        .then((data) => {
+          if (response.status === 200) {
+            dispatch({
+              type: "GET_CONVERSATION_SUCCESS",
+              payload: data.data,
+              message: data.message,
+            });
+          } else if (response.status == 403) {
+            dispatch({
+              type: "AUTHENTICATION_ERROR",
+            });
+          } else {
+            dispatch({
+              type: "GET_CONVERSATION_ERROR",
+              message: data.message,
+            });
+          }
+        })
+        .catch((err) => {
+          dispatch({
+            type: "GET_CONVERSATION_ERROR",
+            message: "Internal Error",
+          });
+        })
+    );
+  };
+};
+
+export const createConversation = (query, file, body, token) => {
+  return (dispatch) => {
+    dispatch({ type: "CREATE_CONVERSATION_LOADING" });
+    const url = queryBuilder("/conversation", query);
+    fetch(backendUrl + url, {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        // "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: createFormData("attachment", file, body),
+    }).then((response) =>
+      response
+        .json()
+        .then((data) => {
+          if (response.status === 200) {
+            dispatch({
+              type: "CREATE_CONVERSATION_SUCCESS",
+              message: data.message,
+              id: data.id,
+            });
+          } else if (response.status === 403 || response.status === 401) {
+            dispatch({
+              type: "AUTHENTICATION_ERROR",
+            });
+          } else {
+            dispatch({
+              type: "CREATE_CONVERSATION_ERROR",
+              message: data.message,
+            });
+          }
+        })
+        .catch((err) => {
+          dispatch({
+            type: "CREATE_CONVERSATION_ERROR",
+            message: "Internal Error",
+          });
+        })
+    );
+  };
 };

@@ -9,6 +9,7 @@ import {
   gotoCompare,
   leftBarItemChange,
   sharePdf,
+  toogleConversationFlag,
 } from "../../store/action/CommonAction";
 import {
   uploadExcel,
@@ -65,12 +66,22 @@ export class Dashboard extends Component {
   };
   componentDidMount() {
     M.AutoInit();
-    var today = this.getDateValue()
+    var today = this.getDateValue();
+    this.props.ToogleConversationFlag(false);
     if (this.props.user) {
       if (this.props.user.is_compliance) {
-        this.setState({ company: this.props.userData.userDetails.Company, today: today });
+        this.setState({
+          company: this.props.userData.userDetails.Company,
+          today: today,
+        });
       }
-      this.get15Date()
+      this.get15Date();
+    }
+    if (this.props.query?.type === "upsi_conversation") {
+      this.props.LeftBarItemChange("conversation");
+      this.props.history.push({
+        pathname: "/admin",
+      });
     }
   }
   componentDidUpdate() {
@@ -89,7 +100,7 @@ export class Dashboard extends Component {
       this.props.weeklyDataError &&
       this.state.uploadFlag
     ) {
-      swal("OOPS!",this.props.weeklyDataMsg, "error");
+      swal("OOPS!", this.props.weeklyDataMsg, "error");
       this.setState({ uploadFlag: false, weeklyData: "", date: "" });
     }
     if (this.state.configFlag && !this.props.windowConfigLoding) {
@@ -136,16 +147,15 @@ export class Dashboard extends Component {
     }
   }
 
-
   getDateValue = () => {
     var d = new Date();
     var day = d.getDate();
-    if (day.toString().length == 1) day = '0' + day
+    if (day.toString().length == 1) day = "0" + day;
     var month = d.getMonth() + 1;
-    if (month.toString().length == 1) month = '0' + month
+    if (month.toString().length == 1) month = "0" + month;
     var Year = d.getFullYear();
     return Year + "-" + month + "-" + day;
-  }
+  };
 
   dateFormatter = (inputDate) => {
     var splitDate = inputDate.split("-");
@@ -197,39 +207,39 @@ export class Dashboard extends Component {
     }
   };
 
-
   sendMail = (e) => {
     // console.error("sendMail = ", this.state);
-    if (
-      !this.state.annualConfirmFlag
-    ) {
+    if (!this.state.annualConfirmFlag) {
       var modal = document.getElementById("confirmation-modal");
       var instance = M.Modal.getInstance(modal);
       instance.close();
       // console.error("sendMail = ", this.state);
-      this.props.SharePdf("Cp_annual_declaration", null, this.props.user.accessToken);
+      this.props.SharePdf(
+        "Cp_annual_declaration",
+        null,
+        this.props.user.accessToken
+      );
       this.setState({ annualConfirmFlag: true });
       // console.error("sendMail = ", this.state);
     }
   };
-
 
   sendMailCO = (e) => {
     // console.error("sendMailCO = ", this.state);
-    if (
-      !this.state.annualConfirmFlag
-    ) {
+    if (!this.state.annualConfirmFlag) {
       var modal = document.getElementById("confirmation-modal");
       var instance = M.Modal.getInstance(modal);
       instance.close();
       // console.error("sendMailCO = ", this.state);
-      this.props.SharePdf("Co_annual_declaration", null, this.props.user.accessToken);
+      this.props.SharePdf(
+        "Co_annual_declaration",
+        null,
+        this.props.user.accessToken
+      );
       this.setState({ annualConfirmFlag: true });
       // console.error("sendMailCO = ", this.state);
     }
   };
-
-
 
   windowCloserSubmit = (e) => {
     // console.log(this.state);
@@ -338,8 +348,24 @@ export class Dashboard extends Component {
         pathname: "/info",
       });
     } else if (e.target.id == "request") {
-      if (this.props.company && new Date(new Date(this.props.company.window_close_from).setHours(0, 0, 0)).getTime() <= new Date().getTime() && new Date().getTime() <= new Date(new Date(this.props.company.window_close_to).setHours(23, 59, 59)).getTime()) {
-        swal('Info', 'Trading window will be closed from ' + this.getDate(this.props.company.window_close_from) + ' to ' + this.getDate(this.props.company.window_close_to), 'info')
+      if (
+        this.props.company &&
+        new Date(
+          new Date(this.props.company.window_close_from).setHours(0, 0, 0)
+        ).getTime() <= new Date().getTime() &&
+        new Date().getTime() <=
+          new Date(
+            new Date(this.props.company.window_close_to).setHours(23, 59, 59)
+          ).getTime()
+      ) {
+        swal(
+          "Info",
+          "Trading window will be closed from " +
+            this.getDate(this.props.company.window_close_from) +
+            " to " +
+            this.getDate(this.props.company.window_close_to),
+          "info"
+        );
       } else {
         this.props.history.push({
           pathname: "/request",
@@ -356,29 +382,36 @@ export class Dashboard extends Component {
   getDate = (date) => {
     var d = new Date(date);
     var day = d.getDate();
-    if (day.toString().length == 1) day = '0' + day
+    if (day.toString().length == 1) day = "0" + day;
     var month = d.getMonth() + 1;
-    if (month.toString().length == 1) month = '0' + month
+    if (month.toString().length == 1) month = "0" + month;
     var Year = d.getFullYear();
     return day + "-" + month + "-" + Year;
-  }
+  };
 
   get15Date = () => {
-    var d = new Date(new Date().getTime() - (15 * 24 * 60 * 60 * 1000));
+    var d = new Date(new Date().getTime() - 15 * 24 * 60 * 60 * 1000);
     var day = d.getDate();
-    if (day.toString().length == 1) day = '0' + day
+    if (day.toString().length == 1) day = "0" + day;
     var month = d.getMonth() + 1;
-    if (month.toString().length == 1) month = '0' + month
+    if (month.toString().length == 1) month = "0" + month;
     var Year = d.getFullYear();
-    this.setState({ day15: Year + "-" + month + "-" + day })
-  }
+    this.setState({ day15: Year + "-" + month + "-" + day });
+  };
 
   render() {
     if (!this.props.user) return <Redirect to="/login" />;
-    // console.log(this.state);
-    // console.log(this.props);
+    console.log(this.state);
+    console.log(this.props);
     return (
-      <div style={{ height: "100vh", width: "100vw", "overflow-x": "auto", "overflow-y": "auto" }}>
+      <div
+        style={{
+          height: "100vh",
+          width: "100vw",
+          "overflow-x": "auto",
+          "overflow-y": "auto",
+        }}
+      >
         <TopNav />
         <MassegeModal
           handleGo={this.handleGo}
@@ -413,7 +446,11 @@ export class Dashboard extends Component {
                   class="card dashboard-card"
                   id="report"
                   onClick={this.onclick}
-                  style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
                 >
                   <div class="card-image dashboard-card-image" id="report">
                     <img
@@ -447,7 +484,11 @@ export class Dashboard extends Component {
                   class="card dashboard-card modal-trigger"
                   id="upload"
                   data-target="upload-modal"
-                  style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
                 >
                   <div
                     class="card-image dashboard-card-image modal-trigger"
@@ -486,7 +527,11 @@ export class Dashboard extends Component {
                   class="card dashboard-card"
                   id="request"
                   onClick={this.onclick}
-                  style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
                 >
                   <div class="card-image dashboard-card-image" id="request">
                     <img
@@ -523,7 +568,15 @@ export class Dashboard extends Component {
             > */}
 
               <div className="col s4 m4 l4">
-                <div class="card dashboard-card modal-trigger" data-target="configure-modal" style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
+                <div
+                  class="card dashboard-card modal-trigger"
+                  data-target="configure-modal"
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
+                >
                   <div
                     class="card-image dashboard-card-image modal-trigger"
                     id="window-closure"
@@ -560,7 +613,15 @@ export class Dashboard extends Component {
               </div>
 
               <div className="col s4 m4 l4">
-                <div class="card dashboard-card modal-trigger" data-target="confirmation-modal" style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
+                <div
+                  class="card dashboard-card modal-trigger"
+                  data-target="confirmation-modal"
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
+                >
                   <div
                     class="card-image dashboard-card-image modal-trigger"
                     id="annual-declaration"
@@ -570,7 +631,7 @@ export class Dashboard extends Component {
                       id="annual-declaration"
                       alt="svgImg"
                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPkAAADKCAMAAABQfxahAAAAkFBMVEX////1gCD0dgD1fBH4rn3//fn96uH1fhn0eAD3lU/0dQD5tY71fhj1fBP2izX//fv+8+v++PL95NT96dz838z6x6f+8Of82sX1hiz71Lz6w6D2kUb5tIf4pm/7z7P3oGT2jT73mFX5vJX6wJv4q3j3nFv818D3oWb1hy/6xaT70bb2jDr4soL2j0P4p3P3lUsthL3NAAAMu0lEQVR4nO1da0PivBK2CWxDbYFS7iiIK4qL6P//d0d3mZn0YkHoTPJ6fD4W2ibNZO4zubr6wQ9+8AMuZJPZbDJoux6GMH7dv0XKvENF29bQ9Wjk8PgW6TA4INSqu3Q9IhlkHRUHOYRq9/+w7vPivP/N/cX1uNhxq8rz/oBZfHNetzHVEw8Cvf1OU2+nhQuvn078feqLwp/T/+ynyG5DfZdj26NPSP1A8Lm9PlvoeDWQHXEz6D+p5J11RS3rUmTNMzbqHSa0LkUWh7+J3n9J1DqTH/ll6N1ESWk6m4TmrTrPgywbjNaKLoZT/Gt2+Ehx9FDcMX5jGeOG1kjDA6J1s0E6zla099UfuHqv8X4zkh79+Rivrf2c3MLlW1xddW///Rn/Hd7BtZamJ6jOWHDwl+DZEAFba57q6onbU1ewre+tmb+zhN+S4z8X6TovuaLJ4YcZXE9WxXteYZ4avskgyj3ELPzf7ZPcgtu8HQnY9Is3ITmEb3DpL2+3l31SvMkz3BTWKkCedfV2mIpulW+7hqnHqL3MpgXauRaZwJlo5ylda2t/9sBQMRXqSQY7XVn0MIpzTzOrHv8MzkR/a/OlMLqxN2cbpqErtmwbSFvZmks7T/J67+tmz4xtf5q7vPqVwj6YVt27OEzR5A31bGEvexL4Kd4GtiYam+fCzymKrl23hB1+r6KLYmR/ztD4qMwO7dUxi8LqpKM78j9VAH/rzArP7b9ZDw61f1PPTTy6yf+YtXTONKlBqIL7gtS7tjRC/6Y+sEdXkL3ZSunyFD+HMS95VjZR9Nl8I/jMmrie5ih9fBslFdOrhc6LhZzQCHVJEXKINKBFMZ3coO+/tt74FJ1zafQsL1Y89cdX094R/zW39i/DaY37qR5qkdN4WvQg/XblCza0rObB/uFBncjXqhCrHJ98saz72ys/cG+qxzQoLXioa1H8TGZvb2lr6soPZ8WEjJTcxH9HhZlo1b2uxV2RJ8TkpHnHDX3IyAfXZN9a8SfrejGkYOKXo8PNbsKC3I9sJ8YDviqMPeBybyizEsthni7ylG6C+UnmRntU2CLKJiNiKHrT8DS+jmdah4DWoT/NyXATf2FjLsO8cdqxjNM7FCLKdfx1bNE6KTD90LbaEnX9Ncv6Pu/I29PdqfU6xwpNhxbhES/2c1xarb88xnRlMwndJWIa4g+JW3pf4kAMCd90aq14fJ67fGkbp0mXVv03rrpTeu/hMGLibu07i1bN3ZnOhL7NIvWafqBATezQO0USNqIJru0gwQXali0WzSteJilq3Pkkx0Trc7xo6RtBNK+5+yjmlh9XkS+TdljkjMmtgPDiPV6b2cP9U3PzCXi0Vt0KTK6BBSRPNTdzYlAOCtlSLrg8ODCxzX7UhPoV75XFEyy5FTvYE0uOGsh3mtCHTIjL4YZK3Bht1i7H5fhtGRVFV+JZeKTNQwZaGz+v+dXES76KW4yTIR8bN29IWgkmpLUtMWrxUHcvE6zUD7z2RovR2JBekIwsrW2LMRkH7B0Jm5ac5E1czHO6AB1KOMANhIvuIrJORIiqFHG3Jv2jKT7WyqMBl2dYGatiBQoc+upzUqkvFOR5kFgnG2AE71LiGbOoxShg7GRB6lJSxGVAXhoYuIQWQzkBgxlpWaSSI7IqTnwJ2jRz5CmYgaGE/VKzErX1aOM37hldkpoAlyBhLjCN6A2nA/S3sAtX/sDowm3zr0MpRvPch0WiEwGm9BB/wyix5ZxpDMhPQxSXyOMSUXJ/RGIHmwGpL9zX3nkmFqV0ErRblGjWFPCXcAdXMLvJNCrRACjZNHq9MNfqpu7GpgGkjZl7V7AmXKoF7nR8PqgPPET2CTDnRUHYZFhWbJrFvCRMfuErBVOmcJtr0FxvgNi5PETofqPc6SnkUzGw1M8A84zRWwCjiNd1912CTVzcTpA7LbnRwROGpI2Mloe/fQB1J3Tzglzj+9pl4J6DbY5KVsS259qotIGKmKHuxPXOEtApgfN8ASnHmMgBUiwB33ubm7eUgblvGq6AlON0FIArhDZ6tzpllBEQOY7BPYTOA8WYyzAoSTFgcaVMUzaAvqYhvJNJiNZeSYkAKtBiRa2v8K2B1/wRUadwS0EQFdi9nLkGvAaDKED+yWvtfRfiAUgNmAnQPydfzSMokh0YMLyeUCRu8GjjJos5X2sDHUEgTUC/MqzBfCDuuHO4gCI+4nytBazLwBd2RMQLWEXk9MGZCzkn0PuInlDwDCnWaguMXaFA59cc8+iXFBlUKViVKayECcBCxG0nVN+CMwfG0psGIjNHPR2IOxCeOWYHANW1YQRNO9rzKNd9gW0slUEA3x4rhym6wspp8AMjaYFiEUlVcy3+CTHMTeqXmC4PkJ3ARA8Snvu9hOxv/rbGqgrQKKh8nAfgelaYKdH94HGhYM73oBupiJI6J0UVgwmgMFH8NF0ppaai4dRsYm0ttByYs7QgpGW7HMdDl1VcSyFrEc0DNmffVwGtEfT98f828R5/em6AF47bNwLOVjkfzDGgV4g57xp3FTNtnQ40UpmjmhDaqerX4AZoqjHLVfDBOEr6rAAaLMy5mGCmxu4Llw5Ae53Z4w9GYsisMZ0MDLloZtdIikFFT7qMUD0R95sgfUAyYl4HUF7DBpNdq1E2WdwCVCt+lguJl760UnooBpvYcOOZ+gri3FxUqXQK5p6pMijU2GlwVgziugUKNX4/YFbyuDvFsBRyYUMqHVqoByagsovzilimU4CnJBbIsYeibz+Y+14w/xTEmhfMvYepvgIp9kuR5IwTgVlpEiEeZO5SEfM6LEsxZU7ISdDjwCRAEaN5B/qiBywOU91FmE7LHxZHCRQiDS+QxbnX4rC2RiZ6T8VazvvjYetpIQ8RaHGS6fzVAK1KqucDRBXlMj4/AW1zoYgPWAlUIugIE0k95gOUXOy43+8LFstKvXFazPt1hKl4dSh4/Zw1k/mHMQoZsRXASh6XbaOsZhNynS6Qp8p3G7ABarQkpwU56lSuIbFLxvIlvV+fYi4t0z7QL9WzOAAQu+znXzgpv84BtQr+uJKNkagvpBJYgCxLdxTacBVYxG4ichm3/wAFwc7yZVCnkM7SwjYmrjIIsNertDuQHN3s0dtKUDcR9lyJIrDBh/A2OwAPyJL3g2JxLkfvmqPoVzRDFMMde3OHGqBlrlmLUauB4Q0HehwdJuRCiUQe56CvNTgIrDZCksCWRZF0mMlqeerEK4Rchrt2pogUWwIGJvvlAP01ttASVGGz+67dVP/vWbfioN748Wok44bNNlHp4BS3SEy056/p6T1EFQe3O0eodswSJjv/HCVmhMUz3ZrF46nnw7mA6fCl19ud5D2E3nFNPYuOv90pNJPR2IttUg/j+nOzpJDjt811EM8BrdLg41id6arlBTZT6+h4On66SVhHJYbRrRd5p/8weLKOM+NoFUf6ajL1aN4fGND5VgxeElrymI2Fno02nsHFkDNFnbpDL3LL86Du9s1HWPcubKPTgTVzjacItl3Zw6cCm6I27SihHr7O89CqMeGKPixdhzWOga0V5dyHcH0tsFdiw0QJHj/5eMqp2MDMG3ZSQHqrG0/rKcCOyw2vOUbr5ToJfxGQv9G0QCfW6UEZRRWwaV3T2eaU8ufgoKNTQAeXNJ0gCOX+HhQTVIIvxogBRONNGxsbz3zZ5nRoYuShFjdERxlDlQeeNOM8v7oMOm6RIwN6Zp0U+OCVCpu+0NBYQqsL6+A43RqO07YHSLPZqyYHoWbJExvbTmdtPIHKnxjOQ4wj3/3tjRzRWokbv2MsjZ1U+p+besRZOPYceRtSDJn1DF/DyKHZs1fSPIfGu9yBRG0ltKvebPUuS3QSh6fi61M5+dFxrN8H8yTmCW8PRy+3686JwJMAg6geyD/DUx/dWa9e50OvNEob/VPbYozdl2k0DKy+OOIQxoYCdyLDEgAUrx6rfYC0dfETf9kAObLHKhmnYo3mpEABmlpl49Fh6jYTkMXVxymwLsbbOM7XAVGA2pSGGVsg2CGwzKqmRwIetfyNiN0+ITz8NNVkDR6GWOzMMAk8k4uwWx0J2OA//EzKOBtT1GCTbYWTMF3jxJ2UIzFiQp6ssOw6mcTkTJM6Q0kMD5Zdb3a5GHe2sVw96ttoMYidZdWHJmg9jv9u+Gy0tr2n+tsoroR+vgZEG6O7b9vQ5PwcieueSCzISuUvJadFMvXW1L4IWXzEjaW333Pi77JrV+u+VBtPDiHgQOtzr3WsPM3GaAjDbnURUKg6npxAwIfl1i5COGxwtfcwHaF5TG5jhfUnYWxU0PpG1lk92sPr9VRFSkVmu/n9fzNtQC/t99NvzM1/8IMf/MAd/getWrdV6eG4IQAAAABJRU5ErkJggg=="
-                      style={{ marginLeft: "60px", }}
+                      style={{ marginLeft: "60px" }}
                     />
                   </div>
                   <div
@@ -596,7 +657,16 @@ export class Dashboard extends Component {
                 </div>
               </div>
               <div className="col s4 m4 l4">
-                <div class="card dashboard-card" id="upsi" onClick={this.onclick} style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
+                <div
+                  class="card dashboard-card"
+                  id="upsi"
+                  onClick={this.onclick}
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
+                >
                   <div
                     class="card-image dashboard-card-image"
                     id="upsi"
@@ -635,7 +705,16 @@ export class Dashboard extends Component {
               //style={{ marginTop: -23 }}
             > */}
               <div className="col s4 m4 l4">
-                <div class="card dashboard-card" id="other" onClick={this.onclick} style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
+                <div
+                  class="card dashboard-card"
+                  id="other"
+                  onClick={this.onclick}
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
+                >
                   <div
                     class="card-image dashboard-card-image"
                     id="other"
@@ -668,7 +747,16 @@ export class Dashboard extends Component {
                 </div>
               </div>
               <div className="col s4 m4 l4">
-                <div class="card dashboard-card" id="cp" onClick={this.onclick} style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
+                <div
+                  class="card dashboard-card"
+                  id="cp"
+                  onClick={this.onclick}
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
+                >
                   <div
                     class="card-image dashboard-card-image"
                     id="cp"
@@ -701,7 +789,16 @@ export class Dashboard extends Component {
                 </div>
               </div>
               <div className="col s4 m4 l4">
-                <div class="card dashboard-card" id="template" onClick={this.onclick} style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
+                <div
+                  class="card dashboard-card"
+                  id="template"
+                  onClick={this.onclick}
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
+                >
                   <div
                     class="card-image dashboard-card-image"
                     id="template"
@@ -734,15 +831,74 @@ export class Dashboard extends Component {
                 </div>
               </div>
             </div>
+            <div className="row dashboard-row-client" style={{ marginTop: 40 }}>
+              <div className="col s4 m4 l4">
+                <div
+                  class="card dashboard-card"
+                  id="conversation"
+                  onClick={this.onclick}
+                  style={{
+                    width: "300px",
+                    marginLeft: "0vw",
+                    "border-radius": "3px",
+                  }}
+                >
+                  <div
+                    class="card-image dashboard-card-image"
+                    id="conversation"
+                    onClick={this.onclick}
+                  >
+                    <img
+                      id="conversation"
+                      alt="svgImg"
+                      src="data:image/png;base64,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"
+                      style={{ marginLeft: "60px" }}
+                      onClick={this.onclick}
+                    />
+                  </div>
+                  <div
+                    id="conversation"
+                    class="btn-flat dashboard-card-action"
+                    onClick={this.onclick}
+                    style={{ marginTop: "-60%" }}
+                  >
+                    <span style={{ marginTop: "-10%" }}>
+                      <a
+                        id="conversation"
+                        className="dashboard-card-name"
+                        style={{ color: "#022d36", fontWeight: 500 }}
+                      >
+                        UPSI Conversation
+                      </a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <>
-            {this.props.userData && this.props.userData.userDetails && !this.props.userData.userDetails.firstLogin ?
+            {this.props.userData &&
+            this.props.userData.userDetails &&
+            !this.props.userData.userDetails.firstLogin ? (
               <div className="dashboard" style={{ marginTop: "60px" }}>
                 <div class="row dashboard-row-client" style={{ marginTop: 40 }}>
                   <div className="col s4 m4 l4">
-                    <div class="card dashboard-card" id="view" onClick={this.onTab} style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
-                      <div id="view" onClick={this.onTab} class="card-image dashboard-card-image">
+                    <div
+                      class="card dashboard-card"
+                      id="view"
+                      onClick={this.onTab}
+                      style={{
+                        width: "300px",
+                        marginLeft: "0vw",
+                        "border-radius": "3px",
+                      }}
+                    >
+                      <div
+                        id="view"
+                        onClick={this.onTab}
+                        class="card-image dashboard-card-image"
+                      >
                         <img
                           id="view"
                           alt="svgImg"
@@ -770,8 +926,21 @@ export class Dashboard extends Component {
                     </div>
                   </div>
                   <div className="col s4 m4 l4">
-                    <div class="card dashboard-card" id="info" onClick={this.onTab} style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
-                      <div id="info" class="card-image dashboard-card-image" onClick={this.onTab}>
+                    <div
+                      class="card dashboard-card"
+                      id="info"
+                      onClick={this.onTab}
+                      style={{
+                        width: "300px",
+                        marginLeft: "0vw",
+                        "border-radius": "3px",
+                      }}
+                    >
+                      <div
+                        id="info"
+                        class="card-image dashboard-card-image"
+                        onClick={this.onTab}
+                      >
                         <img
                           id="info"
                           alt="svgImg"
@@ -804,7 +973,11 @@ export class Dashboard extends Component {
                       class="card dashboard-card"
                       id="request"
                       onClick={this.onTab}
-                      style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}
+                      style={{
+                        width: "300px",
+                        marginLeft: "0vw",
+                        "border-radius": "3px",
+                      }}
                     >
                       <div
                         class="card-image dashboard-card-image"
@@ -838,10 +1011,21 @@ export class Dashboard extends Component {
                     </div>
                   </div>
                 </div>
-                {this.props.userData && this.props.userData.userDetails && this.props.userData.userDetails.upsi ?
-                  <div class="row dashboard-row-client" style={{ marginTop: 40 }}>
+                <div class="row dashboard-row-client" style={{ marginTop: 40 }}>
+                  {this.props.userData &&
+                  this.props.userData.userDetails &&
+                  this.props.userData.userDetails.upsi ? (
                     <div className="col s4 m4 l4">
-                      <div class="card dashboard-card" id="upsi" onClick={this.onclick} style={{ width: "300px", marginLeft: "0vw", "border-radius": "3px" }}>
+                      <div
+                        class="card dashboard-card"
+                        id="upsi"
+                        onClick={this.onclick}
+                        style={{
+                          width: "300px",
+                          marginLeft: "0vw",
+                          "border-radius": "3px",
+                        }}
+                      >
                         <div
                           class="card-image dashboard-card-image"
                           id="upsi"
@@ -865,7 +1049,11 @@ export class Dashboard extends Component {
                             <a
                               id="upsi"
                               className="dashboard-card-name"
-                              style={{ color: "#022d36", fontWeight: 500, margin: 8 }}
+                              style={{
+                                color: "#022d36",
+                                fontWeight: 500,
+                                margin: 8,
+                              }}
                             >
                               UPSI
                             </a>
@@ -873,13 +1061,56 @@ export class Dashboard extends Component {
                         </div>
                       </div>
                     </div>
+                  ) : null}
+                  <div className="col s4 m4 l4">
+                    <div
+                      class="card dashboard-card"
+                      id="conversation"
+                      onClick={this.onclick}
+                      style={{
+                        width: "300px",
+                        marginLeft: "0vw",
+                        "border-radius": "3px",
+                      }}
+                    >
+                      <div
+                        class="card-image dashboard-card-image"
+                        id="conversation"
+                        onClick={this.onclick}
+                      >
+                        <img
+                          id="conversation"
+                          alt="svgImg"
+                          src="data:image/png;base64,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"
+                          style={{ marginLeft: "60px" }}
+                          onClick={this.onclick}
+                        />
+                      </div>
+                      <div
+                        id="conversation"
+                        class="btn-flat dashboard-card-action"
+                        onClick={this.onclick}
+                        style={{ marginTop: "-60%" }}
+                      >
+                        <span style={{ marginTop: "-10%" }}>
+                          <a
+                            id="conversation"
+                            className="dashboard-card-name"
+                            style={{ color: "#022d36", fontWeight: 500 }}
+                          >
+                            UPSI Conversation
+                          </a>
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  : null
-                }
+                </div>
               </div>
-              :
-              <span style={{marginTop: '20px', fontWeight: '500'}}>Please change your password and re-login to continue</span>
-            }
+            ) : (
+              <span style={{ marginTop: "20px", fontWeight: "500" }}>
+                Please change your password and re-login to continue
+              </span>
+            )}
           </>
         )}
       </div>
@@ -888,7 +1119,7 @@ export class Dashboard extends Component {
 }
 
 const mapStateToProps = (state) => {
-  // console.log(state);
+  console.log(state);
   return {
     user: state.auth.user,
     userData: state.auth.data,
@@ -927,7 +1158,11 @@ const mapStateToProps = (state) => {
     sharePdfError: state.common.sharePdfError,
     sharePdfMsg: state.common.sharePdfMsg,
 
-    company: state.common.getCompanyData
+    company: state.common.getCompanyData,
+
+    query: state.common.query,
+
+    toogleConversationFlag: state.common.toogleConversationFlag,
   };
 };
 
@@ -968,6 +1203,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     GoToCompare: (id) => {
       dispatch(gotoCompare(id));
+    },
+    ToogleConversationFlag: (flag) => {
+      dispatch(toogleConversationFlag(flag));
     },
   };
 };

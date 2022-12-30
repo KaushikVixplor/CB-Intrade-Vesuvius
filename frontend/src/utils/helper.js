@@ -138,3 +138,53 @@ export const getDateInputprevn = (date, n) => {
   console.log("dateStr : ", dateStr);
   return dateStr;
 };
+
+export const getStartDate = () => {
+  var d = new Date();
+  var day = d.getDate();
+  if (day < 10) day = "0" + String(day);
+  var month = d.getMonth();
+  if (month < 10) month = "0" + String(month);
+  var Year = d.getFullYear();
+  return Year + "-" + month + "-" + day;
+};
+
+export const getEndDate = () => {
+  var d = new Date();
+  var day = d.getDate();
+  if (day < 10) day = "0" + String(day);
+  var month = d.getMonth() + 1;
+  if (month < 10) month = "0" + String(month);
+  var Year = d.getFullYear();
+  return Year + "-" + month + "-" + day;
+};
+
+export const getParenthesis = (s) => {
+  var sr = "";
+  var flag = false;
+  for (var i = 0; i < s.length; i++) {
+    if (flag === true && s[i] !== ")") {
+      sr += s[i];
+    }
+    if (s[i] === "(") {
+      flag = true;
+    }
+    if (s[i] === ")") {
+      flag = false;
+      break;
+    }
+  }
+  return sr;
+};
+
+export function createFormData(fileName, file, body) {
+  const data = new FormData();
+  if (file) {
+    data.append(fileName, file);
+  }
+  Object.keys(body).forEach((key) => {
+    data.append(key, body[key]);
+  });
+  console.log("data inside foreach", data);
+  return data;
+}

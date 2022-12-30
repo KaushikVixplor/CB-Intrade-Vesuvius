@@ -94,8 +94,7 @@ module.exports = (app, db) => {
         "Yours faithfully,\nfor " +
         companyData.name +
         "\n" +
-        adminData[0].name +
-        "\nCompliance Officer";
+        adminData[0].name;
 
       // to = to.split(",")
 
@@ -113,12 +112,10 @@ module.exports = (app, db) => {
       }
       var activityData = { activityId: activity_id };
       activity_id = await trackActivity(activityData, db);
-      res
-        .status(200)
-        .json({
-          message: "mail sent successfully",
-          mailresponses: mailresponses,
-        });
+      res.status(200).json({
+        message: "mail sent successfully",
+        mailresponses: mailresponses,
+      });
     } catch (error) {
       console.error("mail send error", error);
       res.status(500).json({ message: "mail send error:: " + error });
@@ -182,8 +179,7 @@ module.exports = (app, db) => {
                 "Yours faithfully,\nfor " +
                 companyData.name +
                 "\n" +
-                adminData[0].name +
-                "\nCompliance Officer";
+                adminData[0].name;
 
               // sending mail
               var mailresponses = [];
@@ -210,12 +206,10 @@ module.exports = (app, db) => {
               if (url) {
                 fs.unlinkSync(url);
               }
-              res
-                .status(200)
-                .json({
-                  message: "mail sent successfully",
-                  mailresponses: mailresponses,
-                });
+              res.status(200).json({
+                message: "mail sent successfully",
+                mailresponses: mailresponses,
+              });
             }
           } catch (err) {
             console.log(err);
@@ -255,12 +249,10 @@ module.exports = (app, db) => {
           createdAt: { [Op.between]: [fromDate, toDate] },
         },
       });
-      res
-        .status(200)
-        .json({
-          message: "ActivityLogs fetched successfully",
-          data: ActivityLogsData,
-        });
+      res.status(200).json({
+        message: "ActivityLogs fetched successfully",
+        data: ActivityLogsData,
+      });
     } catch (error) {
       console.error("ActivityLogs info fetch error", error);
       res

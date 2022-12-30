@@ -42,7 +42,7 @@ class TopNav extends Component {
         this.setState({ onRequestFlag: false });
       }
       if (this.props.changePasswordError) {
-        swal("OOPS!",this.props.changePasswordMsg, "error");
+        swal("OOPS!", this.props.changePasswordMsg, "error");
         this.setState({ onRequestFlag: false });
       }
     }
@@ -108,15 +108,19 @@ class TopNav extends Component {
       password: this.state.password,
       newPassword: this.state.newPassword,
     };
-    var re = new RegExp('(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])')
-    var tested = re.test(this.state.newPassword)
+    var re = new RegExp("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])");
+    var tested = re.test(this.state.newPassword);
     if (!tested) {
-      swal('Info', 'Password should contain atleast one Capital letter, one Small letter, one Number and one special charecter', 'info')
-      return
+      swal(
+        "Info",
+        "Password should contain atleast one Capital letter, one Small letter, one Number and one special charecter",
+        "info"
+      );
+      return;
     }
     if (this.state.newPassword.length < 10) {
-      swal('Info', 'Password should contain minimum ten charecters', 'info')
-      return
+      swal("Info", "Password should contain minimum ten charecters", "info");
+      return;
     }
     this.setState({
       password: "",
@@ -158,12 +162,12 @@ class TopNav extends Component {
   getDate = (date) => {
     var d = new Date(date);
     var day = d.getDate();
-    if (day.toString().length == 1) day = '0' + day
+    if (day.toString().length == 1) day = "0" + day;
     var month = d.getMonth() + 1;
-    if (month.toString().length == 1) month = '0' + month
+    if (month.toString().length == 1) month = "0" + month;
     var Year = d.getFullYear();
     return day + "-" + month + "-" + Year;
-  }
+  };
 
   render() {
     const { user } = this.props;
@@ -252,6 +256,15 @@ class TopNav extends Component {
                       <b>Restore</b>
                     </Link>
                   </li> */}
+                  {/* <li>
+                    <Link
+                      className="ChangePassword black-text modal-trigger"
+                      data-target="confirm-modal"
+                      onClick={() => this.setState({ action: "backup" })}
+                    >
+                      <b>Backup</b>
+                    </Link>
+                  </li> */}
                 </>
               ) : null}
               <li>
@@ -267,7 +280,7 @@ class TopNav extends Component {
                   <b>Change Password</b>
                 </Link>
               </li>
-              </>
+            </>
           )}
         </ul>
 
@@ -298,10 +311,28 @@ class TopNav extends Component {
                   </li>
                 ) : null}
               </ul>
-              <span style={{color: 'white'}}>
-                {this.props.company && new Date(new Date(this.props.company.window_close_from).setHours(0, 0, 0)).getTime() <= new Date().getTime() && new Date().getTime() <= new Date(new Date(this.props.company.window_close_to).setHours(23, 59, 59)).getTime() ?
-                  'Trading window will be closed from ' + this.getDate(this.props.company.window_close_from) + ' to ' + this.getDate(this.props.company.window_close_to) : null
-                }
+              <span style={{ color: "white" }}>
+                {this.props.company &&
+                new Date(
+                  new Date(this.props.company.window_close_from).setHours(
+                    0,
+                    0,
+                    0
+                  )
+                ).getTime() <= new Date().getTime() &&
+                new Date().getTime() <=
+                  new Date(
+                    new Date(this.props.company.window_close_to).setHours(
+                      23,
+                      59,
+                      59
+                    )
+                  ).getTime()
+                  ? "Trading window will be closed from " +
+                    this.getDate(this.props.company.window_close_from) +
+                    " to " +
+                    this.getDate(this.props.company.window_close_to)
+                  : null}
               </span>
               <ul
                 className="right hide-on-med-and-down"
@@ -390,7 +421,7 @@ const mapStateToProps = (state) => {
     backupLoading: state.Hod.backupLoading,
     backupSuccess: state.Hod.backupSuccess,
 
-    company: state.common.getCompanyData
+    company: state.common.getCompanyData,
   };
 };
 const mapDispatchToProps = (dispatch) => {

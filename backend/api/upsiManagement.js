@@ -9,7 +9,11 @@ const decryptData = require("../util/common").decryptData;
 const encryptData = require("../util/common").encryptData;
 const encryptCredentials = require("../util/common").encryptCredentials;
 const decryptCredentials = require("../util/common").decryptCredentials;
+const createConversation = require("../util/common").createConversation;
+const queryBuilder = require("../util/common").queryBuilder;
 const getPdf = require("../util/common").getPdf;
+const config = require("../config/config");
+const env = process.env.NODE_ENV || "development";
 const fs = require("fs");
 
 module.exports = (app, db) => {
@@ -92,11 +96,7 @@ module.exports = (app, db) => {
       var Disclaimer = "Dear Insider,\n\n";
       // Disclaimer = Disclaimer+"The UPSI is shared with you on a need-to-know basis.You should maintain the confidentiality of all the Price-Sensitive Information and should not pass on such information to any person directly or indirectly, by way of making a recommendation for the purchase or sale of securities relating to "+companyData.name+".\n"
       Disclaimer = Disclaimer + "\n" + information + "\n\n";
-      Disclaimer =
-        Disclaimer +
-        "Yours faithfully,\n" +
-        coData.name +
-        "\nCompliance Officer";
+      Disclaimer = Disclaimer + "Yours faithfully,\n" + coData.name;
 
       // shared_by = shared_by.split(",")
       // shared_with = shared_with.split(",")
@@ -177,62 +177,92 @@ module.exports = (app, db) => {
                 }
               }
               req.body.data.subject = subject;
-              var nowDate = new Date();
-              var coData = await db.Employees.findOne({
-                where: {
-                  is_active: true,
-                  is_compliance: true,
-                },
-              });
-              // var companyData = await db.Company.findOne({
-              //     where:{
-              //         id: req.user.companyId
-              //     }
-              // })
-              // add UPSI Log
-              const UPSILogsData = await db.UPSILogs.create(req.body.data);
-              const emp = await db.Employees.findByPk(req.user.userPAN);
-              const designation = req.user.is_compliance
-                ? "Compliance Officer"
-                : "Insider";
-              var Disclaimer = "Dear Insider,\n\n";
-              // Disclaimer = Disclaimer+"The UPSI is shared with you on a need-to-know basis.You should maintain the confidentiality of all the Price-Sensitive Information and should not pass on such information to any person directly or indirectly, by way of making a recommendation for the purchase or sale of securities relating to "+companyData.name+".\n"
-              Disclaimer = Disclaimer + "\n" + information + "\n\n";
-              Disclaimer =
-                Disclaimer +
-                "Yours faithfully,\n" +
-                emp.name +
-                "\n" +
-                designation;
-
-              // shared_by = shared_by.split(",")
-              // shared_with = shared_with.split(",")
-
-              // sending mail
-              var mailresponses = [];
-              if (url) {
-                doc = await getPdf(url);
-                attachmentFile.push({
-                  filename:
-                    "attachment." + url.split(".")[url.split(".").length - 1],
-                  path: url,
+              const result = await db.sequelize.transaction(async (t) => {
+                var nowDate = new Date();
+                var coData = await db.Employees.findOne({
+                  where: {
+                    is_active: true,
+                    is_compliance: true,
+                  },
+                  transaction: t,
                 });
-              }
-              for (x = 0; x < shared_with.length; x++) {
-                var mailRes = await sentMail.sentMail({
-                  to: shared_with[x],
-                  subject: subject,
-                  text: Disclaimer,
-                  attachments: attachmentFile,
+                // var companyData = await db.Company.findOne({
+                //     where:{
+                //         id: req.user.companyId
+                //     }
+                // })
+                // add UPSI Log
+                const UPSILogsData = await db.UPSILogs.create(req.body.data, {
+                  transaction: t,
                 });
-                mailresponses.push(mailRes);
-              }
-              if (url) {
-                fs.unlinkSync(url);
-              }
-              res.status(200).json({
-                message: "UPSI Shared successfully",
-                mailresponses: mailresponses,
+                const emp = await db.Employees.findByPk(req.user.userPAN, {
+                  transaction: t,
+                });
+                await createConversation(UPSILogsData, t);
+                // const designation = req.user.is_compliance
+                //   ? "Compliance Officer"
+                //   : "Insider";
+                var Disclaimer = null;
+                if (req.user.is_compliance) {
+                  var Disclaimer = "Dear Insider,\n\n";
+                  // Disclaimer = Disclaimer+"The UPSI is shared with you on a need-to-know basis.You should maintain the confidentiality of all the Price-Sensitive Information and should not pass on such information to any person directly or indirectly, by way of making a recommendation for the purchase or sale of securities relating to "+companyData.name+".\n"
+                  Disclaimer = Disclaimer + "\n" + information + "\n\n";
+                  Disclaimer = Disclaimer + "Yours faithfully,\n" + emp.name;
+                } else {
+                  var Disclaimer = "Dear Insider,\n\n";
+                  // Disclaimer = Disclaimer+"The UPSI is shared with you on a need-to-know basis.You should maintain the confidentiality of all the Price-Sensitive Information and should not pass on such information to any person directly or indirectly, by way of making a recommendation for the purchase or sale of securities relating to "+companyData.name+".\n"
+                  Disclaimer = Disclaimer + "\n" + information + "\n\n";
+                  Disclaimer =
+                    Disclaimer +
+                    "Yours faithfully,\n" +
+                    emp.name +
+                    "\n" +
+                    emp.designation;
+                }
+                // shared_by = shared_by.split(",")
+                // shared_with = shared_with.split(",")
+
+                // sending mail
+                var mailresponses = [];
+                if (url) {
+                  doc = await getPdf(url);
+                  attachmentFile.push({
+                    filename:
+                      "attachment." + url.split(".")[url.split(".").length - 1],
+                    path: url,
+                  });
+                }
+
+                for (x = 0; x < shared_with.length; x++) {
+                  var conversationurl = queryBuilder(
+                    config[env].frontendUrl + "/login",
+                    {
+                      email: shared_with[x],
+                      upsi_id: UPSILogsData.id,
+                      sender_id: btoa(req.user.userPAN),
+                      type: "receive",
+                    }
+                  );
+                  var extra =
+                    "\n" +
+                    conversationurl +
+                    "\nClick on the above link to start coversation for this UPSI (Registered user only)\n\n";
+                  console.log("subject", subject);
+                  var mailRes = await sentMail.sentMail({
+                    to: shared_with[x],
+                    subject: subject,
+                    text: Disclaimer + extra,
+                    attachments: attachmentFile,
+                  });
+                  mailresponses.push(mailRes);
+                }
+                if (url) {
+                  fs.unlinkSync(url);
+                }
+                res.status(200).json({
+                  message: "UPSI Shared successfully",
+                  mailresponses: mailresponses,
+                });
               });
             }
           } catch (err) {
@@ -308,5 +338,167 @@ module.exports = (app, db) => {
       console.error("upsi info fetch error", error);
       res.status(500).json({ message: "upsi info fetch error:: " + error });
     }
+  });
+
+  //fetch conversations
+  app.get("/conversation", async (req, res) => {
+    try {
+      var data = { ...req.query };
+      var conversation = null;
+      if (data.type === "log") {
+        conversation = await db.Conversations.findAll({
+          where: {
+            upsi_id: data.upsi_id,
+            status: "conversation",
+          },
+          order: [["createdAt", "ASC"]],
+          attributes: [
+            "id",
+            "createdAt",
+            "upsi_id",
+            "sender_id",
+            "receiver_id",
+          ],
+          include: [
+            {
+              model: db.Employees,
+              as: "Sender",
+              attributes: ["pan", "name"],
+            },
+            {
+              model: db.Employees,
+              as: "Receiver",
+              attributes: ["pan", "name"],
+            },
+          ],
+        });
+      } else {
+        const sender_id = data.sender_id;
+        const receiver_id = data.receiver_id;
+        delete data.sender_id;
+        delete data.receiver_id;
+        conversation = await db.Conversations.findAll({
+          where: {
+            ...data,
+            [sequelize.Op.or]: [
+              {
+                [sequelize.Op.and]: [
+                  { sender_id: sender_id },
+                  { receiver_id: receiver_id },
+                ],
+              },
+              {
+                [sequelize.Op.and]: [
+                  { sender_id: receiver_id },
+                  { receiver_id: sender_id },
+                ],
+              },
+            ],
+          },
+          attributes: [
+            "id",
+            "information",
+            "createdAt",
+            "upsi_id",
+            "sender_id",
+            "receiver_id",
+          ],
+          include: {
+            model: db.Employees,
+            as: "Sender",
+            attributes: ["pan", "name"],
+          },
+        });
+      }
+      console.log("Conversation fetched successfully");
+      res.status(200).json({
+        message: "Conversation fetched successfully",
+        data: conversation,
+      });
+    } catch (err) {
+      console.log("Error to fetch conversations", err);
+      res
+        .status(500)
+        .json({ message: "Error to fetch conversations : " + err });
+    }
+  });
+
+  app.post("/conversation", async (req, res) => {
+    var out = await localUpload.fields([{ name: "attachment", maxCount: 1 }])(
+      req,
+      res,
+      async function (err) {
+        try {
+          if (err) {
+            console.log(err);
+            throw "Unexpected error occured";
+          } else {
+            var data = {
+              information: await decryptData(req.body.information),
+              upsi_id: parseInt(await decryptData(req.body.upsi_id)),
+              sender_id: await decryptData(req.body.sender_id),
+              receiver_id: await decryptData(req.body.receiver_id),
+              status: "conversation",
+              attachmentUrl: null,
+            };
+            var url = "";
+            if (req.files["attachment"] && req.files["attachment"][0]) {
+              url = await localgetPublicUrl(
+                req.files["attachment"][0].filename
+                  ? req.files["attachment"][0].filename
+                  : req.files["attachment"][0].key
+                  ? req.files["attachment"][0].key
+                  : req.files["attachment"][0].originalname
+              );
+            }
+            const upsi = await db.UPSILogs.findByPk(data.upsi_id);
+            const send_by = await db.Employees.findByPk(data.sender_id);
+            const send_to = await db.Employees.findByPk(data.receiver_id);
+            const attachmentFile = [];
+            if (url) {
+              attachmentFile.push({
+                filename:
+                  "attachment." + url.split(".")[url.split(".").length - 1],
+                path: url,
+              });
+            }
+            console.log(req.user);
+            console.log(upsi);
+            var conversationurl = queryBuilder(
+              config[env].frontendUrl + "/login",
+              {
+                email: send_to.email,
+                upsi_id: upsi.id,
+                type: req.user.userPAN == upsi.sender_id ? "receive" : "send",
+                sender_id: btoa(req.user.userPAN),
+              }
+            );
+            var extra =
+              "\n" +
+              conversationurl +
+              "\nClick on the above link to start coversation for this UPSI\n\n";
+            var mailRes = await sentMail.sentMail({
+              to: send_to.email,
+              mailId: send_by.email,
+              subject: upsi.subject,
+              text: data.information + extra,
+              attachments: attachmentFile,
+            });
+            if (mailRes.status == 500) {
+              throw "Error to sent mail";
+            }
+            if (url) fs.unlinkSync(url);
+            var con = await db.Conversations.create(data);
+            res.status(200).json({
+              message: "Conversation created successfully",
+              id: con.id,
+            });
+          }
+        } catch (err) {
+          console.log(err);
+          res.status(500).json({ message: "Error occured " + err });
+        }
+      }
+    );
   });
 };
