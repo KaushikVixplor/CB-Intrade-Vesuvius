@@ -78,7 +78,7 @@ export class TradingRequest extends Component {
     var date_from = new Date(this.state.date_requested_from).getTime();
     var date_to = new Date(this.state.date_requested_to).getTime();
     if (date_to - date_from > day * 7) {
-      swal("Error", "Dealing date can't be more than 7 days", "error");
+      swal("Error", "Dealing period can't be more than 7 days", "error");
       return;
     }
     if (this.state.request_type == "Sell") {
