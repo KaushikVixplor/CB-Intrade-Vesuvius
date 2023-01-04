@@ -7,7 +7,7 @@ const ConfigureModal = ({
   windowCloserSubmit,
   windowCloserSubmitShare,
   getDate,
-  company
+  company,
 }) => {
   // var field1 = state.company.window_close_from
   //   ? moment(state.company.window_close_from).format("DD-MM-YYYY")
@@ -37,7 +37,7 @@ const ConfigureModal = ({
               />
             </div>
             <div>
-              <label for="to">Quarter ending date:</label>
+              <label for="to">WINDOW CLOSURE ENDING DATE:</label>
               <input
                 type="date"
                 id="to"
@@ -71,9 +71,17 @@ const ConfigureModal = ({
               ></textarea>
             </div>
             <div className="col s12 m12 l12">
-              {company && company.window_close_from && company.window_close_to &&
-                <span style={{ transform: 'translate(-5px, 8px)'}}> {'Configured window closure period: ' + getDate(company.window_close_from) + ' to ' + getDate(company.window_close_to) }</span>
-              }
+              {company &&
+                company.window_close_from &&
+                company.window_close_to && (
+                  <span style={{ transform: "translate(-5px, 8px)" }}>
+                    {" "}
+                    {"Configured window closure period: " +
+                      getDate(company.window_close_from) +
+                      " to " +
+                      getDate(company.window_close_to)}
+                  </span>
+                )}
             </div>
           </div>
         </div>

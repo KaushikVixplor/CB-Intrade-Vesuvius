@@ -143,9 +143,11 @@ export const getStartDate = () => {
   var d = new Date();
   var day = d.getDate();
   if (day < 10) day = "0" + String(day);
-  var month = d.getMonth()+1;
+  var month = d.getMonth();
+  if (month === 0) month = 12;
   if (month < 10) month = "0" + String(month);
   var Year = d.getFullYear();
+  if (d.getMonth() === 0) Year -= 1;
   return Year + "-" + month + "-" + day;
 };
 
@@ -153,7 +155,7 @@ export const getEndDate = () => {
   var d = new Date();
   var day = d.getDate();
   if (day < 10) day = "0" + String(day);
-  var month = d.getMonth() + 2;
+  var month = d.getMonth() + 1;
   if (month < 10) month = "0" + String(month);
   var Year = d.getFullYear();
   return Year + "-" + month + "-" + day;

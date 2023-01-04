@@ -40,7 +40,6 @@ const config = {
       status: "Active",
     },
     username: "sa",
-    password: "vixplor12345",
     password: "Vixplor12345",
     database: "CBMSLDev",
     host: "127.0.0.1",
