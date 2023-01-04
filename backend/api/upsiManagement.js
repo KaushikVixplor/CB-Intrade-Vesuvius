@@ -15,6 +15,7 @@ const getPdf = require("../util/common").getPdf;
 const config = require("../config/config");
 const env = process.env.NODE_ENV || "development";
 const fs = require("fs");
+const extractName = require("../util/common").extractName;
 
 module.exports = (app, db) => {
   async function getDate(dateString) {
@@ -226,9 +227,9 @@ module.exports = (app, db) => {
                 var mailresponses = [];
                 if (url) {
                   doc = await getPdf(url);
+                  var fileName = extractName(url);
                   attachmentFile.push({
-                    filename:
-                      "attachment." + url.split(".")[url.split(".").length - 1],
+                    filename: fileName[0] + "." + fileName[1],
                     path: url,
                   });
                 }
@@ -456,9 +457,9 @@ module.exports = (app, db) => {
             const send_to = await db.Employees.findByPk(data.receiver_id);
             const attachmentFile = [];
             if (url) {
+              var fileName = extractName(url);
               attachmentFile.push({
-                filename:
-                  "attachment." + url.split(".")[url.split(".").length - 1],
+                filename: fileName[0] + "." + fileName[1],
                 path: url,
               });
             }

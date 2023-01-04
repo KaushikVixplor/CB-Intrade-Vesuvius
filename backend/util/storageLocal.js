@@ -4,18 +4,12 @@ var storage = multer.diskStorage({
     callback(null, "./uploads");
   },
   filename: function (req, file, callback) {
-    // console.error('file.originalname.split(".") = ',file.originalname.split("."))
-    temp = file.originalname.split(".");
-    type = temp[temp.length - 1];
-    console.error("type = ", type);
-    if ("pdf" == type) {
-      var tempName = file.originalname;
-      callback(null, tempName);
-    } else if (type == "xlsx") {
-      callback(null, file.fieldname + "-" + Date.now() + ".xlsx");
-    } else {
-      callback(null, file.originalname);
-    }
+    var name = file.originalname.split(".");
+    name.splice(file.originalname.split(".").length - 1, 1);
+    name = name.join(".");
+    var ext =
+      file.originalname.split(".")[file.originalname.split(".").length - 1];
+    callback(null, name + "-" + Date.now() + "." + ext);
   },
 });
 

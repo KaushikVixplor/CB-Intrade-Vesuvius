@@ -755,6 +755,18 @@ async function getConversationLog(conversation) {
   }
 }
 
+function extractName(url) {
+  var name = url.split(".");
+  name.splice(url.split(".").length - 1, 1);
+  name = name.join(".").split("-");
+  name.splice(name.length - 1, 1);
+  name = name.join("-");
+  if (name.includes("./uploads/")) {
+    name = name.replace("./uploads/", "");
+  }
+  var ext = url.split(".")[url.split(".").length - 1];
+  return [name, ext];
+}
 module.exports = {
   getUpdatedText,
   // compareTransaction,
@@ -771,4 +783,5 @@ module.exports = {
   createConversation,
   queryBuilder,
   getConversationLog,
+  extractName,
 };
