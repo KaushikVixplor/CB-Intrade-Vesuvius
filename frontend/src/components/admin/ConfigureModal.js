@@ -37,7 +37,7 @@ const ConfigureModal = ({
               />
             </div>
             <div>
-              <label for="to">WINDOW CLOSURE ENDING DATE:</label>
+              <label for="to">Window Closure Ending Date:</label>
               <input
                 type="date"
                 id="to"

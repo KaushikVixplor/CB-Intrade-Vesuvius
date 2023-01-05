@@ -193,6 +193,7 @@ class Conversation extends Component {
                       id="file"
                       type="file"
                       className="left"
+                      accept=".*"
                       onChange={this.onChangeFile}
                     />
                   </div>
