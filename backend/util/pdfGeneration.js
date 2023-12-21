@@ -223,7 +223,7 @@ var getAnnexure4 = async (data) => {
   doc.moveDown();
   doc.table(table0, {
     prepareHeader: () => doc.font("Times-Roman").fontSize(11),
-    prepareRow: (row, i) => doc.font("Times-Roman").fontSize(09),
+    prepareRow: (row, i) => doc.font("Times-Roman").fontSize(9),
   });
   doc.fontSize(11);
   doc.moveDown();
@@ -1774,8 +1774,7 @@ var getAnnexure1And2 = async (req, EmployeeData, FolioData, db, requestId) => {
       KMP_Name +
       " " +
       designation +
-      ", of the Company residing at " +
-      company_add +
+      " of the Company" +
       ", am desirous of dealing in " +
       proposed_quantity +
       " shares of the Company as mentioned in my application dated " +
